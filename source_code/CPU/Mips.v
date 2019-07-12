@@ -1,4 +1,4 @@
-module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout, ram_addr, ram_byte_valid, int_i);
+module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout, ram_addr, ram_byte_valid, int_i, debug_wb_pc, debug_wb_rf_wen, debug_wb_rf_wnum, debug_wb_rf_wdata);
 	/*********************
 	 *			Mips
 	 *input:
@@ -26,6 +26,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	output ram_en, ram_we;
 	output [3:0] ram_byte_valid;
 	output [31:0] ram_addr, ram_dout;
+	// for debug
+	output [31:0] debug_wb_pc, debug_wb_rf_wdata;
+	output debug_wb_rf_wen;
+	output [4:0] debug_wb_rf_wnum;
 	
 	wire [31:0] mem_rdata = ram_din;
 	/**************************/
@@ -669,4 +673,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	assign ram_addr = EXE_MEM_ALU_result_data;
 	assign ram_dout = mem_wdata_o;
 	assign ram_we = EXE_MEM_wmem_data && !MEM_store_exc;
+	
+	// for debug
+	assign debug_wb_pc = EXE_MEM_PC_plus4_data;
+	assign debug_wb_rf_wdata = WB_result_data;
+	assign debug_wb_rf_wen = MEM_WB_wreg_data;
+	assign debug_wb_rf_wnum = MEM_WB_regdst_data;
 endmodule
