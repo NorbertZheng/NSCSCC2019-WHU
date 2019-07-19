@@ -43,7 +43,7 @@ module PC(clk, rst_n, stall0, stall1, stall2, stall3, PC_exc_i, PC_target_i, PC_
 	// PCReg
 	PCReg m_PCReg(
 		.clk(clk), 
-		.rstn_n(rst_n), 
+		.rst_n(rst_n), 
 		.wpc(wpc), 
 		.PC_i(PC_i), 
 		.PC_o(PC_o)

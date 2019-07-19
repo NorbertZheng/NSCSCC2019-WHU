@@ -1,4 +1,4 @@
-module ID_EXE_REG(clk, rst_n, ID_EXE_Stall, ID_EXE_Flush, is_div, ID_EXE_is_div_data, is_sign_div, ID_EXE_is_sign_div_data, exc_mask, ID_EXE_exc_mask_data, is_delayslot, ID_EXE_is_delayslot_data, wcp0, ID_EXE_wcp0_data, store_type, ID_EXE_store_type_data, load_type, ID_EXE_load_type_data, hi_i_sel, ID_EXE_hi_i_sel_data, lo_i_sel, ID_EXE_lo_i_sel_data, whi, ID_EXE_whi_data, wlo, ID_EXE_wlo_data, wreg, ID_EXE_wreg_data, result_sel, ID_EXE_result_sel_data, wmem, ID_EXE_wmem_data, aluop, ID_EXE_aluop_data, alusrc0_sel, ID_EXE_alusrc0_sel_data, alusrc1_sel, ID_EXE_alusrc1_sel_data, regdst, ID_EXE_regdst_data, rf_rdata0, ID_EXE_rf_rdata0_data, rf_rdata1, ID_EXE_rf_rdata1_data, hi, ID_EXE_hi_data, lo, ID_EXE_lo_data, COP0_data, ID_EXE_COP0_data_data, rs, ID_EXE_rs_data, rt, ID_EXE_rt_data, rd, ID_EXE_rd_data, Imm32, ID_EXE_Imm32_data, PC_plus4, ID_EXE_PC_plus4_data, fetch_exc, ID_EXE_fetch_exc_data);
+module ID_EXE_REG(clk, rst_n, ID_EXE_Stall, ID_EXE_Flush, is_div, ID_EXE_is_div_data, is_sign_div, ID_EXE_is_sign_div_data, exc_mask, ID_EXE_exc_mask_data, is_delayslot, ID_EXE_is_delayslot_data, wcp0, ID_EXE_wcp0_data, store_type, ID_EXE_store_type_data, load_type, ID_EXE_load_type_data, hi_i_sel, ID_EXE_hi_i_sel_data, lo_i_sel, ID_EXE_lo_i_sel_data, whi, ID_EXE_whi_data, wlo, ID_EXE_wlo_data, wreg, ID_EXE_wreg_data, result_sel, ID_EXE_result_sel_data, wmem, ID_EXE_wmem_data, aluop, ID_EXE_aluop_data, alusrc0_sel, ID_EXE_alusrc0_sel_data, alusrc1_sel, ID_EXE_alusrc1_sel_data, regdst, ID_EXE_regdst_data, rf_rdata0, ID_EXE_rf_rdata0_data, rf_rdata1, ID_EXE_rf_rdata1_data, hi, ID_EXE_hi_data, lo, ID_EXE_lo_data, COP0_data, ID_EXE_COP0_data_data, rs, ID_EXE_rs_data, rt, ID_EXE_rt_data, rd, ID_EXE_rd_data, Imm32, ID_EXE_Imm32_data, PC_plus4, ID_EXE_PC_plus4_data, fetch_exc, ID_EXE_fetch_exc_data, instruction, ID_EXE_Instruction_data);
 	/*********************
 	 *	ID - EXE Pipeline Registers
 	 *input:
@@ -73,14 +73,15 @@ module ID_EXE_REG(clk, rst_n, ID_EXE_Stall, ID_EXE_Flush, is_div, ID_EXE_is_div_
 	input [3:0] store_type, load_type;
 	input [4:0] rs, rt, rd;
 	input [7:0] exc_mask, aluop, fetch_exc;
-	input [31:0] rf_rdata0, rf_rdata1, hi, lo, COP0_data, Imm32, PC_plus4;
+	input [31:0] rf_rdata0, rf_rdata1, hi, lo, COP0_data, Imm32, PC_plus4, instruction;
 	output ID_EXE_is_div_data, ID_EXE_is_sign_div_data, ID_EXE_is_delayslot_data, ID_EXE_wcp0_data, ID_EXE_hi_i_sel_data, ID_EXE_lo_i_sel_data;
 	output ID_EXE_whi_data, ID_EXE_wlo_data, ID_EXE_wreg_data, ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data;
 	output [1:0] ID_EXE_result_sel_data, ID_EXE_alusrc1_sel_data, ID_EXE_regdst_data;
 	output [3:0] ID_EXE_store_type_data, ID_EXE_load_type_data;
 	output [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data;
 	output [7:0] ID_EXE_exc_mask_data, ID_EXE_aluop_data, ID_EXE_fetch_exc_data;
-	output [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data, ID_EXE_PC_plus4_data;
+	output [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data
+				, ID_EXE_PC_plus4_data, ID_EXE_Instruction_data;
 	
 	// ID_EXE_is_div
 	flopr #(1) m_ID_EXE_is_div(
@@ -370,5 +371,15 @@ module ID_EXE_REG(clk, rst_n, ID_EXE_Stall, ID_EXE_Flush, is_div, ID_EXE_is_div_
 		.flush(ID_EXE_Flush), 
 		.data_i(fetch_exc), 
 		.data_o(ID_EXE_fetch_exc_data)
+	);	
+	
+	// ID_EXE_Instruction
+	flopr #(32) m_ID_EXE_Instruction(
+		.clk(clk), 
+		.rst_n(rst_n), 
+		.stall(ID_EXE_Stall), 
+		.flush(ID_EXE_Flush), 
+		.data_i(instruction), 
+		.data_o(ID_EXE_Instruction_data)
 	);	
 endmodule

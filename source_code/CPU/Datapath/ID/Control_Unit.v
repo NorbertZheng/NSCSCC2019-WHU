@@ -1,3 +1,5 @@
+`include "../../Define/Instruction_Define.v"
+`include "../../Define/LS_Define.v"
 module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_delayslot_i, is_div, is_sign_div, exc_mask, is_delayslot_o, wcp0, store_type, load_type, hi_i_sel, lo_i_sel, whi, wlo, wreg, result_sel, wmem, sign, aluop, alusrc0_sel, alusrc1_sel, regdst, i_bj, i_b, PC_target_sel, PC_branch);
 	/*********************
 	 *		Control Unit
@@ -566,31 +568,31 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 					end
 				`OPCODE_SB:
 					begin
-					store_type = `STR_SB;
+					store_type = `STORE_SB;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
 					end
 				`OPCODE_SH:
 					begin
-					store_type = `STR_SH;
+					store_type = `STORE_SH;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
 					end
 				`OPCODE_SW:
 					begin
-					store_type = `STR_SW;
+					store_type = `STORE_SW;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
 					end
 				`OPCODE_SWL:
 					begin
-					store_type = `STR_SWL;
+					store_type = `STORE_SWL;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
 					end
 				`OPCODE_SWR:
 					begin
-					store_type = `STR_SWR;
+					store_type = `STORE_SWR;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
 					end
@@ -602,7 +604,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 					end
 				`OPCODE_SC:
 					begin
-					store_type = `STR_SC;
+					store_type = `STORE_SC;
 					wreg = 1'b1;
 					result_sel = 2'b10;
 					wmem = 1'b1;

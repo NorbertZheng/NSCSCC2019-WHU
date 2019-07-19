@@ -1,4 +1,4 @@
-module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_type, MEM_WB_load_type_data, hi_i_sel, MEM_WB_hi_i_sel_data, lo_i_sel,MEM_WB_lo_i_sel_data, whi, MEM_WB_whi_data, wlo, MEM_WB_wlo_data, wreg, MEM_WB_wreg_data, result_sel, MEM_WB_result_sel_data,  rf_rdata0_fw, MEM_WB_rf_rdata0_fw_data, rf_rdata1_fw, MEM_WB_rf_rdata1_fw_data, ALU_result, MEM_WB_ALU_result_data, SC_result_sel, MEM_WB_SC_result_sel_data, byte_valid, MEM_WB_byte_valid_data, MulDiv_result, MEM_WB_MulDiv_result_data, regdst, MEM_WB_regdst_data, mem_rdata, MEM_WB_mem_rdata_data);
+module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_type, MEM_WB_load_type_data, hi_i_sel, MEM_WB_hi_i_sel_data, lo_i_sel,MEM_WB_lo_i_sel_data, whi, MEM_WB_whi_data, wlo, MEM_WB_wlo_data, wreg, MEM_WB_wreg_data, result_sel, MEM_WB_result_sel_data,  rf_rdata0_fw, MEM_WB_rf_rdata0_fw_data, rf_rdata1_fw, MEM_WB_rf_rdata1_fw_data, ALU_result, MEM_WB_ALU_result_data, SC_result_sel, MEM_WB_SC_result_sel_data, byte_valid, MEM_WB_byte_valid_data, MulDiv_result, MEM_WB_MulDiv_result_data, regdst, MEM_WB_regdst_data, mem_rdata, MEM_WB_mem_rdata_data, PC_plus4, MEM_WB_PC_plus4_data, instruction, MEM_WB_Instruction_data);
 	/*********************
 	 *	MEM - WB Pipeline Registers PACKED
 	 *input:
@@ -22,6 +22,7 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 	 *	MulDiv_result[63:0]				: Mul / Div result
 	 *	regdst[4:0]						: select which reg to write
 	 *	mem_rdata[31:0]					: mem read data
+	 *	PC_plus4[31:0]					: PC_plus4 data
 	 *output:
 	 *	MEM_WB_wcp0_data				: MEM/WB wcp0 data
 	 *	MEM_WB_load_type_data[3:0]		: MEM/WB load_type data
@@ -38,7 +39,8 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 	 *	MEM_WB_byte_valid_data[3:0]		: MEM/WB byte_valid data
 	 *	MEM_WB_MulDiv_result_data[63:0]	: MEM/WB MulDiv_result data
 	 *	MEM_WB_regdst_data[4:0]			: MEM/WB regdst data
-	 *	MEM_WB_mem_rdata_data[31:0]		 MEM/WB mem_rdata data
+	 *	MEM_WB_mem_rdata_data[31:0]		: MEM/WB mem_rdata data
+	 *	MEM_WB_PC_plus4_data[31:0]		: MEM/WB PC_plus4 data
 	 *********************/
 	input clk, rst_n;
 	input stall0, irq;
@@ -46,13 +48,13 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 	input [1:0] result_sel;
 	input [3:0] load_type, byte_valid;
 	input [4:0] regdst;
-	input [31:0] rf_rdata0_fw, rf_rdata1_fw, ALU_result, mem_rdata;
+	input [31:0] rf_rdata0_fw, rf_rdata1_fw, ALU_result, mem_rdata, PC_plus4, instruction;
 	input [63:0] MulDiv_result;
 	output MEM_WB_wcp0_data, MEM_WB_hi_i_sel_data, MEM_WB_lo_i_sel_data, MEM_WB_whi_data, MEM_WB_wlo_data, MEM_WB_wreg_data, MEM_WB_SC_result_sel_data;
 	output [1:0] MEM_WB_result_sel_data;
 	output [3:0] MEM_WB_load_type_data, MEM_WB_byte_valid_data;
 	output [4:0] MEM_WB_regdst_data;
-	output [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data;
+	output [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data, MEM_WB_PC_plus4_data, MEM_WB_Instruction_data;
 	output [63:0] MEM_WB_MulDiv_result_data;
 	
 	wire MEM_WB_Stall = stall0 & ~irq;
@@ -94,6 +96,11 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 		.regdst(regdst), 
 		.MEM_WB_regdst_data(MEM_WB_regdst_data), 
 		.mem_rdata(mem_rdata), 
-		.MEM_WB_mem_rdata_data(MEM_WB_mem_rdata_data)
+		.MEM_WB_mem_rdata_data(MEM_WB_mem_rdata_data),
+		// for test only
+		.PC_plus4(PC_plus4),
+		.MEM_WB_PC_plus4_data(MEM_WB_PC_plus4_data),
+		.instruction(instruction),
+		.MEM_WB_Instruction_data(MEM_WB_Instruction_data)
 	);
 endmodule

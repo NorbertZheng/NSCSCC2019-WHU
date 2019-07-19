@@ -54,23 +54,23 @@ module Divider(clk, rst_n, a, b, start, clr, is_sign_div, result, busy);
 							cnt <= 6'b000000;
 							if(is_sign_div == 1'b1 && a[31] == 1'b1)	//处理第1个立即数为负
 								begin
-								temp_op1 = ~a + 1;
-								sgn_fix1 = 1;
+								temp_op1 <= ~a + 1;
+								sgn_fix1 <= 1;
 								end 
 							else 
 								begin
-								temp_op1 = a;
-								sgn_fix1 = 0;
+								temp_op1 <= a;
+								sgn_fix1 <= 0;
 								end
 							if(is_sign_div == 1'b1 && b[31] == 1'b1 )	//处理第2个立即数为负
 								begin
-								temp_op2 = ~b + 1;
-								sgn_fix2 = 1;
+								temp_op2 <= ~b + 1;
+								sgn_fix2 <= 1;
 								end 
 							else 
 								begin
-								temp_op2 = b;
-								sgn_fix2 = 0;
+								temp_op2 <= b;
+								sgn_fix2 <= 0;
 								end
 							dividend <= {32'd0,32'd0};
 							dividend[32:1] <= temp_op1;			//商初值

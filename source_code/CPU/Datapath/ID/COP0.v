@@ -1,3 +1,4 @@
+`include "../../Define/COP0_Define.v"
 module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_addr, is_delayslot, badvaddr, COP0_data, COP0_Count, COP0_Compare, COP0_Status, COP0_Cause, COP0_EPC, COP0_Config, COP0_Prid, COP0_Badvaddr, exc_en, PC_exc);
 	/*********************
 	 *		CoProcessor 0
@@ -76,7 +77,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 				begin					// 由于cause使用了组合逻辑，所以可以在这里直接使用cause，而不像 timer_int 使用了同步逻辑而必须等一周期
 				if(cause == 5'd31)
 					begin
-					COP0_Status[1] = 1'b0;		// 开异常中断
+					COP0_Status[1] <= 1'b0;		// 开异常中断
 					end
 				else if(!COP0_Status[1])		// 异常中断被允许
 					begin
@@ -106,7 +107,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 						COP0_EPC <= victim_inst_addr;
 						COP0_Cause[31] <= 1'b0;
 						end
-					COP0_Status[1] = 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
@@ -130,7 +131,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 						COP0_EPC <= victim_inst_addr;
 						COP0_Cause[31] <= 1'b0;
 						end
-					COP0_Status[1] = 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
@@ -154,7 +155,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 						COP0_EPC <= victim_inst_addr;
 						COP0_Cause[31] <= 1'b0;
 						end
-					COP0_Status[1] = 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
@@ -311,7 +312,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 					PC_exc = 32'hbfc00380;
 				5'd31:				//eret 考虑特殊情况：前条指令在W级写回epc，eret指令在M级将得到旧值
 					begin
-					PC_exc = epc_new;
+					PC_exc = tempEPC;
 					end
 				default:
 					begin

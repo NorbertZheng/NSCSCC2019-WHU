@@ -1,3 +1,4 @@
+`include "../Define/Fragment_Define.v"
 module EXT(EXTOp, Imm16, Imm32);
 	/*********************
 	 *	16/32-bit Extend

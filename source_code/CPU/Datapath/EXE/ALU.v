@@ -1,3 +1,4 @@
+`include "../../Define/ALUOP_Define.v"
 module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_result, ALU_we, ALU_mwe, Mul_result, byte_valid, ALU_exc);
 	/*********************
 	 *			ALU

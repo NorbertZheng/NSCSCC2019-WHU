@@ -1,3 +1,4 @@
+`include "../../Define/LS_Define.v"
 module modifyStoreData(mem_wdata_i, store_type, byte_valid, mem_wdata_o);
 	/*********************
 	 *	Store Data Modifier
@@ -16,7 +17,7 @@ module modifyStoreData(mem_wdata_i, store_type, byte_valid, mem_wdata_o);
 		begin
 		mem_wdata_o = mem_wdata_i;
 		case(store_type)
-			`STR_SB:
+			`STORE_SB:
 				begin
 				case(byte_valid)
 					4'b0001:
@@ -37,16 +38,16 @@ module modifyStoreData(mem_wdata_i, store_type, byte_valid, mem_wdata_o);
 						end
 				endcase
 				end
-			`STR_SH:
+			`STORE_SH:
 				begin
 				mem_wdata_o = (byte_valid == 4'b0011) ? {8'b0, 8'b0, mem_wdata_i[15:8], mem_wdata_i[7:0]} : {mem_wdata_i[15:8], mem_wdata_i[7:0], 8'b0, 8'b0};
 				end
-			`STR_SC,
-			`STR_SW:
+			`STORE_SC,
+			`STORE_SW:
 				begin
 				;
 				end
-			`STR_SWL:
+			`STORE_SWL:
 				begin
 				case(byte_valid)
 					4'b0001:
@@ -67,7 +68,7 @@ module modifyStoreData(mem_wdata_i, store_type, byte_valid, mem_wdata_o);
 						end
 				endcase
 				end
-			`STR_SWR:
+			`STORE_SWR:
 				begin
 				case(byte_valid)
 					4'b1000:

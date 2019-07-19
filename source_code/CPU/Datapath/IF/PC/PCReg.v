@@ -1,4 +1,4 @@
-module PCReg(clk, rstn_n, wpc, PC_i, PC_o);
+module PCReg(clk, rst_n, wpc, PC_i, PC_o);
 	/*********************
 	 *	32-bit Program Counter
 	 *input:

@@ -1,3 +1,4 @@
+`include "../../Define/LS_Define.v"
 module modifyLoaddata(mem_rdata_i, rf_rdata_i, load_type, byte_valid, mem_rdata_o);
 	/*********************
 	 *	Load Data Modifier
