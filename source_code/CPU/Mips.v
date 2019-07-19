@@ -662,6 +662,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.d3(MEM_WB_ALU_result_data)
 	);
 	assign WB_result_data = result_mux_data;
+	always@(*)
+		begin
+		$display("modifiedLoadData: 0x%8h, MEM_WB_ALU_result_data: 0x%8h, EXE_MEM_ALU_result_data: 0x%8h, ALU_result: 0x%8h"
+				, modifiedLoadData, MEM_WB_ALU_result_data, EXE_MEM_ALU_result_data, ALU_result);
+		end
 	
 	// WB_hi_fw_mux
 	Mux2T1 m_WB_hi_fw_mux(
@@ -687,6 +692,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	assign ram_we = EXE_MEM_wmem_data && !MEM_store_exc;
 	
 	// for debug
+	always@(*)
+		begin
+		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, wb_inst: 0x%8h", debug_wb_pc, debug_wb_pc[19:2], debug_wb_inst);
+		end
 	assign debug_wb_inst = MEM_WB_Instruction_data;
 	assign debug_wb_pc = MEM_WB_PC_plus4_data - 32'h4;
 	assign debug_wb_rf_wdata = WB_result_data;

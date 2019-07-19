@@ -82,6 +82,11 @@ module Registers(clk, rst_n, RegWrite, Read_register1, Read_register2, Write_reg
 		else if(RegWrite)
 			begin
 			registers[Write_register] <= (Write_register != 0) ? Write_data : 0;
+			$display("R[00-07]=%8X, %8X, %8X, %8X, %8X, %8X, %8X, %8X", 0, registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]);
+			$display("R[08-15]=%8X, %8X, %8X, %8X, %8X, %8X, %8X, %8X", registers[8], registers[9], registers[10], registers[11], registers[12], registers[13], registers[14], registers[15]);
+			$display("R[16-23]=%8X, %8X, %8X, %8X, %8X, %8X, %8X, %8X", registers[16], registers[17], registers[18], registers[19], registers[20], registers[21], registers[22], registers[23]);
+			$display("R[24-31]=%8X, %8X, %8X, %8X, %8X, %8X, %8X, %8X", registers[24], registers[25], registers[26], registers[27], registers[28], registers[29], registers[30], registers[31]);
+			$display("Registers  %x  %x", Write_register, Write_data);
 			end
 		end
 endmodule
