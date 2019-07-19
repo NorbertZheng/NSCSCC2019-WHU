@@ -1,0 +1,25 @@
+Vivado Simulator 2018.3
+Copyright 1986-1999, 2001-2018 Xilinx, Inc. All Rights Reserved.
+Running: D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/bin/unwrapped/win64.o/xelab.exe -wto 8de8692e6f7648c084645fde77f29b66 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L secureip --snapshot tb_top_func_synth xil_defaultlib.tb_top xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+ERROR: [VRFC 10-3180] cannot find port 'write_timer' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109133]
+ERROR: [VRFC 10-3180] cannot find port 'virtual_uart_data_reg[7]_1' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109132]
+ERROR: [VRFC 10-3180] cannot find port 'virtual_uart_data_reg[7]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109131]
+ERROR: [VRFC 10-3180] cannot find port 'timer_r2_reg[31]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109130]
+ERROR: [VRFC 10-3180] cannot find port 'switch_IBUF' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109128]
+ERROR: [VRFC 10-3180] cannot find port 'open_trace_reg_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109127]
+ERROR: [VRFC 10-3180] cannot find port 'open_trace' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109126]
+ERROR: [VRFC 10-3180] cannot find port 'num_monitor_reg_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109125]
+ERROR: [VRFC 10-3180] cannot find port 'num_monitor' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109124]
+ERROR: [VRFC 10-3180] cannot find port 'num_data_reg[31]_1' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109123]
+ERROR: [VRFC 10-3180] cannot find port 'num_data_reg[31]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109122]
+ERROR: [VRFC 10-3180] cannot find port 'num_csn_reg[7]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109121]
+ERROR: [VRFC 10-3180] cannot find port 'num_a_g_reg[6]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109120]
+ERROR: [VRFC 10-3180] cannot find port 'num_a_g_reg[0]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109119]
+ERROR: [VRFC 10-3180] cannot find port 'led_rg1_data_reg[31]_1' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109118]
+ERROR: [VRFC 10-3180] cannot find port 'led_rg1_data_reg[31]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109117]
+ERROR: [VRFC 10-3180] cannot find port 'led_rg0_data_reg[31]_1' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109116]
+ERROR: [VRFC 10-3180] cannot find port 'led_rg0_data_reg[31]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109115]
+ERROR: [VRFC 10-3180] cannot find port 'led_data_reg[9]_0' on this module [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/synth/func/xsim/tb_top_func_synth.v:109114]
+ERROR: [XSIM 43-3322] Static elaboration of top level Verilog design unit(s) in library work failed.

@@ -1,0 +1,51 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../../../rtl/xilinx_ip/clk_pll/clk_pll_sim_netlist.v" \
+"../../../../../../rtl/xilinx_ip/data_ram/data_ram_sim_netlist.v" \
+"../../../../../../rtl/xilinx_ip/inst_ram/sim/inst_ram.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/ALU.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/COP0.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/Control_Unit.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/Divider.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG_PACKED.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/EXT.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/Forwarding_Unit.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/Hazard_Detection_Unit.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG_PACKED.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG_PACKED.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG_PACKED.v" \
+"../../../../../../rtl/myCPU/CPU/Mips.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/Mux.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/IF/PC/PC.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/IF/PC/PCPlus4.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/IF/PC/PCReg.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/Registers.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/add.v" \
+"../../../../../../rtl/BRIDGE/bridge_1x2.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla32.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_16.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_2.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_32.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_4.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_8.v" \
+"../../../../../../rtl/CONFREG/confreg.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/flopr.v" \
+"../../../../../../rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/g_p.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/hi_lo_reg.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/EXE/ll_bit.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/WB/modifyLoadData.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/MEM/modifyStoreData.v" \
+"../../../../../../rtl/myCPU/mycpu_top.v" \
+"../../../../../../rtl/soc_lite_top.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/ID/victimInstDetector.v" \
+"../../../../../../testbench/mycpu_tb.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

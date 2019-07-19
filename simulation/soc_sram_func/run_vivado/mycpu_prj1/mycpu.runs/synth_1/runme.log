@@ -1,0 +1,1270 @@
+
+*** Running vivado
+    with args -log soc_lite_top.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source soc_lite_top.tcl
+
+
+****** Vivado v2018.3 (64-bit)
+  **** SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+  **** IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source soc_lite_top.tcl -notrace
+Command: synth_design -top soc_lite_top -part xc7a200tfbg676-2
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a200t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a200t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 16744 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 400.039 ; gain = 105.813
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'soc_lite_top' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/soc_lite_top.v:65]
+	Parameter SIMULATION bound to: 1'b0 
+INFO: [Synth 8-6157] synthesizing module 'clk_pll' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/clk_pll_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_pll' (1#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/clk_pll_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'mycpu_top' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/mycpu_top.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Mips' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Mips.v:2]
+INFO: [Synth 8-6157] synthesizing module 'PC' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PC.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Mux2T1' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+	Parameter width bound to: 32 - type: integer 
+	Parameter signWidth bound to: 1 - type: integer 
+INFO: [Synth 8-226] default block is never used [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:22]
+INFO: [Synth 8-6155] done synthesizing module 'Mux2T1' (2#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+INFO: [Synth 8-6157] synthesizing module 'PCReg' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PCReg.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'PCReg' (3#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PCReg.v:1]
+INFO: [Synth 8-6157] synthesizing module 'PCPlus4' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PCPlus4.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla32' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla32.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla_32' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_32.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla_16' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_16.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla_8' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_8.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla_4' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_4.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cla_2' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_2.v:1]
+INFO: [Synth 8-6157] synthesizing module 'add' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/add.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'add' (4#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/add.v:1]
+INFO: [Synth 8-6157] synthesizing module 'g_p' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/g_p.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'g_p' (5#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/g_p.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla_2' (6#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_2.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla_4' (7#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_4.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla_8' (8#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_8.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla_16' (9#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_16.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla_32' (10#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla_32.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cla32' (11#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/AdvancedCarryAdder/cla32.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'PCPlus4' (12#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PCPlus4.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'PC' (13#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/PC/PC.v:1]
+INFO: [Synth 8-6157] synthesizing module 'IF_ID_REG_PACKED' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'IF_ID_REG' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr' (14#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized0' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 8 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized0' (14#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized1' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized1' (14#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'IF_ID_REG' (15#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'IF_ID_REG_PACKED' (16#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Mux3T1' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:42]
+	Parameter width bound to: 32 - type: integer 
+	Parameter signWidth bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'Mux3T1' (17#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:42]
+INFO: [Synth 8-6157] synthesizing module 'Control_Unit' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:3]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:658]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:674]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:722]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:750]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:503]
+INFO: [Synth 8-6155] done synthesizing module 'Control_Unit' (18#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Control_Unit.v:3]
+INFO: [Synth 8-6157] synthesizing module 'Registers' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Registers.v:1]
+	Parameter width bound to: 32 - type: integer 
+	Parameter AddrWidth bound to: 5 - type: integer 
+	Parameter num bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'Registers' (19#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Registers.v:1]
+INFO: [Synth 8-6157] synthesizing module 'hi_lo_reg' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/hi_lo_reg.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'hi_lo_reg' (20#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/hi_lo_reg.v:1]
+INFO: [Synth 8-6157] synthesizing module 'COP0' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/COP0.v:2]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/COP0.v:173]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/COP0.v:208]
+INFO: [Synth 8-6155] done synthesizing module 'COP0' (21#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/COP0.v:2]
+INFO: [Synth 8-6157] synthesizing module 'EXT' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/EXT.v:2]
+INFO: [Synth 8-6155] done synthesizing module 'EXT' (22#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/EXT.v:2]
+INFO: [Synth 8-6157] synthesizing module 'victimInstDetector' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/victimInstDetector.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'victimInstDetector' (23#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/victimInstDetector.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Hazard_Detection_Unit' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Hazard_Detection_Unit.v:2]
+INFO: [Synth 8-6155] done synthesizing module 'Hazard_Detection_Unit' (24#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/Hazard_Detection_Unit.v:2]
+INFO: [Synth 8-6157] synthesizing module 'ID_EXE_REG_PACKED' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'ID_EXE_REG' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized2' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 4 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized2' (24#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized3' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized3' (24#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized4' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 5 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized4' (24#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'ID_EXE_REG' (25#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'ID_EXE_REG_PACKED' (26#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/ID/ID_EXE_REG/ID_EXE_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Mux2T1__parameterized0' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+	Parameter width bound to: 32 - type: integer 
+	Parameter signWidth bound to: 1 - type: integer 
+INFO: [Synth 8-226] default block is never used [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:22]
+INFO: [Synth 8-6155] done synthesizing module 'Mux2T1__parameterized0' (26#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+INFO: [Synth 8-6157] synthesizing module 'Mux4T1' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:86]
+	Parameter width bound to: 32 - type: integer 
+	Parameter signWidth bound to: 2 - type: integer 
+INFO: [Synth 8-226] default block is never used [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:108]
+INFO: [Synth 8-6155] done synthesizing module 'Mux4T1' (27#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:86]
+INFO: [Synth 8-6157] synthesizing module 'Mux2T1__parameterized1' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+	Parameter width bound to: 1 - type: integer 
+	Parameter signWidth bound to: 1 - type: integer 
+INFO: [Synth 8-226] default block is never used [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:22]
+INFO: [Synth 8-6155] done synthesizing module 'Mux2T1__parameterized1' (27#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:4]
+INFO: [Synth 8-6157] synthesizing module 'ALU' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:2]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:173]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:253]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:326]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:433]
+INFO: [Synth 8-6155] done synthesizing module 'ALU' (28#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:2]
+INFO: [Synth 8-6157] synthesizing module 'Divider' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:1]
+WARNING: [Synth 8-5788] Register cnt_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:54]
+WARNING: [Synth 8-5788] Register temp_op1_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:57]
+WARNING: [Synth 8-5788] Register sgn_fix1_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:58]
+WARNING: [Synth 8-5788] Register temp_op2_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:67]
+WARNING: [Synth 8-5788] Register sgn_fix2_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:68]
+WARNING: [Synth 8-5788] Register dividend_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:32]
+WARNING: [Synth 8-5788] Register divisor_reg in module Divider is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:32]
+INFO: [Synth 8-6155] done synthesizing module 'Divider' (29#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Divider.v:1]
+INFO: [Synth 8-6157] synthesizing module 'Mux3T1__parameterized0' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:42]
+	Parameter width bound to: 5 - type: integer 
+	Parameter signWidth bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'Mux3T1__parameterized0' (29#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/Mux.v:42]
+INFO: [Synth 8-6157] synthesizing module 'Forwarding_Unit' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Forwarding_Unit.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'Forwarding_Unit' (30#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/Forwarding_Unit.v:1]
+INFO: [Synth 8-6157] synthesizing module 'll_bit' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ll_bit.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'll_bit' (31#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ll_bit.v:1]
+INFO: [Synth 8-6157] synthesizing module 'EXE_MEM_REG_PACKED' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'EXE_MEM_REG' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG.v:1]
+INFO: [Synth 8-6157] synthesizing module 'flopr__parameterized5' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+	Parameter width bound to: 64 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'flopr__parameterized5' (31#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Generatic/flopr.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'EXE_MEM_REG' (32#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'EXE_MEM_REG_PACKED' (33#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/EXE_MEM_REG/EXE_MEM_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'modifyStoreData' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/modifyStoreData.v:2]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/modifyStoreData.v:19]
+INFO: [Synth 8-6155] done synthesizing module 'modifyStoreData' (34#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/modifyStoreData.v:2]
+INFO: [Synth 8-6157] synthesizing module 'MEM_WB_REG_PACKED' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'MEM_WB_REG' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'MEM_WB_REG' (35#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'MEM_WB_REG_PACKED' (36#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG_PACKED.v:1]
+INFO: [Synth 8-6157] synthesizing module 'modifyLoaddata' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/WB/modifyLoadData.v:2]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/WB/modifyLoadData.v:25]
+INFO: [Synth 8-6155] done synthesizing module 'modifyLoaddata' (37#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/WB/modifyLoadData.v:2]
+INFO: [Synth 8-6155] done synthesizing module 'Mips' (38#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Mips.v:2]
+WARNING: [Synth 8-3848] Net inst_sram_wdata in module/entity mycpu_top does not have driver. [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/mycpu_top.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'mycpu_top' (39#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/mycpu_top.v:1]
+WARNING: [Synth 8-689] width (4) of port connection 'inst_sram_wen' does not match port width (1) of module 'mycpu_top' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/soc_lite_top.v:144]
+WARNING: [Synth 8-689] width (4) of port connection 'data_sram_wen' does not match port width (1) of module 'mycpu_top' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/soc_lite_top.v:150]
+WARNING: [Synth 8-689] width (4) of port connection 'debug_wb_rf_wen' does not match port width (1) of module 'mycpu_top' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/soc_lite_top.v:157]
+INFO: [Synth 8-6157] synthesizing module 'inst_ram' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/inst_ram_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'inst_ram' (40#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/inst_ram_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'bridge_1x2' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/BRIDGE/bridge_1x2.v:50]
+INFO: [Synth 8-6155] done synthesizing module 'bridge_1x2' (41#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/BRIDGE/bridge_1x2.v:50]
+INFO: [Synth 8-6157] synthesizing module 'data_ram' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/data_ram_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'data_ram' (42#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/.Xil/Vivado-4532-DESKTOP-HFH0Q47/realtime/data_ram_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'confreg' [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/CONFREG/confreg.v:73]
+	Parameter SIMULATION bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'confreg' (43#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/CONFREG/confreg.v:73]
+INFO: [Synth 8-6155] done synthesizing module 'soc_lite_top' (44#1) [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/soc_lite_top.v:65]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[31]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[30]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[29]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[28]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[27]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[26]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[25]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[24]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[23]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[22]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[21]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[20]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[19]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[18]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[17]
+WARNING: [Synth 8-3331] design confreg has unconnected port conf_addr[16]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[31]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[30]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[29]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[28]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[27]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[26]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[25]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[24]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[23]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[22]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[21]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[20]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[19]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[18]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[17]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[16]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[15]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[14]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[13]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[12]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[11]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[10]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[9]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[8]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[7]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[6]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[5]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[4]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[3]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[2]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[1]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port inst_sram_wdata[0]
+WARNING: [Synth 8-3331] design mycpu_top has unconnected port int[0]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 471.832 ; gain = 177.605
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 471.832 ; gain = 177.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 471.832 ; gain = 177.605
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a200tfbg676-2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/data_ram/data_ram/data_ram_in_context.xdc] for cell 'data_ram'
+Finished Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/data_ram/data_ram/data_ram_in_context.xdc] for cell 'data_ram'
+Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/clk_pll/clk_pll/clk_pll_in_context.xdc] for cell 'pll.clk_pll'
+Finished Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/clk_pll/clk_pll/clk_pll_in_context.xdc] for cell 'pll.clk_pll'
+Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/inst_ram/inst_ram/inst_ram_in_context.xdc] for cell 'inst_ram'
+Finished Parsing XDC File [c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/inst_ram/inst_ram/inst_ram_in_context.xdc] for cell 'inst_ram'
+Parsing XDC File [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc]
+WARNING: [Constraints 18-619] A clock with name 'clk' already exists, overwriting the previous clock with the same name. [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc:5]
+WARNING: [Vivado 12-508] No pins matched 'clk_pll/inst/plle2_adv_inst/CLKOUT1'. [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc:91]
+WARNING: [Vivado 12-508] No pins matched 'clk_pll/inst/plle2_adv_inst/CLKOUT0'. [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc:92]
+Finished Parsing XDC File [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc]
+WARNING: [Project 1-498] One or more constraints failed evaluation while reading constraint file [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc] and the design contains unresolved black boxes. These constraints will be read post-synthesis (as long as their source constraint file is marked as used_in_implementation) and should be applied correctly then. You should review the constraints listed in the file [.Xil/soc_lite_top_propImpl.xdc] and check the run log file to verify that these constraints were correctly applied.
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/soc_lite.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/soc_lite_top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/soc_lite_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 898.465 ; gain = 0.000
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 898.465 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 898.465 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 898.465 ; gain = 0.000
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 898.465 ; gain = 604.238
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a200tfbg676-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 898.465 ; gain = 604.238
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property IO_BUFFER_TYPE = NONE for clk. (constraint file  c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/clk_pll/clk_pll/clk_pll_in_context.xdc, line 4).
+Applied set_property CLOCK_BUFFER_TYPE = NONE for clk. (constraint file  c:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/xilinx_ip/clk_pll/clk_pll/clk_pll_in_context.xdc, line 5).
+Applied set_property DONT_TOUCH = true for data_ram. (constraint file  auto generated constraint, line ).
+Applied set_property DONT_TOUCH = true for \pll.clk_pll . (constraint file  auto generated constraint, line ).
+Applied set_property DONT_TOUCH = true for inst_ram. (constraint file  auto generated constraint, line ).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 898.465 ; gain = 604.238
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5546] ROM "is_div" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "is_sign_div" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_mask" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_mask" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5545] ROM "exc_mask" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5546] ROM "exc_mask" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wcp0" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "store_type" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "load_type" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "hi_i_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "hi_i_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "whi" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wlo" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wreg" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wreg" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wreg" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "wreg" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "result_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "result_sel" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "wmem" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "sign" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "aluop" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "aluop" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "aluop" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "alusrc0_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "alusrc1_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "alusrc1_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regdst" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "i_bj" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "PC_target_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[31]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[30]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[29]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[28]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[27]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[26]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[25]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[24]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[23]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[22]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[21]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[20]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[19]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[18]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[17]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[16]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[15]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[14]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[13]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[12]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[11]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[10]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[9]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[8]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[7]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[6]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[5]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[4]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[3]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[2]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[1]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[0]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_en" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_en" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "PC_exc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "COP0_Compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "COP0_Status" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_en" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "exc_en" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "PC_exc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "COP0_Compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "COP0_Status" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "COP0_Cause" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:168]
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5845] Not enough pipeline registers after wide multiplier. Recommended levels of pipeline registers is 4 [C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/rtl/myCPU/CPU/Datapath/EXE/ALU.v:163]
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5544] ROM "byte_vldh" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'Divider'
+INFO: [Synth 8-5545] ROM "cnt" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5545] ROM "state" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'confreg'
+INFO: [Synth 8-5544] ROM "next_state0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state1" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state2" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state3" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state4" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state5" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state1" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state2" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state3" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state4" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state5" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "btn_key_tmp13" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "num_csn" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "num_a_g" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state1" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state1" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state2" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state2" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state3" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state3" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state4" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state4" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state5" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state5" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 iSTATE1 |                               00 |                               00
+                 iSTATE0 |                               01 |                               01
+                  iSTATE |                               10 |                               10
+                 iSTATE2 |                               11 |                               11
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'Divider'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 iSTATE4 |                              000 |                              000
+                  iSTATE |                              101 |                              001
+                 iSTATE0 |                              100 |                              010
+                 iSTATE1 |                              011 |                              011
+                 iSTATE2 |                              010 |                              100
+                 iSTATE3 |                              001 |                              111
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'confreg'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 898.465 ; gain = 604.238
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     64 Bit       Adders := 2     
+	   3 Input     64 Bit       Adders := 1     
+	   3 Input     33 Bit       Adders := 1     
+	   2 Input     32 Bit       Adders := 13    
+	   2 Input      6 Bit       Adders := 3     
+	   2 Input      4 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 2     
+	   3 Input      1 Bit         XORs := 32    
+	   2 Input      1 Bit         XORs := 3     
++---Registers : 
+	               65 Bit    Registers := 1     
+	               64 Bit    Registers := 2     
+	               32 Bit    Registers := 82    
+	               16 Bit    Registers := 1     
+	                8 Bit    Registers := 7     
+	                7 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 6     
+	                4 Bit    Registers := 9     
+	                2 Bit    Registers := 5     
+	                1 Bit    Registers := 48    
++---Muxes : 
+	   2 Input     65 Bit        Muxes := 5     
+	   4 Input     65 Bit        Muxes := 2     
+	   2 Input     64 Bit        Muxes := 7     
+	   3 Input     64 Bit        Muxes := 1     
+	   4 Input     64 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 83    
+	   4 Input     32 Bit        Muxes := 12    
+	   6 Input     32 Bit        Muxes := 8     
+	   5 Input     32 Bit        Muxes := 1     
+	   9 Input     32 Bit        Muxes := 1     
+	   7 Input     32 Bit        Muxes := 2     
+	  13 Input     32 Bit        Muxes := 1     
+	   3 Input     32 Bit        Muxes := 1     
+	   8 Input     32 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 14    
+	   6 Input     16 Bit        Muxes := 1     
+	  17 Input     16 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 7     
+	  32 Input      8 Bit        Muxes := 1     
+	   4 Input      8 Bit        Muxes := 1     
+	   8 Input      8 Bit        Muxes := 1     
+	   2 Input      7 Bit        Muxes := 1     
+	   4 Input      6 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 4     
+	   3 Input      6 Bit        Muxes := 1     
+	   8 Input      6 Bit        Muxes := 2     
+	  32 Input      6 Bit        Muxes := 1     
+	  33 Input      6 Bit        Muxes := 2     
+	  10 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 6     
+	   4 Input      5 Bit        Muxes := 1     
+	  29 Input      4 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 9     
+	   4 Input      4 Bit        Muxes := 3     
+	   6 Input      4 Bit        Muxes := 2     
+	   9 Input      3 Bit        Muxes := 3     
+	   8 Input      3 Bit        Muxes := 3     
+	  37 Input      3 Bit        Muxes := 1     
+	  29 Input      3 Bit        Muxes := 1     
+	  28 Input      3 Bit        Muxes := 3     
+	  13 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 16    
+	   6 Input      3 Bit        Muxes := 3     
+	  28 Input      2 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 11    
+	   6 Input      2 Bit        Muxes := 3     
+	  17 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 9     
+	   7 Input      2 Bit        Muxes := 1     
+	   9 Input      2 Bit        Muxes := 1     
+	  17 Input      1 Bit        Muxes := 9     
+	  28 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 75    
+	   3 Input      1 Bit        Muxes := 5     
+	   4 Input      1 Bit        Muxes := 7     
+	   6 Input      1 Bit        Muxes := 8     
+	  29 Input      1 Bit        Muxes := 1     
+	  10 Input      1 Bit        Muxes := 1     
+	  13 Input      1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module soc_lite_top 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
+Module Mux2T1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module PCReg 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
+Module add 
+Detailed RTL Component Info : 
++---XORs : 
+	   3 Input      1 Bit         XORs := 1     
+Module PC 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+Module flopr 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
+Module flopr__parameterized0 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+Module flopr__parameterized1 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module Mux3T1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+Module Control_Unit 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
++---Muxes : 
+	   6 Input     32 Bit        Muxes := 1     
+	   5 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 1     
+	  32 Input      8 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 1     
+	   4 Input      6 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 2     
+	   3 Input      6 Bit        Muxes := 1     
+	   8 Input      6 Bit        Muxes := 2     
+	  32 Input      6 Bit        Muxes := 1     
+	  29 Input      4 Bit        Muxes := 1     
+	   9 Input      3 Bit        Muxes := 2     
+	   8 Input      3 Bit        Muxes := 2     
+	  37 Input      3 Bit        Muxes := 1     
+	  29 Input      3 Bit        Muxes := 1     
+	  28 Input      3 Bit        Muxes := 3     
+	  28 Input      2 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 3     
+	   6 Input      2 Bit        Muxes := 3     
+	  17 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	  17 Input      1 Bit        Muxes := 9     
+	  28 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 3     
+	   3 Input      1 Bit        Muxes := 3     
+	   4 Input      1 Bit        Muxes := 2     
+	   6 Input      1 Bit        Muxes := 4     
+	  29 Input      1 Bit        Muxes := 1     
+Module Registers 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 32    
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 6     
+	   2 Input      1 Bit        Muxes := 32    
+Module hi_lo_reg 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 6     
+Module COP0 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 2     
++---Registers : 
+	               32 Bit    Registers := 7     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 22    
+	   6 Input     32 Bit        Muxes := 6     
+	   4 Input     32 Bit        Muxes := 1     
+	   9 Input     32 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 1     
+	  10 Input      5 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 19    
+	   6 Input      1 Bit        Muxes := 4     
+	   3 Input      1 Bit        Muxes := 1     
+	  10 Input      1 Bit        Muxes := 1     
+Module EXT 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module victimInstDetector 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 3     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 2     
+Module Hazard_Detection_Unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 3     
+Module flopr__parameterized2 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+Module flopr__parameterized3 
+Detailed RTL Component Info : 
++---Registers : 
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      2 Bit        Muxes := 1     
+Module flopr__parameterized4 
+Detailed RTL Component Info : 
++---Registers : 
+	                5 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+Module Mux2T1__parameterized0 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module Mux4T1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+Module Mux2T1__parameterized1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module ALU 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     64 Bit       Adders := 2     
+	   3 Input     64 Bit       Adders := 1     
+	   2 Input     32 Bit       Adders := 3     
+	   2 Input      6 Bit       Adders := 2     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+	   2 Input      1 Bit         XORs := 1     
++---Muxes : 
+	   2 Input     64 Bit        Muxes := 3     
+	   3 Input     64 Bit        Muxes := 1     
+	   6 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 10    
+	   7 Input     32 Bit        Muxes := 2     
+	  13 Input     32 Bit        Muxes := 1     
+	   3 Input     32 Bit        Muxes := 1     
+	   8 Input     32 Bit        Muxes := 1     
+	  33 Input      6 Bit        Muxes := 2     
+	   4 Input      4 Bit        Muxes := 3     
+	   2 Input      4 Bit        Muxes := 2     
+	   6 Input      4 Bit        Muxes := 1     
+	   9 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 1     
+	  13 Input      3 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 1     
+	   9 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 7     
+	   3 Input      1 Bit        Muxes := 1     
+	  13 Input      1 Bit        Muxes := 1     
+Module Divider 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     33 Bit       Adders := 1     
+	   2 Input     32 Bit       Adders := 3     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               65 Bit    Registers := 1     
+	               32 Bit    Registers := 3     
+	                6 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     65 Bit        Muxes := 5     
+	   4 Input     65 Bit        Muxes := 2     
+	   4 Input     64 Bit        Muxes := 1     
+	   2 Input     64 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	   4 Input      6 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 5     
+Module Mux3T1__parameterized0 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input      5 Bit        Muxes := 1     
+Module Forwarding_Unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input      2 Bit        Muxes := 7     
+Module ll_bit 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module flopr__parameterized5 
+Detailed RTL Component Info : 
++---Registers : 
+	               64 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     64 Bit        Muxes := 1     
+Module modifyStoreData 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 5     
+Module modifyLoaddata 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 1     
+	   4 Input      8 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 1     
+Module Mips 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     64 Bit        Muxes := 1     
+Module bridge_1x2 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 2     
+Module confreg 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 20    
+	               16 Bit    Registers := 1     
+	                8 Bit    Registers := 2     
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
+	                1 Bit    Registers := 13    
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 13    
+	   6 Input     16 Bit        Muxes := 1     
+	  17 Input     16 Bit        Muxes := 1     
+	   8 Input      8 Bit        Muxes := 1     
+	   6 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 16    
+	   6 Input      3 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 5     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 740 (col length:100)
+BRAMs: 730 (col length: RAMB18 100 RAMB36 50)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+Warning: Parallel synthesis criteria is not met 
+INFO: [Synth 8-5587] ROM size for "aluop" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5587] ROM size for "aluop" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "registers_reg[31]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[30]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[29]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[28]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[27]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[26]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[25]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[24]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[23]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[22]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[21]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[20]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[19]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[18]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[17]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[16]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[15]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[14]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[13]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[12]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[11]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[10]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[9]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[8]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[7]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[6]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[5]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[4]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[3]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[2]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[1]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "registers_reg[0]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "PC_exc" won't be mapped to RAM because it is too sparse
+INFO: [Common 17-14] Message 'Synth 8-5546' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5545] ROM "reg_we_mov0" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+DSP Report: Generating DSP mul_tmp, operation Mode is: A*B.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: Generating DSP mul_tmp, operation Mode is: (PCIN>>17)+A*B.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: Generating DSP mul_tmp, operation Mode is: A*B.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: Generating DSP mul_tmp, operation Mode is: (PCIN>>17)+A*B.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+DSP Report: operator mul_tmp is absorbed into DSP mul_tmp.
+INFO: [Synth 8-5545] ROM "cnt" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[16]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[8]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[0]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[24]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[17]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[9]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[1]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[25]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[18]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[10]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[2]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[26]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[19]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[11]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[3]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[27]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[20]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[12]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[4]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[28]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[21]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[13]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[5]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[29]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[22]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[14]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[6]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[30]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[7]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[15]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3886] merging instance 'confreg/simu_flag_reg[23]' (FDRE) to 'confreg/simu_flag_reg[31]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\confreg/simu_flag_reg[31] )
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[0]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[0]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[0]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[1]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[1]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[1]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[2]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[2]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[3]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[3]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[4]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[4]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[5]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[5]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[6]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[6]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[7]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[7]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[7]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[8]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[8]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[9]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[9]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[10]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[10]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[11]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[11]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[12]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[12]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[13]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[13]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[14]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[14]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[15]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[15]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[16]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[16]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[16]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[17]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[17]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[17]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[18]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[18]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[18]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[19]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[19]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[19]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[20]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[20]' (FDP) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[22]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[20]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[21]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[21]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[21]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[22]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (\cpu/m_Mips /m_COP0/\COP0_Prid_reg[22] )
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[23]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[23]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[24]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[24]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[24]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[25]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[25]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[25]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[26]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[26]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[26]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[27]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Prid_reg[27]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Cause_reg[27]' (FDCE) to 'cpu/m_Mips/m_COP0/COP0_Cause_reg[30]'
+INFO: [Synth 8-3886] merging instance 'cpu/m_Mips/m_COP0/COP0_Config_reg[28]' (FDC) to 'cpu/m_Mips/m_COP0/COP0_Prid_reg[31]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cpu/m_Mips /m_COP0/\COP0_Cause_reg[30] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cpu/m_Mips /m_COP0/\COP0_Prid_reg[31] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cpu/m_Mips /m_IF_ID_REG_PACKED/\m_IF_ID_REG/m_IF_ID_fetch_exc/data_o_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cpu/m_Mips /m_ID_EXE_REG_PACKED/\m_ID_EXE_REG/m_ID_EXE_aluop/data_o_reg[6] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cpu/m_Mips /m_EXE_MEM_REG_PACKED/\m_EXE_MEM_REG/m_EXE_MEM_int_i/data_o_reg[3] )
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:53 ; elapsed = 00:01:55 . Memory (MB): peak = 898.465 ; gain = 604.238
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++-------------+------------+---------------+----------------+
+|Module Name  | RTL Object | Depth x Width | Implemented As | 
++-------------+------------+---------------+----------------+
+|Control_Unit | aluop      | 64x6          | LUT            | 
+|Control_Unit | aluop      | 64x6          | LUT            | 
++-------------+------------+---------------+----------------+
+
+
+DSP: Preliminary Mapping  Report (see note below)
++------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping    | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|ALU         | A*B            | 18     | 16     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|ALU         | (PCIN>>17)+A*B | 16     | 16     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|ALU         | A*B            | 18     | 18     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|ALU         | (PCIN>>17)+A*B | 18     | 16     | -      | -      | 47     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5578] Moved timing constraint from pin 'pll.clk_pll/cpu_clk' to pin 'pll.clk_pll/bbstub_cpu_clk/O'
+INFO: [Synth 8-5578] Moved timing constraint from pin 'pll.clk_pll/timer_clk' to pin 'pll.clk_pll/bbstub_timer_clk/O'
+WARNING: [Synth 8-565] redefining clock 'clk'
+INFO: [Synth 8-5819] Moved 2 constraints on hierarchical pins to their respective driving/loading pins
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:05 ; elapsed = 00:02:08 . Memory (MB): peak = 917.758 ; gain = 623.531
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:02:43 ; elapsed = 00:02:46 . Memory (MB): peak = 1174.430 ; gain = 880.203
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:02:51 ; elapsed = 00:02:53 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:02:52 ; elapsed = 00:02:55 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:52 ; elapsed = 00:02:55 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:54 ; elapsed = 00:02:56 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:54 ; elapsed = 00:02:57 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:54 ; elapsed = 00:02:57 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:54 ; elapsed = 00:02:57 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++------+--------------+----------+
+|      |BlackBox name |Instances |
++------+--------------+----------+
+|1     |clk_pll       |         1|
+|2     |inst_ram      |         1|
+|3     |data_ram      |         1|
++------+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |clk_pll  |     1|
+|2     |data_ram |     1|
+|3     |inst_ram |     1|
+|4     |CARRY4   |   222|
+|5     |DSP48E1  |     4|
+|6     |LUT1     |   295|
+|7     |LUT2     |   753|
+|8     |LUT3     |   325|
+|9     |LUT4     |   471|
+|10    |LUT5     |   673|
+|11    |LUT6     |  2387|
+|12    |MUXF7    |   132|
+|13    |FDCE     |  1905|
+|14    |FDPE     |    24|
+|15    |FDRE     |   945|
+|16    |FDSE     |    12|
+|17    |IBUF     |    15|
+|18    |OBUF     |    39|
++------+---------+------+
+
+Report Instance Areas: 
++------+----------------------------------+-------------------------+------+
+|      |Instance                          |Module                   |Cells |
++------+----------------------------------+-------------------------+------+
+|1     |top                               |                         |  8268|
+|2     |  bridge_1x2                      |bridge_1x2               |    34|
+|3     |  confreg                         |confreg                  |  1036|
+|4     |  cpu                             |mycpu_top                |  7075|
+|5     |    m_Mips                        |Mips                     |  7074|
+|6     |      m_ALU                       |ALU                      |   165|
+|7     |      m_ALU_src0_mux              |Mux2T1__parameterized0   |    32|
+|8     |      m_ALU_src1_mux              |Mux4T1                   |    32|
+|9     |      m_COP0                      |COP0                     |   317|
+|10    |      m_COP0_data_fw_mux          |Mux3T1                   |    16|
+|11    |      m_Divider                   |Divider                  |   443|
+|12    |      m_EXE_MEM_REG_PACKED        |EXE_MEM_REG_PACKED       |   992|
+|13    |        m_EXE_MEM_REG             |EXE_MEM_REG              |   992|
+|14    |          m_EXE_MEM_ALU_result    |flopr__parameterized1_45 |   270|
+|15    |          m_EXE_MEM_MulDiv_result |flopr__parameterized5_46 |   176|
+|16    |          m_EXE_MEM_PC_plus4      |flopr__parameterized1_47 |   223|
+|17    |          m_EXE_MEM_SC_result_sel |flopr_48                 |     2|
+|18    |          m_EXE_MEM_byte_valid    |flopr__parameterized2_49 |    35|
+|19    |          m_EXE_MEM_exc_mask      |flopr__parameterized0_50 |    48|
+|20    |          m_EXE_MEM_is_delayslot  |flopr_51                 |    43|
+|21    |          m_EXE_MEM_lo_i_sel      |flopr_52                 |    18|
+|22    |          m_EXE_MEM_load_type     |flopr__parameterized2_53 |    19|
+|23    |          m_EXE_MEM_regdst        |flopr__parameterized4_54 |    14|
+|24    |          m_EXE_MEM_result_sel    |flopr__parameterized3_55 |     4|
+|25    |          m_EXE_MEM_rf_rdata1_fw  |flopr__parameterized1_56 |   105|
+|26    |          m_EXE_MEM_store_type    |flopr__parameterized2_57 |    26|
+|27    |          m_EXE_MEM_wcp0          |flopr_58                 |     2|
+|28    |          m_EXE_MEM_whi           |flopr_59                 |     2|
+|29    |          m_EXE_MEM_wlo           |flopr_60                 |     2|
+|30    |          m_EXE_MEM_wmem          |flopr_61                 |     1|
+|31    |          m_EXE_MEM_wreg          |flopr_62                 |     2|
+|32    |      m_ID_EXE_REG_PACKED         |ID_EXE_REG_PACKED        |  1654|
+|33    |        m_ID_EXE_REG              |ID_EXE_REG               |  1654|
+|34    |          m_ID_EXE_COP0_data      |flopr__parameterized1_19 |    32|
+|35    |          m_ID_EXE_Imm32          |flopr__parameterized1_20 |    14|
+|36    |          m_ID_EXE_PC_plus4       |flopr__parameterized1_21 |   144|
+|37    |          m_ID_EXE_aluop          |flopr__parameterized0_22 |   428|
+|38    |          m_ID_EXE_alusrc0_sel    |flopr_23                 |     1|
+|39    |          m_ID_EXE_alusrc1_sel    |flopr__parameterized3_24 |   477|
+|40    |          m_ID_EXE_exc_mask       |flopr__parameterized0_25 |     8|
+|41    |          m_ID_EXE_fetch_exc      |flopr__parameterized0_26 |     2|
+|42    |          m_ID_EXE_hi             |flopr__parameterized1_27 |    32|
+|43    |          m_ID_EXE_is_delayslot   |flopr_28                 |     2|
+|44    |          m_ID_EXE_is_div         |flopr_29                 |     3|
+|45    |          m_ID_EXE_is_sign_div    |flopr_30                 |     7|
+|46    |          m_ID_EXE_lo             |flopr__parameterized1_31 |    32|
+|47    |          m_ID_EXE_lo_i_sel       |flopr_32                 |     2|
+|48    |          m_ID_EXE_load_type      |flopr__parameterized2_33 |     9|
+|49    |          m_ID_EXE_rd             |flopr__parameterized4_34 |    26|
+|50    |          m_ID_EXE_regdst         |flopr__parameterized3_35 |    11|
+|51    |          m_ID_EXE_result_sel     |flopr__parameterized3_36 |     4|
+|52    |          m_ID_EXE_rs             |flopr__parameterized4_37 |   395|
+|53    |          m_ID_EXE_rt             |flopr__parameterized4_38 |    12|
+|54    |          m_ID_EXE_store_type     |flopr__parameterized2_39 |     7|
+|55    |          m_ID_EXE_wcp0           |flopr_40                 |     2|
+|56    |          m_ID_EXE_whi            |flopr_41                 |     1|
+|57    |          m_ID_EXE_wlo            |flopr_42                 |     1|
+|58    |          m_ID_EXE_wmem           |flopr_43                 |     1|
+|59    |          m_ID_EXE_wreg           |flopr_44                 |     1|
+|60    |      m_IF_ID_REG_PACKED          |IF_ID_REG_PACKED         |   622|
+|61    |        m_IF_ID_REG               |IF_ID_REG                |   622|
+|62    |          m_IF_ID_Instruction     |flopr__parameterized1_16 |   471|
+|63    |          m_IF_ID_PCplus4         |flopr__parameterized1_17 |   147|
+|64    |          m_IF_ID_fetch_exc       |flopr__parameterized0    |     2|
+|65    |          m_IF_ID_is_delayslot    |flopr_18                 |     2|
+|66    |      m_MEM_WB_REG_PACKED         |MEM_WB_REG_PACKED        |   822|
+|67    |        m_MEM_WB_REG              |MEM_WB_REG               |   822|
+|68    |          m_MEM_WB_ALU_result     |flopr__parameterized1    |    58|
+|69    |          m_MEM_WB_MulDiv_result  |flopr__parameterized5    |    66|
+|70    |          m_MEM_WB_SC_result_sel  |flopr                    |     1|
+|71    |          m_MEM_WB_byte_valid     |flopr__parameterized2    |   115|
+|72    |          m_MEM_WB_lo_i_sel       |flopr_8                  |     1|
+|73    |          m_MEM_WB_load_type      |flopr__parameterized2_9  |   100|
+|74    |          m_MEM_WB_mem_rdata      |flopr__parameterized1_10 |    55|
+|75    |          m_MEM_WB_regdst         |flopr__parameterized4    |   255|
+|76    |          m_MEM_WB_result_sel     |flopr__parameterized3    |     3|
+|77    |          m_MEM_WB_rf_rdata1_fw   |flopr__parameterized1_11 |    39|
+|78    |          m_MEM_WB_wcp0           |flopr_12                 |     2|
+|79    |          m_MEM_WB_whi            |flopr_13                 |    63|
+|80    |          m_MEM_WB_wlo            |flopr_14                 |    63|
+|81    |          m_MEM_WB_wreg           |flopr_15                 |     1|
+|82    |      m_PC                        |PC                       |    95|
+|83    |        m_PCReg                   |PCReg                    |    95|
+|84    |      m_Registers                 |Registers                |  1472|
+|85    |      m_WB_hi_fw_mux              |Mux2T1__parameterized0_0 |    32|
+|86    |      m_WB_lo_fw_mux              |Mux2T1__parameterized0_1 |    32|
+|87    |      m_hi_fw_mux                 |Mux3T1_2                 |    64|
+|88    |      m_hi_lo_reg                 |hi_lo_reg                |    64|
+|89    |      m_ll_bit                    |ll_bit                   |     1|
+|90    |      m_lo_fw_mux                 |Mux3T1_3                 |    64|
+|91    |      m_regdst_mux                |Mux3T1__parameterized0   |     5|
+|92    |      m_result_mux                |Mux4T1_4                 |    65|
+|93    |      m_rf_jdata1_fw_mux          |Mux3T1_5                 |     7|
+|94    |      m_rf_rdata0_fw_mux          |Mux3T1_6                 |    37|
+|95    |      m_rf_rdata1_fw_mux          |Mux3T1_7                 |    32|
++------+----------------------------------+-------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:54 ; elapsed = 00:02:57 . Memory (MB): peak = 1212.863 ; gain = 918.637
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 1 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:02:40 ; elapsed = 00:02:47 . Memory (MB): peak = 1212.863 ; gain = 492.004
+Synthesis Optimization Complete : Time (s): cpu = 00:02:54 ; elapsed = 00:02:57 . Memory (MB): peak = 1212.863 ; gain = 918.637
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 358 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 1212.863 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+399 Infos, 65 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:02:59 ; elapsed = 00:03:02 . Memory (MB): peak = 1212.863 ; gain = 930.105
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 1212.863 ; gain = 0.000
+WARNING: [Constraints 18-5210] No constraints selected for write.
+Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
+INFO: [Common 17-1381] The checkpoint 'C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/synth_1/soc_lite_top.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file soc_lite_top_utilization_synth.rpt -pb soc_lite_top_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Thu Jul 18 16:46:33 2019...
