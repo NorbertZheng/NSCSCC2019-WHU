@@ -553,6 +553,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 					load_type = `LOAD_LW;
 					wreg = 1'b1;
 					alusrc1_sel = 2'b11;
+					// $display("LW -> instruction: 0x%8h, rs: 0x%2h, rt: 0x%2h", inst, inst[25:21], inst[20:16]);
 					end
 				`OPCODE_LWL:
 					begin
@@ -583,6 +584,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 					store_type = `STORE_SW;
 					wmem = 1'b1;
 					alusrc1_sel = 2'b11;
+					// $display("SW -> instruction: 0x%8h, rs: 0x%2h, rt: 0x%2h", inst, inst[25:21], inst[20:16]);
 					end
 				`OPCODE_SWL:
 					begin

@@ -24,8 +24,8 @@ module Divider(clk, rst_n, a, b, start, clr, is_sign_div, result, busy);
 	reg[64:0] dividend; 	// 试除中间结果
 	reg[1:0] state; 		// 状态
 	reg[31:0] divisor;		// 被除数
-	reg[31:0] temp_op1; 	// 临时操作数1
-	reg[31:0] temp_op2;		// 临时操作数2
+	// reg[31:0] temp_op1; 	// 临时操作数1
+	// reg[31:0] temp_op2;	// 临时操作数2
 	reg sgn_fix1;
 	reg sgn_fix2;
 	
@@ -54,27 +54,31 @@ module Divider(clk, rst_n, a, b, start, clr, is_sign_div, result, busy);
 							cnt <= 6'b000000;
 							if(is_sign_div == 1'b1 && a[31] == 1'b1)	//处理第1个立即数为负
 								begin
-								temp_op1 <= ~a + 1;
+								// temp_op1 = ~a + 1;
+								dividend[32:1] <= ~a + 1;			//商初值
 								sgn_fix1 <= 1;
 								end 
 							else 
 								begin
-								temp_op1 <= a;
+								// temp_op1 = a;
+								dividend[32:1] <= a;			//商初值
 								sgn_fix1 <= 0;
 								end
 							if(is_sign_div == 1'b1 && b[31] == 1'b1 )	//处理第2个立即数为负
 								begin
-								temp_op2 <= ~b + 1;
+								// temp_op2 = ~b + 1;
+								divisor <= ~b + 1;
 								sgn_fix2 <= 1;
 								end 
 							else 
 								begin
-								temp_op2 <= b;
+								// temp_op2 = b;
+								divisor <= b;
 								sgn_fix2 <= 0;
 								end
-							dividend <= {32'd0,32'd0};
-							dividend[32:1] <= temp_op1;			//商初值
-							divisor <= temp_op2;
+							// dividend <= {32'd0,32'd0};
+							dividend[63:33] <= 31'b0;
+							dividend[0] <= 1'b0;
 							end
 						end        	
 					end

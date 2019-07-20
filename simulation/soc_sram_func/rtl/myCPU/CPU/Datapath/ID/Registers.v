@@ -65,7 +65,7 @@ module Registers(clk, rst_n, RegWrite, Read_register1, Read_register2, Write_reg
 			end
 		else
 			begin
-			Read_data2 = registers[Read_register1];
+			Read_data2 = registers[Read_register2];
 			end
 		end	
 	
