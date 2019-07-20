@@ -181,7 +181,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	wire MEM_WB_wcp0_data, vic_is_delayslot;
 	wire [4:0] EXE_MEM_int_i_data;
 	wire [7:0] EXE_MEM_exc_mask_data; 
-	wire [31:0] vic_inst_addr, COP0_data;
+	wire [31:0] vic_inst_addr, COP0_data, COP0_EPC;
 	COP0 m_COP0(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -193,13 +193,13 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.int_i(EXE_MEM_int_i_data), 
 		.victim_inst_addr(vic_inst_addr), 
 		.is_delayslot(vic_is_delayslot), 
-		.badvaddr(ram_addr), 
+		.badvaddr(EXE_MEM_ALU_result_data), 
 		.COP0_data(COP0_data), 
 		.COP0_Count(), 
 		.COP0_Compare(), 
 		.COP0_Status(), 
 		.COP0_Cause(), 
-		.COP0_EPC(), 
+		.COP0_EPC(COP0_EPC), 
 		.COP0_Config(), 
 		.COP0_Prid(), 
 		.COP0_Badvaddr(), 
@@ -229,6 +229,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.vic_is_delayslot(vic_is_delayslot), 
 		.vic_inst_addr(vic_inst_addr)
 	);
+	/*always@(*)
+		begin
+		$display("COP0_EPC: 0x%8h, EXE_MEM_PC_data: 0x%8h, ID_EXE_PC_data: 0x%8h, IF_ID_PC_data: 0x%8h, vic_inst_addr: 0x%8h"
+				, COP0_EPC, EXE_MEM_PC_plus4_data - 32'h4, ID_EXE_PC_plus4_data - 32'h4, IF_ID_PC_plus4_data - 32'h4, vic_inst_addr);
+		end*/
 	
 	// Hazard_Detection_Unit
 	wire ID_EXE_wreg_data;
@@ -326,11 +331,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.instruction(IF_ID_Instruction_data),
 		.ID_EXE_Instruction_data(ID_EXE_Instruction_data)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("ID_EXE_load_type_data: 0d%2d, IF_ID_rs_data: 0x%2h, IF_ID_rt_data: 0x%2h, EXE_regdst_data: 0x%2h, ID_EXE_Instruction_data: 0x%8h"
 				, ID_EXE_load_type_data, IF_ID_Instruction_data[25:21], IF_ID_Instruction_data[20:16], EXE_regdst_data, ID_EXE_Instruction_data);
-		end
+		end*/
 
 	/**************************/
 	/*          EXE           */
@@ -455,10 +460,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.result(Div_result), 
 		.busy(stcl_div)
 	);
-	always@(*)
+	/*always@(*)
 		begin
-		$display("src0: 0x%8h, src1: 0x%8h", src0, src1);
-		end
+		$display("src0: 0x%8h, src1: 0x%8h, COP0_data_fw_mux_data: 0x%8h", src0, src1, COP0_data_fw_mux_data);
+		end*/
 	
 	// regdst_mux		decoder
 	Mux3T1 #(5) m_regdst_mux(
@@ -568,13 +573,13 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.instruction(ID_EXE_Instruction_data),
 		.EXE_MEM_Instruction_data(EXE_MEM_Instruction_data)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("rf_jdata0_fw_mux_data: 0x%8h, rf_rdata0: 0x%8h, EXE_MEM_ALU_result_data: 0x%8h, WB_result_data: 0x%8h, EXE_MEM_Instruction_data: 0x%8h, EXE_MEM_load_type_data: 0x%8h"
 				, rf_jdata0_fw_mux_data, rf_rdata0, EXE_MEM_ALU_result_data, WB_result_data, EXE_MEM_Instruction_data, EXE_MEM_load_type_data);
 		$display("rf_jdata1_fw_mux_data: 0x%8h, rf_rdata1: 0x%8h, EXE_MEM_ALU_result_data: 0x%8h, WB_result_data: 0x%8h"
 				, rf_jdata1_fw_mux_data, rf_rdata1, EXE_MEM_ALU_result_data, WB_result_data);
-		end
+		end*/
 
 	/**************************/
 	/*          MEM           */
@@ -585,7 +590,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.virtual_sram_addr(EXE_MEM_ALU_result_data), 
 		.physical_sram_addr(physical_sram_addr)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		if(EXE_MEM_load_type_data != 4'd0)
 			begin
@@ -605,7 +610,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 					, EXE_MEM_wmem_data && !MEM_store_exc, EXE_MEM_byte_valid_data);
 			$display();
 			end
-		end
+		end*/
 	
 	// modifyStoreData
 	wire [31:0] mem_wdata;
@@ -630,6 +635,16 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.y(MEM_lo_data), 
 		.d0(EXE_MEM_ALU_result_data), 
 		.d1(EXE_MEM_MulDiv_result_data[31:0])
+	);
+	
+	// modifyLoaddata
+	wire [31:0] modifiedLoadData;
+	modifyLoaddata m_modifyLoaddata(
+		.mem_rdata_i(mem_rdata), 
+		.rf_rdata_i(EXE_MEM_rf_rdata1_fw_data), 
+		.load_type(EXE_MEM_load_type_data), 
+		.byte_valid(EXE_MEM_byte_valid_data), 
+		.mem_rdata_o(modifiedLoadData)
 	);
 	
 	// MEM_WB_REG_PACKED
@@ -673,7 +688,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.MEM_WB_MulDiv_result_data(MEM_WB_MulDiv_result_data), 
 		.regdst(EXE_MEM_regdst_data), 
 		.MEM_WB_regdst_data(MEM_WB_regdst_data), 
-		.mem_rdata(mem_rdata), 
+		.mem_rdata(modifiedLoadData),		// .mem_rdata(mem_rdata), 
 		.MEM_WB_mem_rdata_data(MEM_WB_mem_rdata_data),
 		// for test
 		.PC_plus4(EXE_MEM_PC_plus4_data),
@@ -690,7 +705,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	/**************************/
 	/*           WB           */
 	/**************************/
-	// modifyLoaddata
+	/*// modifyLoaddata
 	wire [31:0] modifiedLoadData;
 	modifyLoaddata m_modifyLoaddata(
 		.mem_rdata_i(MEM_WB_mem_rdata_data), 
@@ -703,14 +718,19 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		begin
 		$display("MEM_WB_mem_rdata_data: 0x%8h, modifiedLoadData: 0x%8h, MEM_WB_load_type_data: 0d%2d"
 				, MEM_WB_mem_rdata_data, modifiedLoadData, MEM_WB_load_type_data);
-		end
+		end*/
+	/*always@(*)
+		begin
+		$display("MEM_WB_mem_rdata_data: 0x%8h, MEM_WB_load_type_data: 0d%2d"
+				, MEM_WB_mem_rdata_data, MEM_WB_load_type_data);
+		end*/
 	
 	// result_mux
 	wire [31:0] result_mux_data;
 	Mux4T1 m_result_mux(
 		.s(MEM_WB_result_sel_data), 
 		.y(result_mux_data), 
-		.d0(modifiedLoadData), 
+		.d0(MEM_WB_mem_rdata_data),		//.d0(modifiedLoadData), 
 		.d1(MEM_WB_ALU_result_data), 
 		.d2({31'b0, MEM_WB_SC_result_sel_data}), 
 		.d3(MEM_WB_ALU_result_data)
@@ -738,11 +758,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.d0(result_mux_data), 
 		.d1(MEM_WB_MulDiv_result_data[31:0])
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("Div_result: 0x%16h, result_mux_data: 0x%8h, MEM_WB_MulDiv_result_data: 0x%8h, WB_lo_data: 0x%8h"
 				, Div_result, result_mux_data, MEM_WB_MulDiv_result_data, WB_lo_data);
-		end
+		end*/
 
 	assign inst_addr = PC_o;
 	assign ram_en = (EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0);
@@ -752,14 +772,14 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	assign ram_we = (EXE_MEM_wmem_data && !MEM_store_exc) ? EXE_MEM_byte_valid_data : 4'b0;
 	
 	// for debug
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, wb_inst: 0x%8h", debug_wb_pc, debug_wb_pc[19:2], debug_wb_inst);
-		end
+		end*/
 	assign debug_wb_inst = MEM_WB_Instruction_data;
 	assign debug_wb_pc = MEM_WB_PC_plus4_data - 32'h4;
 	assign debug_wb_rf_wdata = WB_result_data;
-	assign debug_wb_rf_wen = (MEM_WB_load_type_data == 4'b0) ? {4{MEM_WB_wreg_data}} : MEM_WB_byte_valid_data & {4{MEM_WB_wreg_data}};
+	assign debug_wb_rf_wen = (MEM_WB_load_type_data == 4'b0) ? {4{MEM_WB_wreg_data}} : {4{MEM_WB_wreg_data}};// MEM_WB_byte_valid_data & {4{MEM_WB_wreg_data}};
 	assign debug_wb_rf_wnum = MEM_WB_regdst_data;
 endmodule

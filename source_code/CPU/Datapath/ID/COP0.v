@@ -116,6 +116,37 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
+					/*begin
+					if (cause == 5'd4)			// instruction fetch & ram_data load 同属于 exc_type[6]
+						begin
+						if(victim_inst_addr[1:0] != 2'b00)		// 优先考虑victim_inst_addr, 毕竟是 instruction 来自
+							begin
+							COP0_Badvaddr <= victim_inst_addr;
+							end
+						else
+							begin
+							COP0_Badvaddr <= badvaddr;
+							end
+						end
+					else if(cause == 5'd5)		// ram_data store 属于 exc_type[7]
+						begin
+						COP0_Badvaddr <= badvaddr;
+						end
+					// 根据是否为 delayslot 判断 EPC 写入什么
+					if(is_delayslot)
+						begin
+						COP0_EPC <= victim_inst_addr - 32'h4;
+						COP0_Cause[31] <= 1'b1;
+						end
+					else
+						begin
+						COP0_EPC <= victim_inst_addr;
+						COP0_Cause[31] <= 1'b0;
+						end
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
+					COP0_Cause[15:10] <= hardware_irq;
+					end*/
 				end
 			else if((hardware_irq != 6'd0) && COP0_Status[0])	//中断发生（EXL=1时的外部中断自动屏蔽了）, 说明 exc_type == 8'b0, 没有异常，但是有第二优先级的 hardware_irq
 				begin
@@ -140,6 +171,21 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
+					/*begin
+					if(is_delayslot)
+						begin
+						COP0_EPC <= victim_inst_addr - 32'h4;
+						COP0_Cause[31] <= 1'b1;
+						end
+					else
+						begin
+						COP0_EPC <= victim_inst_addr;
+						COP0_Cause[31] <= 1'b0;
+						end
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
+					COP0_Cause[15:10] <= hardware_irq;
+					end*/
 				end
 			else if((software_irq != 2'b0) && COP0_Status[0])	//软中断发生（EXL=1时的中断自动屏蔽了）, 第三优先级的 software_irq, 内部不会记录 software_irq 的信息
 				begin
@@ -164,11 +210,26 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
 					COP0_Cause[15:10] <= hardware_irq;
 					end
+					/*begin
+					if(is_delayslot)
+						begin
+						COP0_EPC <= victim_inst_addr - 32'h4;
+						COP0_Cause[31] <= 1'b1;
+						end
+					else
+						begin
+						COP0_EPC <= victim_inst_addr;
+						COP0_Cause[31] <= 1'b0;
+						end
+					COP0_Status[1] <= 1'b1;		// 正在处理异常中断，屏蔽其他异常中断，不允许中断嵌套
+					COP0_Cause[6:2] <= cause;	// 写入 Exc_Codes
+					COP0_Cause[15:10] <= hardware_irq;
+					end*/
 				end
 			/**********************************/
 			/*      write COP0 Regs           */
 			/**********************************/
-			if(wcp0)
+			else if(wcp0)
 				begin
 				case(waddr)
 					`CP0_COUNT:
@@ -327,7 +388,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 			//中断向量
 			if(cause == 5'd0)
 				begin
-				PC_exc = 32'h30;
+				PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
 				end
 			else
 				begin
@@ -341,7 +402,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 			//中断向量
 			if(cause == 5'd0)
 				begin
-				PC_exc = 32'h30;
+				PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
 				end
 			else
 				begin
