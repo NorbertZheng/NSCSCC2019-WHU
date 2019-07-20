@@ -39,12 +39,12 @@ module Hazard_Detection_Unit(rst_n, EXE_regdst_data, IF_ID_rs_data, IF_ID_rt_dat
 		else if(((IF_ID_rs_data == EXE_regdst_data) || (IF_ID_rt_data == EXE_regdst_data)) && (ID_EXE_load_type_data != 4'd0))
 			begin
 			stcl_lw = 1'b1;
-			$display("LW Stall!");
+			// $display("LW Stall!");
 			end
 		else if(((IF_ID_rs_data == EXE_regdst_data) || (IF_ID_rt_data == EXE_regdst_data)) && (ID_EXE_store_type_data == `STORE_SC))
 			begin
 			stcl_lw = 1'b1;
-			$display("LW Stall!");
+			// $display("LW Stall!");
 			end
 		else
 			begin

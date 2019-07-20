@@ -637,7 +637,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.d1(EXE_MEM_MulDiv_result_data[31:0])
 	);
 	
-	// modifyLoaddata
+	/*// modifyLoaddata
 	wire [31:0] modifiedLoadData;
 	modifyLoaddata m_modifyLoaddata(
 		.mem_rdata_i(mem_rdata), 
@@ -645,7 +645,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.load_type(EXE_MEM_load_type_data), 
 		.byte_valid(EXE_MEM_byte_valid_data), 
 		.mem_rdata_o(modifiedLoadData)
-	);
+	);*/
 	
 	// MEM_WB_REG_PACKED
 	wire MEM_WB_hi_i_sel_data, MEM_WB_lo_i_sel_data, MEM_WB_SC_result_sel_data;
@@ -688,7 +688,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.MEM_WB_MulDiv_result_data(MEM_WB_MulDiv_result_data), 
 		.regdst(EXE_MEM_regdst_data), 
 		.MEM_WB_regdst_data(MEM_WB_regdst_data), 
-		.mem_rdata(modifiedLoadData),		// .mem_rdata(mem_rdata), 
+		.mem_rdata(mem_rdata), 		// .mem_rdata(modifiedLoadData),
 		.MEM_WB_mem_rdata_data(MEM_WB_mem_rdata_data),
 		// for test
 		.PC_plus4(EXE_MEM_PC_plus4_data),
@@ -705,7 +705,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	/**************************/
 	/*           WB           */
 	/**************************/
-	/*// modifyLoaddata
+	// modifyLoaddata
 	wire [31:0] modifiedLoadData;
 	modifyLoaddata m_modifyLoaddata(
 		.mem_rdata_i(MEM_WB_mem_rdata_data), 
@@ -714,7 +714,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.byte_valid(MEM_WB_byte_valid_data), 
 		.mem_rdata_o(modifiedLoadData)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("MEM_WB_mem_rdata_data: 0x%8h, modifiedLoadData: 0x%8h, MEM_WB_load_type_data: 0d%2d"
 				, MEM_WB_mem_rdata_data, modifiedLoadData, MEM_WB_load_type_data);
@@ -730,7 +730,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	Mux4T1 m_result_mux(
 		.s(MEM_WB_result_sel_data), 
 		.y(result_mux_data), 
-		.d0(MEM_WB_mem_rdata_data),		//.d0(modifiedLoadData), 
+		.d0(modifiedLoadData),		// .d0(MEM_WB_mem_rdata_data),
 		.d1(MEM_WB_ALU_result_data), 
 		.d2({31'b0, MEM_WB_SC_result_sel_data}), 
 		.d3(MEM_WB_ALU_result_data)
