@@ -1,5 +1,6 @@
 `include "../../Define/COP0_Define.v"
-module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_addr, is_delayslot, badvaddr, COP0_data, COP0_Count, COP0_Compare, COP0_Status, COP0_Cause, COP0_EPC, COP0_Config, COP0_Prid, COP0_Badvaddr, exc_en, PC_exc);
+`include "../../Define/TLB_Define.v"
+module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result, exc_type, int_i, victim_inst_addr, is_delayslot, badvaddr, COP0_data, exc_en, PC_exc, kseg0_uncached, tlb_addr, tlb_wdata, asid);
 	/*********************
 	 *		CoProcessor 0
 	 *input:
@@ -9,6 +10,8 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 	 *	waddr[4:0]				: write address
 	 *	raddr[4:0]				: read address
 	 *	wdata[31:0]				: data to write into COP0
+	 *	tlbp_we					: tlbp instruction write enable
+	 *	tlbr_we					: tlbr instruction write enable
 	 *	exc_type[7:0]			: exc type
 	 *	int_i[4:0]				: outside int * 5
 	 *	victim_inst_addr[31:0]	: victim instruction PC address
@@ -16,27 +19,30 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 	 *	badvaddr[31:0]			: bad instruction Virtual address
 	 *output:
 	 *	COP0_data[31:0]			: 32-bit COP0 dout
-	 *	COP0_Count[31:0]		: Count Reg			# COP0 Reg
-	 *	COP0_Compare[31:0]		: Compare Reg		# COP0 Reg
-	 *	COP0_Status[31:0]		: Status Reg		# COP0 Reg
-	 *	COP0_Cause[31:0]		: Cause Reg			# COP0 Reg
-	 *	COP0_EPC[31:0]			: EPC Reg			# COP0 Reg
-	 *	COP0_Config[31:0]		: Config Reg		# COP0 Reg
-	 *	COP0_Prid[31:0]			: Prid Reg			# COP0 Reg
-	 *	COP0_Badvaddr[31:0]		: Badvaddr Reg		# COP0 Reg
 	 *	exc_en					: identity whether exc is happening
 	 *	PC_exc[31:0]			: PC exc address
+	 *	kseg0_uncached			: through COP0_Config identity whether kseg0 is uncached(default)
+	 *	tlb_addr[4:0]			: TLB access address
+	 *	tlb_wdata[89:0]			: TLB write data
+	 *	asid[7:0]				: asid
 	 *********************/
 	input clk, rst_n;
-	input wcp0, is_delayslot;
+	input wcp0, tlbp_we, wlbr_we, is_delayslot;
 	input [4:0] waddr, raddr, int_i;
 	input [7:0] exc_type;
 	input [31:0] wdata, victim_inst_addr, badvaddr;
-	output reg [31:0] COP0_data, COP0_Count, COP0_Compare, COP0_Status, COP0_Cause, COP0_EPC, COP0_Config, COP0_Prid, COP0_Badvaddr;
+	input [89:0] tlbr_result;
+	output reg [31:0] COP0_data;
 	// 组合逻辑输出
-	output reg exc_en;
+	output reg exc_en, kseg0_uncached;
+	output reg [4:0] tlb_addr;
+	output reg [7:0] asid;
 	output reg [31:0] PC_exc;
+	output reg [89:0] tlb_wdata;
 	
+	reg [31:0] COP0_Index, COP0_EntryLo0, COP0_EntryLo1;
+	reg [31:0] COP0_PageMask;
+	reg [31:0] COP0_Badvaddr, COP0_Count, COP0_EntryHi, COP0_Compare, COP0_Status, COP0_Cause, COP0_EPC, COP0_Prid, COP0_Config;
 	reg timer_int;
 	reg [31:0] tempEPC;
 	// COP0_Status[15:10]: 指示硬件中断是否被允许， 0 - 屏蔽， 1 - 允许； COP0_Status[9:8]: 指示软件中断是否被允许, 0 - 屏蔽， 1 - 允许
@@ -44,24 +50,161 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 	wire [1:0] software_irq = COP0_Status[1] ? 2'b00 : COP0_Cause[9:8] & COP0_Status[9:8];				//屏蔽EXL=1时的软中断
 	wire [4:0] cause = exc_type[6] ? 5'd4 : exc_type[7] ? 5'd5 : exc_type[1] ? 5'd8 : exc_type[0] ? 5'd9 : exc_type[2] ? 5'd10 : exc_type[3] ? 5'd12 : exc_type[4] ? 5'd13 : exc_type[5] ? 5'd31 : ((hardware_irq != 6'b0) || (software_irq != 2'b0)) ? 5'd0 : 5'd30;
 
+	// kseg0_uncached
+	always@(*)
+		begin
+		if(!rst_n)
+			begin
+			kseg0_uncached = 1'b1;
+			end
+		else
+			begin
+			if(wcp0)
+				begin
+				if(waddr == `CP0_CONFIG)
+					begin
+					kseg0_uncached = (wdata[2:0] == 3'b010);
+					end
+				end
+			else
+				begin
+				kseg0_uncached = (COP0_Config[2:0] == 3'b010);
+				end
+			end
+		end
+		
+	// tlb_addr
+	always@(*)
+		begin
+		if(!rst_n)
+			begin
+			tlb_addr = 5'b0;
+			end
+		else
+			if(wcp0)
+				begin
+				if(waddr == `CP0_INDEX)
+					begin
+					tlb_addr = wdata[`CP0_INDEX_INDEX];
+					end
+				end
+			else if(tlbp_we)
+				begin
+				tlb_addr = wdata[`CP0_INDEX_INDEX];
+				end
+			else
+				begin
+				tlb_addr = COP0_Index[`CP0_INDEX_INDEX];
+				end
+			end
+		end
+	
+	// asid
+	always@(*)
+		begin
+		if(!rst_n)
+			begin
+			asid = 8'b0;
+			end
+		else
+			begin
+			if(wcp0)
+				begin
+				if(waddr == `CP0_ENTRYHI)
+					begin
+					asid = wdata[`CP0_ENTRYHI_ASID];
+					end
+				end
+			else if(tlbr_we)
+				begin
+				asid = tlbr_result[`TLB_ASID];
+				end
+			else
+				begin
+				asid = COP0_EntryHi[`CP0_ENTRYHI_ASID];
+				end
+			end
+		end
+		
+	// tlb_wdata
+	always@(*)
+		begin
+		if(!rst_n)
+			begin
+			tlb_wdata = 90'b0;
+			end
+		else
+			begin
+			if(wcp0)
+				begin
+				case(waddr)
+					`CP0_ENTRYLO0:
+						begin
+						tlb_wdata = {COP0_EntryHi[`CP0_ENTRYHI_VPN2], COP0_EntryHi[`CP0_ENTRYHI_ASID], 
+							COP0_PageMask[`CP0_PAGEMASK_MASK], tlbr_result[`TLB_G] & COP0_EntryLo1[`CP0_ENTRYLO_G],
+							tlbr_result[`TLB_ENTRYLO0], 
+							COP0_EntryLo1[`CP0_ENTRYLO_PFN], COP0_EntryLo1[`CP0_ENTRYLO_C], COP0_EntryLo1[`CP0_ENTRYLO_D], COP0_EntryLo1[`CP0_ENTRYLO_V]};
+						end
+					`CP0_ENTRYLO1:
+						begin
+						tlb_wdata = {COP0_EntryHi[`CP0_ENTRYHI_VPN2], COP0_EntryHi[`CP0_ENTRYHI_ASID], 
+							COP0_PageMask[`CP0_PAGEMASK_MASK], COP0_EntryLo0[`CP0_ENTRYLO_G] & tlbr_result[`TLB_G],
+							COP0_EntryLo0[`CP0_ENTRYLO_PFN], COP0_EntryLo0[`CP0_ENTRYLO_C], COP0_EntryLo0[`CP0_ENTRYLO_D], COP0_EntryLo0[`CP0_ENTRYLO_V], 
+							tlbr_result[`TLB_ENTRYLO1]};
+						end
+					`CP0_PAGEMASK:
+						begin
+						tlb_wdata = {COP0_EntryHi[`CP0_ENTRYHI_VPN2], COP0_EntryHi[`CP0_ENTRYHI_ASID], 
+							tlbr_result[`TLB_PAGEMASK], COP0_EntryLo0[`CP0_ENTRYLO_G] & COP0_EntryLo1[`CP0_ENTRYLO_G],
+							COP0_EntryLo0[`CP0_ENTRYLO_PFN], COP0_EntryLo0[`CP0_ENTRYLO_C], COP0_EntryLo0[`CP0_ENTRYLO_D], COP0_EntryLo0[`CP0_ENTRYLO_V], 
+							COP0_EntryLo1[`CP0_ENTRYLO_PFN], COP0_EntryLo1[`CP0_ENTRYLO_C], COP0_EntryLo1[`CP0_ENTRYLO_D], COP0_EntryLo1[`CP0_ENTRYLO_V]};
+						end
+					`CP0_ENTRYHI:
+						begin
+						tlb_wdata = {tlbr_result[`TLB_ENTRYHI], 
+							COP0_PageMask[`CP0_PAGEMASK_MASK], COP0_EntryLo0[`CP0_ENTRYLO_G] & COP0_EntryLo1[`CP0_ENTRYLO_G],
+							COP0_EntryLo0[`CP0_ENTRYLO_PFN], COP0_EntryLo0[`CP0_ENTRYLO_C], COP0_EntryLo0[`CP0_ENTRYLO_D], COP0_EntryLo0[`CP0_ENTRYLO_V], 
+							COP0_EntryLo1[`CP0_ENTRYLO_PFN], COP0_EntryLo1[`CP0_ENTRYLO_C], COP0_EntryLo1[`CP0_ENTRYLO_D], COP0_EntryLo1[`CP0_ENTRYLO_V]};
+						end
+				endcase
+				end
+			else if(tlbr_we)
+				begin
+				tlb_wdata = tlbr_result;
+				end
+			else
+				begin
+				tlb_wdata = {COP0_EntryHi[`CP0_ENTRYHI_VPN2], COP0_EntryHi[`CP0_ENTRYHI_ASID], 
+							COP0_PageMask[`CP0_PAGEMASK_MASK], COP0_EntryLo0[`CP0_ENTRYLO_G] & COP0_EntryLo1[`CP0_ENTRYLO_G],
+							COP0_EntryLo0[`CP0_ENTRYLO_PFN], COP0_EntryLo0[`CP0_ENTRYLO_C], COP0_EntryLo0[`CP0_ENTRYLO_D], COP0_EntryLo0[`CP0_ENTRYLO_V], 
+							COP0_EntryLo1[`CP0_ENTRYLO_PFN], COP0_EntryLo1[`CP0_ENTRYLO_C], COP0_EntryLo1[`CP0_ENTRYLO_D], COP0_EntryLo1[`CP0_ENTRYLO_V]};
+				end
+			end
+		end
+				
+
 	always@(posedge clk or negedge rst_n)
 		begin
 		if(!rst_n)
 			begin
 			timer_int <= 1'b0;
+			COP0_Index <= {1'b0, 26'b0, 5'b0};
+			COP0_EntryLo0 <= 32'b0;
+			COP0_EntryLo1 <= 32'b0;
+			COP0_PageMask <= 32'b0;
+			COP0_Badvaddr <= 32'b0;
 			COP0_Count <= 32'b0;
+			COP0_EntryHi <= 32'b0;
 			COP0_Compare <= 32'b0;
 			COP0_Status <= 32'b00010000000000000000000000000000;
 			COP0_Cause <= 32'b0;
 			COP0_EPC <= 32'b0;
-			COP0_Prid <= {8'b0, 8'h57, 10'h4, 6'h2};
-			COP0_Config <= 32'b0;
-			COP0_Badvaddr <= 32'b0;
+			COP0_Prid <= {8'b0, 8'b1, 16'h8000}; 					//MIPS32 4Kc		// {8'b0, 8'h57, 10'h4, 6'h2};
+			COP0_Config <= {1'b1, 21'b0, 3'b001, 4'b0, 3'b010}; 	//Release 1;
 			end
 		else
 			begin
 			COP0_Prid <= {8'b0, 8'h57, 10'h4, 6'h2};
-			COP0_Config <= 32'b0;
 			COP0_Count <= COP0_Count + 1'b1;
 			/**********************************/
 			/*      比较计时是否结束          */
@@ -232,9 +375,32 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 			else if(wcp0)
 				begin
 				case(waddr)
+					`CP0_INDEX:
+						begin
+						COP0_Index[`CP0_INDEX_INDEX] <= wdata[`CP0_INDEX_INDEX];
+						end
+					`CP0_ENTRYLO0:
+						begin
+						COP0_EntryLo0[`CP0_ENTRYLO_PFN] <= wdata[`CP0_ENTRYLO_PFN];
+						COP0_EntryLo0[`CP0_ENTRYLO_FLAG] <= wdata[`CP0_ENTRYLO_FLAG];
+						end
+					`CP0_ENTRYLO1:
+						begin
+						COP0_EntryLo1[`CP0_ENTRYLO_PFN] <= wdata[`CP0_ENTRYLO_PFN];
+						COP0_EntryLo1[`CP0_ENTRYLO_FLAG] <= wdata[`CP0_ENTRYLO_FLAG];
+						end
+					`CP0_PAGEMASK:
+						begin
+						COP0_PageMask[`CP0_PAGEMASK_MASK] <= wdata[`CP0_PAGEMASK_MASK];
+						end
 					`CP0_COUNT:
 						begin
 						COP0_Count <= wdata;
+						end
+					`CP0_ENTRYHI:
+						begin
+						COP0_EntryHi[`CP0_ENTRYHI_VPN2] <= wdata[`CP0_ENTRYHI_VPN2];
+						COP0_EntryHi[`CP0_ENTRYHI_ASID] <= wdata[`CP0_ENTRYHI_ASID];
 						end
 					`CP0_COMPARE:
 						begin
@@ -255,7 +421,39 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, exc_type, int_i, victim_inst_
 						begin
 						COP0_EPC <= wdata;
 						end
+					`CP0_CONFIG:
+						begin
+						COP0_Config[2:0] <= wdata[2:0];
+						end
 				endcase
+				end
+			/**********************************/
+			/*    hardware write COP0_Index   */
+			/**********************************/
+			else if(tlbp_we)
+				begin
+				COP0_Index[`CP0_INDEX_P] <= wdata[`CP0_INDEX_P];
+				COP0_Index[`CP0_INDEX_INDEX] <= wdata[`CP0_INDEX_INDEX];
+				end
+			else if(tlbr_we)
+				begin
+				// COP0_EntryLo0
+				COP0_EntryLo0[`CP0_ENTRYLO_PFN] <= tlbr_result[`TLB_ENTRYLO0_PFN0];
+				COP0_EntryLo0[`CP0_ENTRYLO_G] <= tlbr_result[`TLB_G];
+				COP0_EntryLo0[`CP0_ENTRYLO_C] <= tlbr_result[`TLB_ENTRYLO0_C];
+				COP0_EntryLo0[`CP0_ENTRYLO_D] <= tlbr_result[`TLB_ENTRYLO0_D];
+				COP0_EntryLo0[`CP0_ENTRYLO_V] <= tlbr_result[`TLB_ENTRYLO0_V];
+				// COP0_EntryLo1
+				COP0_EntryLo1[`CP0_ENTRYLO_PFN] <= tlbr_result[`TLB_ENTRYLO1_PFN0];
+				COP0_EntryLo1[`CP0_ENTRYLO_G] <= tlbr_result[`TLB_G];
+				COP0_EntryLo1[`CP0_ENTRYLO_C] <= tlbr_result[`TLB_ENTRYLO1_C];
+				COP0_EntryLo1[`CP0_ENTRYLO_D] <= tlbr_result[`TLB_ENTRYLO1_D];
+				COP0_EntryLo1[`CP0_ENTRYLO_V] <= tlbr_result[`TLB_ENTRYLO1_V];
+				// COP0_PageMask
+				COP0_PageMask[`CP0_PAGEMASK_MASK] <= tlbr_result[`TLB_PAGEMASK];
+				// COP0_EntryHi
+				COP0_EntryHi[`CP0_ENTRYHI_VPN2] <= tlbr_result[`TLB_VPN2];
+				COP0_EntryHi[`CP0_ENTRYHI_ASID] <= tlbr_result[`TLB_ASID];
 				end
 			end
 		end

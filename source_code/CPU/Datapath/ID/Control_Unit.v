@@ -1,6 +1,6 @@
 `include "../../Define/Instruction_Define.v"
 `include "../../Define/LS_Define.v"
-module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_delayslot_i, is_div, is_sign_div, exc_mask, is_delayslot_o, wcp0, store_type, load_type, hi_i_sel, lo_i_sel, whi, wlo, wreg, result_sel, wmem, sign, aluop, alusrc0_sel, alusrc1_sel, regdst, i_bj, i_b, PC_target_sel, PC_branch);
+module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_delayslot_i, is_div, is_sign_div, exc_mask, is_delayslot_o, wcp0, store_type, load_type, hi_i_sel, lo_i_sel, whi, wlo, wreg, result_sel, wmem, sign, aluop, alusrc0_sel, alusrc1_sel, regdst, i_bj, i_b, PC_target_sel, PC_branch, tlbr, tlbp, wtlb);
 	/*********************
 	 *		Control Unit
 	 *input:
@@ -34,6 +34,9 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 	 *	i_b 				: branch instruction
 	 *	PC_target_sel		: whether select target(jump / branch) PC as PC_i
 	 *	PC_branch[31:0]		: branch PC address
+	 *	tlbp				: instruction tlbp
+	 *	tlbr				: instruction tlbr
+	 *	wtlb				: write tlb signal
 	 *********************/
 	input rst_n;
 	input [31:0] inst;
@@ -42,7 +45,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 	// for delayslot
 	input is_delayslot_i;
 	output is_delayslot_o;
-	output reg is_div, is_sign_div, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel;
+	output reg is_div, is_sign_div, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, tlbr, tlbp, wtlb;
 	output reg [1:0] result_sel, alusrc1_sel, regdst;
 	output reg [3:0] store_type, load_type;
 	output reg [7:0] exc_mask, aluop;
@@ -195,9 +198,24 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							if(inst == `INST_ERET)
+							if(rs[4] == `CO_TLB)
 								begin
-								exc_mask[5] = 1'b1;
+								case(func)
+									`FUNC_TLBR,
+									`FUNC_TLBWI,
+									`FUNC_TLBP:
+										begin
+										aluop = `ALUOP_NOP;
+										end
+									`FUNC_ERET:
+										begin
+										exc_mask[5] = 1'b1;
+										end
+									default:
+										begin
+										exc_mask[2] = 1'b1;
+										end
+								endcase
 								end
 							else
 								begin
@@ -477,6 +495,9 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 			i_b = 1'b0;
 			PC_target_sel = 1'b0;
 			PC_branch = 32'b0;
+			tlbr = 1'b0;
+			tlbp = 1'b0;
+			wtlb = 1'b0;
 			end
 		else
 			begin
@@ -668,6 +689,23 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							begin
 							wreg = 1'b1;
 							result_sel = 2'b01;
+							end
+						default:
+							begin
+							case(rs[4])
+								`FUNC_TLBR:
+									begin
+									tlbr = 1'b1;
+									end
+								`FUNC_TLBWI:
+									begin
+									wtlb = 1'b1;
+									end
+								`FUNC_TLBP:
+									begin
+									tlbp = 1'b1;
+									end
+							endcase
 							end
 					endcase
 					end

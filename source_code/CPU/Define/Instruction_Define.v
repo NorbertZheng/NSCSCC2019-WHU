@@ -54,7 +54,8 @@
 /****************************************/
 `define RS_MFC0				5'b00000
 `define RS_MTC0				5'b00100
-`define RS_ERET				5'b10000
+// CO (rs[4] for tlb instructions and eret)
+`define CO_TLB				1'b1
 
 /****************************************/
 /*                                      */
@@ -123,6 +124,12 @@
 `define FUNC_TEQ			6'b110100
 
 `define FUNC_TNE			6'b110110
+
+// OPCODE_COP0
+`define FUNC_TLBR			6'b000001
+`define FUNC_TLBWI			6'b000010
+`define FUNC_TLBP			6'b001000
+`define FUNC_ERET			6'b011000
 
 // OPCODE_SPECIAL2
 `define FUNC_MADD			6'b000000
