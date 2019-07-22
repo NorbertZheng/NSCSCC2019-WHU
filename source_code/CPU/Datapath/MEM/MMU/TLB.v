@@ -31,8 +31,8 @@ module TLB(clk, rst_n, wtlb, tlb_addr, tlb_wdata, inst_addr_i, data_addr_i, asid
 	input [7:0] asid;
 	input [31:0] inst_addr_i, data_addr_i;
 	input [89:0] tlb_wdata;
-	output reg instMiss, dataMiss, instDirty, dataDirty, instValid, dataValid, instBypassCache, dataBypassCache;
-	output reg [31:0] tlbp_result, inst_addr_o, data_addr_o;
+	output instMiss, dataMiss, instDirty, dataDirty, instValid, dataValid, instBypassCache, dataBypassCache;
+	output [31:0] inst_addr_o, data_addr_o, tlbp_result;
 	output [89:0] tlbr_result;
 	
 	reg [89:0] TLB_Entries[31:0];
@@ -43,7 +43,7 @@ module TLB(clk, rst_n, wtlb, tlb_addr, tlb_wdata, inst_addr_i, data_addr_i, asid
 	always@(posedge clk or negedge rst_n)
 		begin
 		if(!rst_n)
-			begin
+			begin : label
 			integer i;
 			for(i = 0;i < 32;i = i + 1)
 				begin

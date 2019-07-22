@@ -107,7 +107,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	);
 	
 	// Control_Unit
-	wire is_div, is_sign_div, is_delayslot_o, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, i_b;
+	wire is_div, is_sign_div, is_delayslot_o, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, i_b, tlbr, tlbp, wtlb;
 	wire [1:0] result_sel, alusrc1_sel, regdst;
 	wire [3:0] store_type, load_type;
 	wire [7:0] exc_mask, aluop;
@@ -140,7 +140,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.i_bj(is_delayslot), 
 		.i_b(i_b), 
 		.PC_target_sel(PC_target_sel), 
-		.PC_branch(PC_branch)
+		.PC_branch(PC_branch),
+		.tlbr(tlbr),
+		.tlbp(tlbp),
+		.wtlb(wtlb)
 	);
 
 	// Registers
@@ -178,10 +181,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 						((EXE_MEM_load_type_data == `LOAD_LL || EXE_MEM_load_type_data == `LOAD_LW) && ram_addr[1:0] != 2'b00);
 	wire MEM_store_exc = (EXE_MEM_store_type_data == `STORE_SH && ram_addr[0])||
 						((EXE_MEM_store_type_data == `STORE_SW || EXE_MEM_store_type_data == `STORE_SC) && ram_addr[1:0] != 2'b00);
-	wire MEM_WB_wcp0_data, vic_is_delayslot;
-	wire [4:0] EXE_MEM_int_i_data;
-	wire [7:0] EXE_MEM_exc_mask_data; 
-	wire [31:0] vic_inst_addr, COP0_data, COP0_EPC;
+	wire MEM_WB_wcp0_data, vic_is_delayslot, kseg0_uncached, MEM_WB_tlbp_data, MEM_WB_tlbr_data, user_mode;
+	wire [4:0] EXE_MEM_int_i_data, tlb_addr;
+	wire [7:0] EXE_MEM_exc_mask_data, asid; 
+	wire [31:0] vic_inst_addr, COP0_data;
+	wire [89:0] tlb_wdata, MEM_WB_tlbr_result_data;
 	COP0 m_COP0(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -189,22 +193,22 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.waddr(MEM_WB_regdst_data), 
 		.raddr(IF_ID_Instruction_data[15:11]), 
 		.wdata(WB_result_data), 
+		.tlbp_we(MEM_WB_tlbp_data),
+		.tlbr_we(MEM_WB_tlbr_data),
+		.tlbr_result(MEM_WB_tlbr_result_data),
 		.exc_type(EXE_MEM_exc_mask_data | {MEM_store_exc, MEM_load_exc, 6'b0}), 
 		.int_i(EXE_MEM_int_i_data), 
 		.victim_inst_addr(vic_inst_addr), 
 		.is_delayslot(vic_is_delayslot), 
 		.badvaddr(EXE_MEM_ALU_result_data), 
 		.COP0_data(COP0_data), 
-		.COP0_Count(), 
-		.COP0_Compare(), 
-		.COP0_Status(), 
-		.COP0_Cause(), 
-		.COP0_EPC(COP0_EPC), 
-		.COP0_Config(), 
-		.COP0_Prid(), 
-		.COP0_Badvaddr(), 
 		.exc_en(exc_en), 
-		.PC_exc(PC_exc)
+		.PC_exc(PC_exc),
+		.kseg0_uncached(kseg0_uncached),
+		.tlb_addr(tlb_addr),
+		.tlb_wdata(tlb_wdata),
+		.asid(asid),
+		.user_mode(user_mode)
 	);
 	
 	// EXT
@@ -257,11 +261,12 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	
 	// ID_EXE_REG_PACKED
 	wire ID_EXE_is_div_data, ID_EXE_is_sign_div_data, ID_EXE_wcp0_data, ID_EXE_hi_i_sel_data, ID_EXE_lo_i_sel_data, ID_EXE_whi_data, ID_EXE_wlo_data;
-	wire ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data;
+	wire ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data, ID_EXE_tlbr_data, ID_EXE_tlbp_data, ID_EXE_wtlb_data;
 	wire [1:0] ID_EXE_result_sel_data, ID_EXE_alusrc1_sel_data, ID_EXE_regdst_data;
-	wire [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data;
+	wire [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data, ID_EXE_tlb_addr_data;
 	wire [7:0] ID_EXE_exc_mask_data, ID_EXE_aluop_data, ID_EXE_fetch_exc_data;
 	wire [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data, ID_EXE_Instruction_data;
+	wire [89:0] ID_EXE_tlb_wdata_data;
 	ID_EXE_REG_PACKED m_ID_EXE_REG_PACKED(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -329,7 +334,17 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.fetch_exc(IF_ID_fetch_exc_data), 
 		.ID_EXE_fetch_exc_data(ID_EXE_fetch_exc_data),
 		.instruction(IF_ID_Instruction_data),
-		.ID_EXE_Instruction_data(ID_EXE_Instruction_data)
+		.ID_EXE_Instruction_data(ID_EXE_Instruction_data),
+		.tlb_addr(tlb_addr), 
+		.ID_EXE_tlb_addr_data(ID_EXE_tlb_addr_data), 
+		.tlb_wdata(tlb_wdata), 
+		.ID_EXE_tlb_wdata_data(ID_EXE_tlb_wdata_data), 
+		.tlbr(tlbr), 
+		.ID_EXE_tlbr_data(ID_EXE_tlbr_data), 
+		.tlbp(tlbp), 
+		.ID_EXE_tlbp_data(ID_EXE_tlbp_data),
+		.wtlb(wtlb),
+		.ID_EXE_wtlb_data(ID_EXE_wtlb_data)
 	);
 	/*always@(*)
 		begin
@@ -414,22 +429,66 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.d1(MEM_ll_bit_data)
 	);
 	
+	// EXE_MEM_modify_tlbr_result
+	wire [89:0] EXE_MEM_tlbr_result_data;
+	wire [31:0] MEM_modified_tlbr_result_data;
+	modify_tlbr_result m_EXE_MEM_modify_tlbr_result(
+		.tlbr_result(EXE_MEM_tlbr_result_data), 
+		.ID_EXE_rd_data(ID_EXE_rd_data), 
+		.modified_tlbr_result(MEM_modified_tlbr_result_data)
+	);
+	
+	// MEM_WB_modify_tlbr_result
+	wire [31:0] WB_modified_tlbr_result_data;
+	modify_tlbr_result m_MEM_WB_modify_tlbr_result(
+		.tlbr_result(MEM_WB_tlbr_result_data), 
+		.ID_EXE_rd_data(ID_EXE_rd_data), 
+		.modified_tlbr_result(WB_modified_tlbr_result_data)
+	);
+	
 	// COP0_data_fw_mux
-	wire [1:0] COP0_rdata_fw_sel;
+	wire [2:0] COP0_rdata_fw_sel;
 	wire [31:0] COP0_data_fw_mux_data;
-	Mux3T1 m_COP0_data_fw_mux(
+	Mux5T1 m_COP0_data_fw_mux(
 		.s(COP0_rdata_fw_sel), 
 		.y(COP0_data_fw_mux_data), 
 		.d0(ID_EXE_COP0_data_data), 
 		.d1(EXE_MEM_ALU_result_data),
-		.d2(WB_result_data)
+		.d2(WB_result_data),
+		.d3(MEM_modified_tlbr_result_data),
+		.d4(WB_modified_tlbr_result_data)
+	);
+	
+	// MMU
+	wire inst_uncached, data_uncached;
+	wire [31:0] physical_inst_addr, physical_data_addr, tlbp_result;
+	wire [89:0] tlbr_result;
+	MMU m_MMU(
+		.clk(clk), 
+		.rst_n(rst_n), 
+		.wtlb(ID_EXE_wtlb_data),
+		.user_mode(user_mode),
+		.tlb_addr(ID_EXE_tlb_addr_data), 
+		.tlb_wdata(ID_EXE_tlb_wdata_data), 
+		.inst_enable(1'b1), 
+		.data_enable((EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0)), 
+		.inst_addr_i(PC_o), 
+		.data_addr_i(EXE_MEM_ALU_result_data), 
+		.asid(asid), 
+		.kseg0_uncached(kseg0_uncached), 
+		.inst_addr_o(physical_inst_addr), 
+		.data_addr_o(physical_data_addr), 
+		.inst_uncached(inst_uncached), 
+		.data_uncached(data_uncached), 
+		.tlbp_result(tlbp_result), 
+		.tlbr_result(tlbr_result)
 	);
 	
 	// ALU
 	wire ALU_we, ALU_mwe;
 	wire [3:0] byte_valid;
 	wire [7:0] ALU_exc;
-	wire [31:0] ALU_result;
+	wire [31:0] temp_ALU_result;
 	wire [63:0] Mul_result;
 	ALU m_ALU(
 		.aluop(ID_EXE_aluop_data), 
@@ -439,12 +498,21 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.hilo_o({hi_fw_mux_data, lo_fw_mux_data}), 
 		.EXE_PC_plus8(ID_EXE_PC_plus4_data + 32'h4), 
 		.COP0_rdata(COP0_data_fw_mux_data), 
-		.ALU_result(ALU_result), 
+		.ALU_result(temp_ALU_result), 
 		.ALU_we(ALU_we), 
 		.ALU_mwe(ALU_mwe), 
 		.Mul_result(Mul_result), 
 		.byte_valid(byte_valid), 
 		.ALU_exc(ALU_exc)
+	);
+	
+	// ALU_result_mux
+	wire [31:0] ALU_result;
+	Mux2T1 m_ALU_result_mux(
+		.s(ID_EXE_tlbp_data), 
+		.y(ALU_result), 
+		.d0(temp_ALU_result), 
+		.d1(tlbp_result)
 	);
 	
 	// Divider
@@ -475,7 +543,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	);
 	
 	// Forwawrding_Unit
-	wire EXE_MEM_wreg_data, EXE_MEM_whi_data, EXE_MEM_wlo_data, EXE_MEM_wcp0_data;
+	wire EXE_MEM_wreg_data, EXE_MEM_whi_data, EXE_MEM_wlo_data, EXE_MEM_wcp0_data, EXE_MEM_tlbp_data, EXE_MEM_tlbr_data;
 	Forwarding_Unit m_Forwawrding_Unit(
 		.rst_n(rst_n), 
 		.IF_ID_rs_data(IF_ID_Instruction_data[25:21]), 
@@ -497,7 +565,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.hi_fw_sel(hi_fw_sel), 
 		.lo_fw_sel(lo_fw_sel), 
 		.ID_EXE_rd_data(ID_EXE_rd_data), 
-		.EXE_MEM_wcp0_data(EXE_MEM_wcp0_data), 
+		.EXE_MEM_wcp0_data(EXE_MEM_wcp0_data),
+		.EXE_MEM_tlbp_data(EXE_MEM_tlbp_data),
+		.EXE_MEM_tlbr_data(EXE_MEM_tlbr_data),
+		.MEM_WB_tlbp_data(MEM_WB_tlbp_data),
+		.MEM_WB_tlbr_data(MEM_WB_tlbr_data),
 		.MEM_WB_wcp0_data(MEM_WB_wcp0_data), 
 		.COP0_rdata_fw_sel(COP0_rdata_fw_sel)
 	);
@@ -569,6 +641,12 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.EXE_MEM_regdst_data(EXE_MEM_regdst_data), 
 		.PC_plus4(ID_EXE_PC_plus4_data), 
 		.EXE_MEM_PC_plus4_data(EXE_MEM_PC_plus4_data),
+		.tlbr(ID_EXE_tlbr_data),
+		.EXE_MEM_tlbr_data(EXE_MEM_tlbr_data),
+		.tlbp(ID_EXE_tlbp_data),
+		.EXE_MEM_tlbp_data(EXE_MEM_tlbp_data),
+		.tlbr_result(tlbr_result),
+		.EXE_MEM_tlbr_result_data(EXE_MEM_tlbr_result_data),
 		// for test only
 		.instruction(ID_EXE_Instruction_data),
 		.EXE_MEM_Instruction_data(EXE_MEM_Instruction_data)
@@ -584,12 +662,6 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	/**************************/
 	/*          MEM           */
 	/**************************/
-	// MMU
-	wire [31:0] physical_sram_addr;
-	MMU m_MMU(
-		.virtual_sram_addr(EXE_MEM_ALU_result_data), 
-		.physical_sram_addr(physical_sram_addr)
-	);
 	/*always@(*)
 		begin
 		if(EXE_MEM_load_type_data != 4'd0)
@@ -690,6 +762,12 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.MEM_WB_regdst_data(MEM_WB_regdst_data), 
 		.mem_rdata(mem_rdata), 		// .mem_rdata(modifiedLoadData),
 		.MEM_WB_mem_rdata_data(MEM_WB_mem_rdata_data),
+		.tlbr(EXE_MEM_tlbr_data),
+		.MEM_WB_tlbr_data(MEM_WB_tlbr_data),
+		.tlbp(EXE_MEM_tlbp_data),
+		.MEM_WB_tlbp_data(MEM_WB_tlbp_data),
+		.tlbr_result(EXE_MEM_tlbr_result_data),
+		.MEM_WB_tlbr_result_data(MEM_WB_tlbr_result_data),
 		// for test
 		.PC_plus4(EXE_MEM_PC_plus4_data),
 		.MEM_WB_PC_plus4_data(MEM_WB_PC_plus4_data),
@@ -764,10 +842,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 				, Div_result, result_mux_data, MEM_WB_MulDiv_result_data, WB_lo_data);
 		end*/
 
-	assign inst_addr = PC_o;
+	assign inst_addr = physical_inst_addr;
 	assign ram_en = (EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0);
 	assign ram_byte_valid = EXE_MEM_byte_valid_data;
-	assign ram_addr = physical_sram_addr;		// virtual_addr -> physical addr
+	assign ram_addr = physical_data_addr;		// virtual_addr -> physical addr
 	assign ram_dout = mem_wdata;
 	assign ram_we = (EXE_MEM_wmem_data && !MEM_store_exc) ? EXE_MEM_byte_valid_data : 4'b0;
 	

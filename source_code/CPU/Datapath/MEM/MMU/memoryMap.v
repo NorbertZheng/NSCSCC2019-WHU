@@ -45,6 +45,7 @@ module memoryMap(addr_i, enable, user_mode, kseg0_uncached, addr_o, access_inval
 						begin
 						addr_o = addr_i;
 						end
+					end
 				3'b100:		// kseg0
 					begin
 					uncached = kseg0_uncached;

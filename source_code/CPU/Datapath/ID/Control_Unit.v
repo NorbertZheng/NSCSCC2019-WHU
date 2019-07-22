@@ -521,6 +521,9 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 			i_b = 1'b0;
 			PC_target_sel = 1'b0;
 			PC_branch = 32'b0;
+			tlbr = 1'b0;
+			tlbp = 1'b0;
+			wtlb = 1'b0;
 			case(op)
 				`OPCODE_ANDI,
 				`OPCODE_ORI,
@@ -692,20 +695,24 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							case(rs[4])
-								`FUNC_TLBR:
-									begin
-									tlbr = 1'b1;
-									end
-								`FUNC_TLBWI:
-									begin
-									wtlb = 1'b1;
-									end
-								`FUNC_TLBP:
-									begin
-									tlbp = 1'b1;
-									end
-							endcase
+							if(rs[4] == `CO_TLB)
+								begin
+								case(func)
+									`FUNC_TLBR:
+										begin
+										tlbr = 1'b1;
+										end
+									`FUNC_TLBWI:
+										begin
+										wtlb = 1'b1;
+										end
+									`FUNC_TLBP:
+										begin
+										tlbp = 1'b1;
+										result_sel = 2'b01;
+										end
+								endcase
+								end
 							end
 					endcase
 					end

@@ -1,4 +1,4 @@
-module EXE_MEM_REG(clk, rst_n, EXE_MEM_Stall, EXE_MEM_Flush, exc_mask, EXE_MEM_exc_mask_data, is_delayslot, EXE_MEM_is_delayslot_data, int_i, EXE_MEM_int_i_data, wcp0, EXE_MEM_wcp0_data, store_type, EXE_MEM_store_type_data, load_type, EXE_MEM_load_type_data, hi_i_sel, EXE_MEM_hi_i_sel_data, lo_i_sel,EXE_MEM_lo_i_sel_data, whi, EXE_MEM_whi_data, wlo, EXE_MEM_wlo_data, wreg, EXE_MEM_wreg_data, result_sel, EXE_MEM_result_sel_data, wmem, EXE_MEM_wmem_data, rf_rdata0_fw, EXE_MEM_rf_rdata0_fw_data, rf_rdata1_fw, EXE_MEM_rf_rdata1_fw_data, ALU_result, EXE_MEM_ALU_result_data, SC_result_sel, EXE_MEM_SC_result_sel_data, byte_valid, EXE_MEM_byte_valid_data, MulDiv_result, EXE_MEM_MulDiv_result_data, regdst, EXE_MEM_regdst_data, PC_plus4, EXE_MEM_PC_plus4_data, instruction, EXE_MEM_Instruction_data);
+module EXE_MEM_REG(clk, rst_n, EXE_MEM_Stall, EXE_MEM_Flush, exc_mask, EXE_MEM_exc_mask_data, is_delayslot, EXE_MEM_is_delayslot_data, int_i, EXE_MEM_int_i_data, wcp0, EXE_MEM_wcp0_data, store_type, EXE_MEM_store_type_data, load_type, EXE_MEM_load_type_data, hi_i_sel, EXE_MEM_hi_i_sel_data, lo_i_sel,EXE_MEM_lo_i_sel_data, whi, EXE_MEM_whi_data, wlo, EXE_MEM_wlo_data, wreg, EXE_MEM_wreg_data, result_sel, EXE_MEM_result_sel_data, wmem, EXE_MEM_wmem_data, rf_rdata0_fw, EXE_MEM_rf_rdata0_fw_data, rf_rdata1_fw, EXE_MEM_rf_rdata1_fw_data, ALU_result, EXE_MEM_ALU_result_data, SC_result_sel, EXE_MEM_SC_result_sel_data, byte_valid, EXE_MEM_byte_valid_data, MulDiv_result, EXE_MEM_MulDiv_result_data, regdst, EXE_MEM_regdst_data, PC_plus4, EXE_MEM_PC_plus4_data, instruction, EXE_MEM_Instruction_data, tlbr, EXE_MEM_tlbr_data, tlbp, EXE_MEM_tlbp_data, tlbr_result, EXE_MEM_tlbr_result_data);
 	/*********************
 	 *	EXE - MEM Pipeline Registers
 	 *input:
@@ -27,6 +27,9 @@ module EXE_MEM_REG(clk, rst_n, EXE_MEM_Stall, EXE_MEM_Flush, exc_mask, EXE_MEM_e
 	 *	MulDiv_result[63:0]				: Mul / Div result
 	 *	regdst[4:0]						: select which reg to write
 	 *	PC_plus4[31:0]					: PC_plus4
+	 *	tlbr							: tlbr instruction
+	 *	tlbp							: tlbp instruction
+	 *	tlbr_result[89:0]				: tlbr_result
 	 *output:
 	 *	EXE_MEM_exc_mask_data[7:0]		: EXE/MEM exc_mask data
 	 *	EXE_MEM_is_delayslot_data		: EXE/MEM is_delayslot data
@@ -49,24 +52,29 @@ module EXE_MEM_REG(clk, rst_n, EXE_MEM_Stall, EXE_MEM_Flush, exc_mask, EXE_MEM_e
 	 *	EXE_MEM_MulDiv_result_data[63:0]: EXE/MEM MulDiv_result data
 	 *	EXE_MEM_regdst_data[4:0]		: EXE/MEM regdst data
 	 *	EXE_MEM_PC_plus4_data[31:0]		: EXE/MEM PC_plus4 data
+	 *	EXE_MEM_tlbr_data				: EXE/MEM tlbr data
+	 *	EXE_MEM_tlbp_data				: EXE/MEM tlbp data
+	 *	EXE_MEM_tlbr_result_data[89:0]	: EXE/MEM tlbr_result data
 	 *********************/
 	input clk, rst_n;
 	input EXE_MEM_Stall, EXE_MEM_Flush;
-	input is_delayslot, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, SC_result_sel;
+	input is_delayslot, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, SC_result_sel, tlbr, tlbp;
 	input [1:0] result_sel;
 	input [3:0] store_type, load_type, byte_valid;
 	input [4:0] int_i, regdst;
 	input [7:0] exc_mask;
 	input [31:0] rf_rdata0_fw, rf_rdata1_fw, ALU_result, PC_plus4, instruction;
 	input [63:0] MulDiv_result;
+	input [89:0] tlbr_result;
 	output EXE_MEM_is_delayslot_data, EXE_MEM_wcp0_data, EXE_MEM_hi_i_sel_data, EXE_MEM_lo_i_sel_data, EXE_MEM_whi_data, EXE_MEM_wlo_data, EXE_MEM_wreg_data;
-	output EXE_MEM_wmem_data, EXE_MEM_SC_result_sel_data;
+	output EXE_MEM_wmem_data, EXE_MEM_SC_result_sel_data, EXE_MEM_tlbr_data, EXE_MEM_tlbp_data;
 	output [1:0] EXE_MEM_result_sel_data;
 	output [3:0] EXE_MEM_store_type_data, EXE_MEM_load_type_data, EXE_MEM_byte_valid_data;
 	output [4:0] EXE_MEM_int_i_data, EXE_MEM_regdst_data;
 	output [7:0] EXE_MEM_exc_mask_data;
 	output [31:0] EXE_MEM_rf_rdata0_fw_data, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_ALU_result_data, EXE_MEM_PC_plus4_data, EXE_MEM_Instruction_data;
 	output [63:0] EXE_MEM_MulDiv_result_data;
+	output [89:0] EXE_MEM_tlbr_result_data;
 	
 	// EXE_MEM_exc_mask
 	flopr #(8) m_EXE_MEM_exc_mask(
@@ -276,6 +284,36 @@ module EXE_MEM_REG(clk, rst_n, EXE_MEM_Stall, EXE_MEM_Flush, exc_mask, EXE_MEM_e
 		.flush(EXE_MEM_Flush), 
 		.data_i(PC_plus4), 
 		.data_o(EXE_MEM_PC_plus4_data)
+	);
+	
+	// EXE_MEM_tlbr
+	flopr #(1) m_EXE_MEM_tlbr(
+		.clk(clk), 
+		.rst_n(rst_n), 
+		.stall(EXE_MEM_Stall), 
+		.flush(EXE_MEM_Flush), 
+		.data_i(tlbr), 
+		.data_o(EXE_MEM_tlbr_data)
+	);
+	
+	// EXE_MEM_tlbp
+	flopr #(1) m_EXE_MEM_tlbp(
+		.clk(clk), 
+		.rst_n(rst_n), 
+		.stall(EXE_MEM_Stall), 
+		.flush(EXE_MEM_Flush), 
+		.data_i(tlbp), 
+		.data_o(EXE_MEM_tlbp_data)
+	);
+	
+	// EXE_MEM_tlbr_result
+	flopr #(90) m_EXE_MEM_tlbr_result(
+		.clk(clk), 
+		.rst_n(rst_n), 
+		.stall(EXE_MEM_Stall), 
+		.flush(EXE_MEM_Flush), 
+		.data_i(tlbr_result), 
+		.data_o(EXE_MEM_tlbr_result_data)
 	);
 	
 	// EXE_MEM_Instruction

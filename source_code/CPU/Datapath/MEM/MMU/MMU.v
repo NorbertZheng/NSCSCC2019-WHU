@@ -1,11 +1,11 @@
-module MMU(clk, rst_n, rtlb, wtlb, tlb_addr, tlb_wdata, inst_enable, data_enable, inst_addr_i, data_addr_i, asid, kseg0_uncached, inst_address_o, data_address_o, inst_uncached, data_uncached, tlbp_result, tlbr_result);
+module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_enable, inst_addr_i, data_addr_i, asid, kseg0_uncached, inst_addr_o, data_addr_o, inst_uncached, data_uncached, tlbp_result, tlbr_result);
 	/*********************
 	 *		MMU
 	 *input:
 	 *	clk					: clock
 	 *	rst_n				: negetive reset signal
-	 *	rtlb				: read TLB signal
 	 *	wtlb				: write TLB signal
+	 *	user_mode			: user mode
 	 *	tlb_addr[4:0]		: TLB access address
 	 *	tlb_wdata[89:0]		: TLB write data
 	 *	inst_enable			: instruction TLB enable signal
@@ -23,7 +23,7 @@ module MMU(clk, rst_n, rtlb, wtlb, tlb_addr, tlb_wdata, inst_enable, data_enable
 	 *	data_uncached		: data mem uncached signal
 	 *********************/
 	input clk, rst_n;
-	input rtlb, wtlb,kseg0_uncached, inst_enable, data_enable;
+	input wtlb, user_mode, kseg0_uncached, inst_enable, data_enable;
 	input [4:0] tlb_addr;
 	input [7:0] asid;
 	input [31:0] inst_addr_i, data_addr_i;
@@ -40,6 +40,8 @@ module MMU(clk, rst_n, rtlb, wtlb, tlb_addr, tlb_wdata, inst_enable, data_enable
 	
 	assign inst_uncached = inst_map_uncached || instBypassCache;
 	assign data_uncached = data_map_uncached || dataBypassCache;
+	assign data_addr_o = data_tlb_map ? data_address_tlb : data_address_direct;
+	assign inst_addr_o = inst_tlb_map ? inst_address_tlb : inst_address_direct;
 	
 	// instruction memory map
 	memoryMap #(WITH_TLB) m_instruction_memory_map(
@@ -71,8 +73,7 @@ module MMU(clk, rst_n, rtlb, wtlb, tlb_addr, tlb_wdata, inst_enable, data_enable
 		begin : gen_tlb
 		TLB m_TLB(
 			.clk(clk), 
-			.rst_n(rst_n), 
-			.rtlb(rtlb), 
+			.rst_n(rst_n),
 			.wtlb(wtlb), 
 			.tlb_addr(tlb_addr), 
 			.tlb_wdata(tlb_wdata), 

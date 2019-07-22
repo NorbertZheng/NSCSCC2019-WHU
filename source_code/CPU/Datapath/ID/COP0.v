@@ -1,6 +1,6 @@
 `include "../../Define/COP0_Define.v"
 `include "../../Define/TLB_Define.v"
-module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result, exc_type, int_i, victim_inst_addr, is_delayslot, badvaddr, COP0_data, exc_en, PC_exc, kseg0_uncached, tlb_addr, tlb_wdata, asid);
+module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result, exc_type, int_i, victim_inst_addr, is_delayslot, badvaddr, COP0_data, exc_en, PC_exc, kseg0_uncached, tlb_addr, tlb_wdata, asid, user_mode);
 	/*********************
 	 *		CoProcessor 0
 	 *input:
@@ -25,9 +25,10 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 	 *	tlb_addr[4:0]			: TLB access address
 	 *	tlb_wdata[89:0]			: TLB write data
 	 *	asid[7:0]				: asid
+	 *	user_mode				: user mode
 	 *********************/
 	input clk, rst_n;
-	input wcp0, tlbp_we, wlbr_we, is_delayslot;
+	input wcp0, tlbp_we, tlbr_we, is_delayslot;
 	input [4:0] waddr, raddr, int_i;
 	input [7:0] exc_type;
 	input [31:0] wdata, victim_inst_addr, badvaddr;
@@ -35,6 +36,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 	output reg [31:0] COP0_data;
 	// 组合逻辑输出
 	output reg exc_en, kseg0_uncached;
+	output user_mode;
 	output reg [4:0] tlb_addr;
 	output reg [7:0] asid;
 	output reg [31:0] PC_exc;
@@ -50,6 +52,9 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 	wire [1:0] software_irq = COP0_Status[1] ? 2'b00 : COP0_Cause[9:8] & COP0_Status[9:8];				//屏蔽EXL=1时的软中断
 	wire [4:0] cause = exc_type[6] ? 5'd4 : exc_type[7] ? 5'd5 : exc_type[1] ? 5'd8 : exc_type[0] ? 5'd9 : exc_type[2] ? 5'd10 : exc_type[3] ? 5'd12 : exc_type[4] ? 5'd13 : exc_type[5] ? 5'd31 : ((hardware_irq != 6'b0) || (software_irq != 2'b0)) ? 5'd0 : 5'd30;
 
+	// user_mode
+	assign user_mode = 1'b0;
+	
 	// kseg0_uncached
 	always@(*)
 		begin
@@ -59,6 +64,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 			end
 		else
 			begin
+			kseg0_uncached = 1'b1;
 			if(wcp0)
 				begin
 				if(waddr == `CP0_CONFIG)
@@ -81,6 +87,8 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 			tlb_addr = 5'b0;
 			end
 		else
+			begin
+			tlb_addr = 5'b0;
 			if(wcp0)
 				begin
 				if(waddr == `CP0_INDEX)
@@ -108,6 +116,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 			end
 		else
 			begin
+			asid = 8'b0;
 			if(wcp0)
 				begin
 				if(waddr == `CP0_ENTRYHI)
@@ -135,6 +144,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 			end
 		else
 			begin
+			tlb_wdata = 90'b0;
 			if(wcp0)
 				begin
 				case(waddr)
@@ -444,7 +454,7 @@ module COP0(clk, rst_n, wcp0, waddr, raddr, wdata, tlbp_we, tlbr_we, tlbr_result
 				COP0_EntryLo0[`CP0_ENTRYLO_D] <= tlbr_result[`TLB_ENTRYLO0_D];
 				COP0_EntryLo0[`CP0_ENTRYLO_V] <= tlbr_result[`TLB_ENTRYLO0_V];
 				// COP0_EntryLo1
-				COP0_EntryLo1[`CP0_ENTRYLO_PFN] <= tlbr_result[`TLB_ENTRYLO1_PFN0];
+				COP0_EntryLo1[`CP0_ENTRYLO_PFN] <= tlbr_result[`TLB_ENTRYLO1_PFN1];
 				COP0_EntryLo1[`CP0_ENTRYLO_G] <= tlbr_result[`TLB_G];
 				COP0_EntryLo1[`CP0_ENTRYLO_C] <= tlbr_result[`TLB_ENTRYLO1_C];
 				COP0_EntryLo1[`CP0_ENTRYLO_D] <= tlbr_result[`TLB_ENTRYLO1_D];
