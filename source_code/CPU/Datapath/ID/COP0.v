@@ -70,7 +70,7 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 						(exc_type[8]	?	`Sys	:
 						(exc_type[9]	?	`Bp		:
 						(exc_type[10]	?	`RI		:
-						(exc_type[11]	?	`CpU	:
+						(exc_type[11]	?	`RI		: // `CpU	:
 						(exc_type[12]	?	`Ov		:
 						(exc_type[13]	?	`Tr		:
 						(eret			?	`Int	:
@@ -726,11 +726,12 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 					if(wcp0 && ({raddr, rsel} == {waddr, wsel}))
 						begin
 						// COP0_data = {9'b0, wdata[`CP0_STATUS_BEV], 6'b0, wdata[`CP0_STATUS_INTMASK], 6'b0, wdata[`CP0_STATUS_EXL], wdata[`CP0_STATUS_IE]};
-						COP0_data = {9'b0, COP0_Status[`CP0_STATUS_BEV], 6'b0, wdata[`CP0_STATUS_INTMASK], 6'b0, wdata[`CP0_STATUS_EXL], wdata[`CP0_STATUS_IE]};
+						// COP0_data = {9'b0, COP0_Status[`CP0_STATUS_BEV], 6'b0, wdata[`CP0_STATUS_INTMASK], 6'b0, wdata[`CP0_STATUS_EXL], wdata[`CP0_STATUS_IE]};
+						COP0_data = {9'b0, 1'b1, 6'b0, wdata[`CP0_STATUS_INTMASK], 6'b0, wdata[`CP0_STATUS_EXL], wdata[`CP0_STATUS_IE]};
 						end
 					else
 						begin
-						COP0_data = {9'b0, COP0_Status[`CP0_STATUS_BEV], 6'b0, COP0_Status[`CP0_STATUS_INTMASK], 6'b0, COP0_Status[`CP0_STATUS_EXL], COP0_Status[`CP0_STATUS_IE]};
+						COP0_data = {9'b0, 1'b1, 6'b0, COP0_Status[`CP0_STATUS_INTMASK], 6'b0, COP0_Status[`CP0_STATUS_EXL], COP0_Status[`CP0_STATUS_IE]};
 						end
 					end
 				{`CP0_CAUSE, `CP0_CAUSE_SEL}:	
@@ -801,7 +802,7 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 			PC_exc = 32'b0;
 			exc_en = 1'b0;
 			end
-		else if(exc_type != 32'b0)	// 中断发生（EXL=1时的外部中断自动屏蔽了）
+		else
 			begin
 			PC_exc = 32'b0;
 			exc_en = 1'b1;
@@ -816,94 +817,97 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 					PC_exc = COP0_EPC;
 					end
 				end
-			case(cause)
-				`Mod:
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`TLBL,
-				`TLBS:
-					begin
-					if(instMiss | dataMiss)
-						begin
-						PC_exc = 32'hbfc00200;
-						end
-					else if(~instValid | ~dataValid)
+			else if(exc_type != 32'b0)	// 中断发生（EXL=1时的外部中断自动屏蔽了）
+				begin					// 没有必要查看exc了，eret为MEM阶段的指令，之前搜集的也只是eret之后的指令的exc
+				case(cause)
+					`Mod:
 						begin
 						PC_exc = 32'hbfc00380;
 						end
-					end
-				`AdEL:				//加载或取值地址不对齐
+					`TLBL,
+					`TLBS:
+						begin
+						if(instMiss | dataMiss)
+							begin
+							PC_exc = 32'hbfc00200;
+							end
+						else if(~instValid | ~dataValid)
+							begin
+							PC_exc = 32'hbfc00380;
+							end
+						end
+					`AdEL:				//加载或取值地址不对齐
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`AdES:				//存储地址不对齐
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`Sys:				//syscall
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`Bp:				//break
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`RI:				//unused inst
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`CpU:
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`Ov:				//overflow
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					`Tr:				//自陷
+						begin
+						PC_exc = 32'hbfc00380;
+						end
+					default:
+						begin
+						exc_en = 1'b0;
+						PC_exc = 32'b0;
+						end
+				endcase
+				end
+			else if((hardware_irq != 6'b0) && COP0_Status[`CP0_STATUS_IE])	//中断发生（EXL=1时的外部中断自动屏蔽了）
+				begin
+				exc_en = 1'b1;
+				//中断向量
+				if(cause == 5'd0)
 					begin
-					PC_exc = 32'hbfc00380;
+					PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
 					end
-				`AdES:				//存储地址不对齐
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`Sys:				//syscall
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`Bp:				//break
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`RI:				//unused inst
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`CpU:
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`Ov:				//overflow
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				`Tr:				//自陷
-					begin
-					PC_exc = 32'hbfc00380;
-					end
-				default:
+				else
 					begin
 					exc_en = 1'b0;
 					PC_exc = 32'b0;
 					end
-			endcase
-			end
-		else if((hardware_irq != 6'b0) && COP0_Status[`CP0_STATUS_IE])	//中断发生（EXL=1时的外部中断自动屏蔽了）
-			begin
-			exc_en = 1'b1;
-			//中断向量
-			if(cause == 5'd0)
+				end
+			else if((software_irq != 2'b0) && COP0_Status[`CP0_STATUS_IE])	//中断发生（EXL=1时的外部中断自动屏蔽了）
 				begin
-				PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
+				exc_en = 1'b1;
+				//中断向量
+				if(cause == 5'd0)
+					begin
+					PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
+					end
+				else
+					begin
+					exc_en = 1'b0;
+					PC_exc = 32'b0;
+					end
 				end
 			else
 				begin
 				exc_en = 1'b0;
 				PC_exc = 32'b0;
 				end
-			end
-		else if((software_irq != 2'b0) && COP0_Status[`CP0_STATUS_IE])	//中断发生（EXL=1时的外部中断自动屏蔽了）
-			begin
-			exc_en = 1'b1;
-			//中断向量
-			if(cause == 5'd0)
-				begin
-				PC_exc = 32'hbfc00380;			// PC_exc = 32'h30;
-				end
-			else
-				begin
-				exc_en = 1'b0;
-				PC_exc = 32'b0;
-				end
-			end
-		else
-			begin
-			exc_en = 1'b0;
-			PC_exc = 32'b0;
 			end
 		end
 endmodule
