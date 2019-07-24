@@ -1,42 +1,43 @@
 `include "../../Define/Instruction_Define.v"
 `include "../../Define/LS_Define.v"
-module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_delayslot_i, is_div, is_sign_div, exc_mask, is_delayslot_o, wcp0, store_type, load_type, hi_i_sel, lo_i_sel, whi, wlo, wreg, result_sel, wmem, sign, aluop, alusrc0_sel, alusrc1_sel, regdst, i_bj, i_b, PC_target_sel, PC_branch, tlbr, tlbp, wtlb);
+module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_delayslot_i, eret, is_div, is_sign_div, cu_inst_exc_type, is_delayslot_o, wcp0, store_type, load_type, hi_i_sel, lo_i_sel, whi, wlo, wreg, result_sel, wmem, sign, aluop, alusrc0_sel, alusrc1_sel, regdst, i_bj, i_b, PC_target_sel, PC_branch, tlbr, tlbp, wtlb);
 	/*********************
 	 *		Control Unit
 	 *input:
-	 *	rst_n				: negetive reset signal
-	 *	inst[31:0]			: instruction
-	 *	rf_read_data0[31:0]	: register file read data0
-	 *	rd_read_data1[31:0]	: register file read data1
-	 *	PC_plus4[31:0]		: current instruction PC + 4
-	 *	is_delayslot_i		: assign is_delayslot_o = is_delayslot_i;
+	 *	rst_n					: negetive reset signal
+	 *	inst[31:0]				: instruction
+	 *	rf_read_data0[31:0]		: register file read data0
+	 *	rd_read_data1[31:0]		: register file read data1
+	 *	PC_plus4[31:0]			: current instruction PC + 4
+	 *	is_delayslot_i			: assign is_delayslot_o = is_delayslot_i;
 	 *output:
-	 *	is_div				: whether is div operaton
-	 *	is_sign_div			: whether is signed div operation
-	 *	exc_mask[7:0]		: exc mask
-	 *	is_delayslot_o		: assign is_delayslot_o = is_delayslot_i;
-	 *	wcp0				: write cop0
-	 *	store_type[3:0]		: store type
-	 *	load_type[3:0]		: load type
-	 *	hi_i_sel			: hi_i select signal
-	 *	lo_i_sel			: lo_i select signal
-	 *	whi					: write hi register
-	 *	wlo					: write lo register
-	 *	wreg				: write register file
-	 *	result_sel[1:0]		: select which result(ALU_result, mem_dout...) to write
-	 *	wmem				: write mem
-	 *	sign 				: sign extend?
-	 *	aluop[7:0]			: ALU opcode
-	 *	alusrc0_sel			: select which data to be src0
-	 *	alusrc1_sel[1:0]	: select which data to be src1
-	 *	regdst[1:0]			: select which register to write
-	 *	i_bj				: branch / jump instruction
-	 *	i_b 				: branch instruction
-	 *	PC_target_sel		: whether select target(jump / branch) PC as PC_i
-	 *	PC_branch[31:0]		: branch PC address
-	 *	tlbp				: instruction tlbp
-	 *	tlbr				: instruction tlbr
-	 *	wtlb				: write tlb signal
+	 *	eret					: eret instruction
+	 *	is_div					: whether is div operaton
+	 *	is_sign_div				: whether is signed div operation
+	 *	cu_inst_exc_type[31:0]	: exc mask
+	 *	is_delayslot_o			: assign is_delayslot_o = is_delayslot_i;
+	 *	wcp0					: write cop0
+	 *	store_type[3:0]			: store type
+	 *	load_type[3:0]			: load type
+	 *	hi_i_sel				: hi_i select signal
+	 *	lo_i_sel				: lo_i select signal
+	 *	whi						: write hi register
+	 *	wlo						: write lo register
+	 *	wreg					: write register file
+	 *	result_sel[1:0]			: select which result(ALU_result, mem_dout...) to write
+	 *	wmem					: write mem
+	 *	sign 					: sign extend?
+	 *	aluop[7:0]				: ALU opcode
+	 *	alusrc0_sel				: select which data to be src0
+	 *	alusrc1_sel[1:0]		: select which data to be src1
+	 *	regdst[1:0]				: select which register to write
+	 *	i_bj					: branch / jump instruction
+	 *	i_b 					: branch instruction
+	 *	PC_target_sel			: whether select target(jump / branch) PC as PC_i
+	 *	PC_branch[31:0]			: branch PC address
+	 *	tlbp					: instruction tlbp
+	 *	tlbr					: instruction tlbr
+	 *	wtlb					: write tlb signal
 	 *********************/
 	input rst_n;
 	input [31:0] inst;
@@ -45,10 +46,11 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 	// for delayslot
 	input is_delayslot_i;
 	output is_delayslot_o;
-	output reg is_div, is_sign_div, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, tlbr, tlbp, wtlb;
+	output reg eret, is_div, is_sign_div, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, tlbr, tlbp, wtlb;
 	output reg [1:0] result_sel, alusrc1_sel, regdst;
 	output reg [3:0] store_type, load_type;
-	output reg [7:0] exc_mask, aluop;
+	output reg [7:0] aluop;
+	output reg [31:0] cu_inst_exc_type;
 	// for branch / jump
 	output reg i_bj, i_b, PC_target_sel;		// i_bj is also for delayslot
 	output reg [31:0] PC_branch;
@@ -66,12 +68,14 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 		if(!rst_n)
 			begin
 			aluop = 8'b0;
-			exc_mask = 8'b0;
+			cu_inst_exc_type = 32'b0;
+			eret = 1'b0;
 			end
 		else
 			begin
 			aluop = `ALUOP_NOP;
-			exc_mask = 8'b0;
+			cu_inst_exc_type = 32'b0;
+			eret = 1'b0;
 			case(op)
 				`OPCODE_J:
 					begin
@@ -90,7 +94,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 				`OPCODE_BGTZ:
 					begin
 					aluop = `ALUOP_NOP;
-					exc_mask[2] = |rt;
+					cu_inst_exc_type[10] = |rt;		// RI
 					end
 				`OPCODE_ADDI:
 					begin
@@ -123,7 +127,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 				`OPCODE_LUI:
 					begin
 					aluop = `ALUOP_LU;
-					exc_mask[2] = |rs;
+					cu_inst_exc_type[10] = |rs;
 					end
 				`OPCODE_LB:
 					begin
@@ -209,20 +213,24 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 										end
 									`FUNC_ERET:
 										begin
-										exc_mask[5] = 1'b1;
+										eret = 1'b1;
 										end
 									default:
 										begin
-										exc_mask[2] = 1'b1;
+										cu_inst_exc_type[10] = 1'b1;
 										end
 								endcase
 								end
 							else
 								begin
-								exc_mask[2] = 1'b1;
+								cu_inst_exc_type[10] = 1'b1;
 								end
 							end
 					endcase
+					end
+				`OPCODE_COP1:
+					begin
+					cu_inst_exc_type[11] = 1'b1;		// CpU
 					end
 				`OPCODE_REGIMM:
 					begin
@@ -263,7 +271,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							exc_mask[2] = 1'b1;
+							cu_inst_exc_type[10] = 1'b1;
 							end
 					endcase
 					end
@@ -300,7 +308,7 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							exc_mask[2] = 1'b1;
+							cu_inst_exc_type[10] = 1'b1;
 							end
 					endcase
 					end
@@ -349,11 +357,11 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						`FUNC_SYSCALL:
 							begin
-							exc_mask[1] = 1'b1;
+							cu_inst_exc_type[8] = 1'b1;
 							end
 						`FUNC_BREAK:
 							begin
-							exc_mask[0] = 1'b1;
+							cu_inst_exc_type[9] = 1'b1;
 							end
 						`FUNC_SYNC:
 							begin
@@ -454,13 +462,13 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							exc_mask[2] = 1'b1;
+							cu_inst_exc_type[10] = 1'b1;
 							end
 					endcase
 					end
 				default:
 					begin
-					exc_mask[2] = 1'b1;
+					cu_inst_exc_type[10] = 1'b1;
 					end
 			endcase
 			end

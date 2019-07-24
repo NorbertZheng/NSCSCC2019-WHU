@@ -1,4 +1,4 @@
-module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_enable, inst_addr_i, data_addr_i, asid, kseg0_uncached, inst_addr_o, data_addr_o, inst_uncached, data_uncached, tlbp_result, tlbr_result);
+module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_enable, inst_addr_i, data_addr_i, asid, kseg0_uncached, inst_addr_o, data_addr_o, inst_uncached, data_uncached, tlbp_result, tlbr_result, dataMiss, instMiss, dataDirty, dataValid, instValid);
 	/*********************
 	 *		MMU
 	 *input:
@@ -21,6 +21,11 @@ module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_e
 	 *	data_addr_o[31:0]	: data mem access physical address
 	 *	inst_uncached		: instruction mem uncached signal
 	 *	data_uncached		: data mem uncached signal
+	 *	dataMiss			: data mem miss signal
+	 *	instMiss			: inst mem miss signal
+	 *	dataDirty			: data mem dirty signal
+	 *	dataValid			: data mem valid signal
+	 *	instValid			: inst mem valid signal
 	 *********************/
 	input clk, rst_n;
 	input wtlb, user_mode, kseg0_uncached, inst_enable, data_enable;
@@ -28,14 +33,14 @@ module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_e
 	input [7:0] asid;
 	input [31:0] inst_addr_i, data_addr_i;
 	input [89:0] tlb_wdata;
-	output inst_uncached, data_uncached;
+	output dataMiss, instMiss, dataDirty, dataValid, instValid, inst_uncached, data_uncached;
 	output [31:0] inst_addr_o, data_addr_o, tlbp_result;
 	output [89:0] tlbr_result;
 	
 	parameter WITH_TLB = 1;
 	
 	wire data_tlb_map, inst_tlb_map, data_map_uncached, inst_map_uncached, inst_access_invalid, data_access_invalid;
-	wire dataMiss, instMiss, dataDirty, dataValid, instValid, dataBypassCache, instBypassCache;
+	wire dataBypassCache, instBypassCache;
 	wire[31:0] data_address_direct, inst_address_direct, data_address_tlb, inst_address_tlb;
 	
 	assign inst_uncached = inst_map_uncached || instBypassCache;

@@ -1,5 +1,5 @@
 `include "../../Define/ALUOP_Define.v"
-module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_result, ALU_we, ALU_mwe, Mul_result, byte_valid, ALU_exc);
+module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_result, ALU_we, ALU_mwe, Mul_result, byte_valid, ALU_exc_type);
 	/*********************
 	 *			ALU
 	 *input:
@@ -16,7 +16,7 @@ module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_re
 	 *	ALU_mwe				: ???
 	 *	Mul_result[63:0]	: Mul result
 	 *	byte_valid[3:0]		: identity which byte in word is valid
-	 *	ALU_exc[7:0]		: exc produced by ALU
+	 *	ALU_exc_type[31:0]	: exc produced by ALU
 	 *********************/
 	input ll_bit_o;
 	input [7:0] aluop;
@@ -25,8 +25,7 @@ module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_re
 	output ALU_we;
 	output reg ALU_mwe;
 	output reg [3:0] byte_valid;
-	output reg [7:0] ALU_exc;
-	output reg [31:0] ALU_result;
+	output reg [31:0] ALU_result, ALU_exc_type;
 	output reg [63:0] Mul_result;
 	
 	reg reg_we_mov;
@@ -426,34 +425,34 @@ module ALU(aluop, src0, src1, ll_bit_o, hilo_o, EXE_PC_plus8, COP0_rdata, ALU_re
 		endcase
 		end
 	
-	// ALU_exc
+	// ALU_exc_type
 	always@(*)
 		begin
-		ALU_exc = {4'b0, alu_ov, 3'b0};
+		ALU_exc_type = {19'b0, alu_ov, 12'b0};
 		case(aluop)
 			`ALUOP_TEQ:
 				begin
-				ALU_exc[4] = (src0 == src1);
+				ALU_exc_type[13] = (src0 == src1);
 				end
 			`ALUOP_TGE:
 				begin
-				ALU_exc[4] = ~src0_lt_src1_sign;
+				ALU_exc_type[13] = ~src0_lt_src1_sign;
 				end
 			`ALUOP_TGEU:
 				begin
-				ALU_exc[4] = (src0 >= src1);
+				ALU_exc_type[13] = (src0 >= src1);
 				end
 			`ALUOP_TLT:
 				begin
-				ALU_exc[4] = src0_lt_src1_sign;
+				ALU_exc_type[13] = src0_lt_src1_sign;
 				end
 			`ALUOP_TLTU:
 				begin
-				ALU_exc[4] = (src0 < src1);
+				ALU_exc_type[13] = (src0 < src1);
 				end
 			`ALUOP_TNE:
 				begin
-				ALU_exc[4] = ~(src0 == src1);
+				ALU_exc_type[13] = ~(src0 == src1);
 				end
 		endcase
 		end

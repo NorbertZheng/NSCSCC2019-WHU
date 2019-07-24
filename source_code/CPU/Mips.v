@@ -7,7 +7,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	 *	rst_n				: negetive reset signal
 	 *	inst_data[31:0]		: instruction
 	 *	ram_din[31:0]		: ram read data
-	 *	int_i[4:0]			: interrupt signal
+	 *	int_i[5:0]			: interrupt signal
 	 *output:
 	 *	inst_addr[31:0]		: PC
 	 *	ram_en				: ram enable signal
@@ -18,7 +18,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	 *********************/
 	input clk, rst_n;
 	// interrupt signal
-	input [4:0] int_i;
+	input [5:0] int_i;
 	// instruction
 	input [31:0] inst_data;
 	output [31:0] inst_addr;
@@ -41,8 +41,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	wire PC_target_sel, exc_en, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div;
 	assign stcl_f = 1'b0;			// temp for test
 	assign stcl_ram_cache = 1'b0;	// temp for test
-	wire [7:0] fetch_exc;
-	wire [31:0] PC_branch, PC_exc, PC_o, PC_plus4;
+	wire [31:0] if_fetch_exc_type, PC_branch, PC_exc, PC_o, PC_plus4;
 	PC m_PC(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -56,13 +55,13 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.PC_target_sel(PC_target_sel), 
 		.PC_o(PC_o), 
 		.PC_plus4(PC_plus4), 
-		.fetch_exc(fetch_exc)
+		.if_fetch_exc_type(if_fetch_exc_type)
 	);
 	
 	// IF_ID_REG_PACKED
-	wire is_delayslot, IF_ID_is_delayslot_data;
-	wire [7:0] IF_ID_fetch_exc_data;
-	wire [31:0] IF_ID_PC_plus4_data, IF_ID_Instruction_data;
+	wire is_delayslot, IF_ID_is_delayslot_data, instMiss, IF_ID_instMiss_data, instValid, IF_ID_instValid_data;
+	wire [7:0] asid, IF_ID_asid_data;
+	wire [31:0] IF_ID_if_fetch_exc_type_data, IF_ID_PC_plus4_data, IF_ID_Instruction_data;
 	IF_ID_REG_PACKED m_IF_ID_REG_PACKED(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -77,8 +76,14 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.IF_ID_Instruction_data(IF_ID_Instruction_data), 
 		.is_delayslot(is_delayslot), 
 		.IF_ID_is_delayslot_data(IF_ID_is_delayslot_data), 
-		.fetch_exc(fetch_exc), 
-		.IF_ID_fetch_exc_data(IF_ID_fetch_exc_data)
+		.if_fetch_exc_type(if_fetch_exc_type), 
+		.IF_ID_if_fetch_exc_type_data(IF_ID_if_fetch_exc_type_data),
+		.asid(asid),
+		.IF_ID_asid_data(IF_ID_asid_data),
+		.instMiss(instMiss),
+		.IF_ID_instMiss_data(IF_ID_instMiss_data),
+		.instValid(instValid),
+		.IF_ID_instValid_data(IF_ID_instValid_data)
 	);
 
 	/**************************/
@@ -107,10 +112,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	);
 	
 	// Control_Unit
-	wire is_div, is_sign_div, is_delayslot_o, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, i_b, tlbr, tlbp, wtlb;
+	wire eret, is_div, is_sign_div, is_delayslot_o, wcp0, hi_i_sel, lo_i_sel, whi, wlo, wreg, wmem, sign, alusrc0_sel, i_b, tlbr, tlbp, wtlb;
 	wire [1:0] result_sel, alusrc1_sel, regdst;
 	wire [3:0] store_type, load_type;
-	wire [7:0] exc_mask, aluop;
+	wire [7:0] aluop;
+	wire [31:0] cu_inst_exc_type;
 	Control_Unit m_Control_Unit(
 		.rst_n(rst_n), 
 		.inst(IF_ID_Instruction_data), 
@@ -118,9 +124,10 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.rf_read_data1(rf_jdata1_fw_mux_data), 
 		.PC_plus4(IF_ID_PC_plus4_data), 
 		.is_delayslot_i(IF_ID_is_delayslot_data), 
+		.eret(eret),
 		.is_div(is_div), 
 		.is_sign_div(is_sign_div), 
-		.exc_mask(exc_mask), 
+		.cu_inst_exc_type(cu_inst_exc_type), 
 		.is_delayslot_o(is_delayslot_o), 
 		.wcp0(wcp0), 
 		.store_type(store_type), 
@@ -175,29 +182,40 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.lo_o(lo_o)
 	);
 	
-	// COP0
+	// COP0 
+	wire EXE_MEM_instMiss_data, dataMiss, EXE_MEM_instValid_data, dataValid, EXE_MEM_eret_data;
 	wire [3:0] EXE_MEM_load_type_data, EXE_MEM_store_type_data;
 	wire MEM_load_exc = ((EXE_MEM_load_type_data == `LOAD_LH || EXE_MEM_load_type_data == `LOAD_LHU) && ram_addr[0])||
 						((EXE_MEM_load_type_data == `LOAD_LL || EXE_MEM_load_type_data == `LOAD_LW) && ram_addr[1:0] != 2'b00);
 	wire MEM_store_exc = (EXE_MEM_store_type_data == `STORE_SH && ram_addr[0])||
 						((EXE_MEM_store_type_data == `STORE_SW || EXE_MEM_store_type_data == `STORE_SC) && ram_addr[1:0] != 2'b00);
 	wire MEM_WB_wcp0_data, vic_is_delayslot, kseg0_uncached, MEM_WB_tlbp_data, MEM_WB_tlbr_data, user_mode;
-	wire [4:0] EXE_MEM_int_i_data, tlb_addr;
-	wire [7:0] EXE_MEM_exc_mask_data, asid; 
-	wire [31:0] vic_inst_addr, COP0_data;
+	wire [4:0] tlb_addr;
+	wire [5:0] EXE_MEM_int_i_data;
+	wire [7:0] exp_asid; 
+	wire [31:0] vic_inst_addr, COP0_data, MEM_WB_Instruction_data, EXE_MEM_exc_type_data, MEM_tlb_exc_type;
 	wire [89:0] tlb_wdata, MEM_WB_tlbr_result_data;
+	wire [2:0] MEM_WB_wsel_data = MEM_WB_Instruction_data[2:0];
 	COP0 m_COP0(
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.wcp0(MEM_WB_wcp0_data), 
 		.waddr(MEM_WB_regdst_data), 
-		.raddr(IF_ID_Instruction_data[15:11]), 
+		.wsel(MEM_WB_wsel_data),
+		.raddr(IF_ID_Instruction_data[15:11]),
+		.rsel(IF_ID_Instruction_data[2:0]),
 		.wdata(WB_result_data), 
+		.eret(EXE_MEM_eret_data),
 		.tlbp_we(MEM_WB_tlbp_data),
 		.tlbr_we(MEM_WB_tlbr_data),
 		.tlbr_result(MEM_WB_tlbr_result_data),
-		.exc_type(EXE_MEM_exc_mask_data | {MEM_store_exc, MEM_load_exc, 6'b0}), 
+		.exc_type(EXE_MEM_exc_type_data | {26'b0, MEM_store_exc, MEM_load_exc, 4'b0}), // | MEM_tlb_exc_type), 
 		.int_i(EXE_MEM_int_i_data), 
+		.instMiss(EXE_MEM_instMiss_data),
+		.dataMiss(dataMiss),
+		.instValid(EXE_MEM_instValid_data),
+		.dataValid(dataValid),
+		.exp_asid(exp_asid),
 		.victim_inst_addr(vic_inst_addr), 
 		.is_delayslot(vic_is_delayslot), 
 		.badvaddr(EXE_MEM_ALU_result_data), 
@@ -221,17 +239,23 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	
 	// victimInstDetector
 	wire ID_EXE_is_delayslot_data, EXE_MEM_is_delayslot_data;
+	wire [7:0] ID_EXE_asid_data, EXE_MEM_asid_data;
 	wire [31:0] ID_EXE_PC_plus4_data, EXE_MEM_PC_plus4_data;
 	victimInstDetector m_victimInstDetector(
 		.PC_o(PC_o), 
+		.asid(asid),
 		.IF_ID_is_delayslot_data(IF_ID_is_delayslot_data), 
+		.IF_ID_asid_data(IF_ID_asid_data),
 		.IF_ID_PC_plus4_data(IF_ID_PC_plus4_data), 
 		.ID_EXE_is_delayslot_data(ID_EXE_is_delayslot_data), 
+		.ID_EXE_asid_data(ID_EXE_asid_data),
 		.ID_EXE_PC_plus4_data(ID_EXE_PC_plus4_data), 
 		.EXE_MEM_is_delayslot_data(EXE_MEM_is_delayslot_data), 
+		.EXE_MEM_asid_data(EXE_MEM_asid_data),
 		.EXE_MEM_PC_plus4_data(EXE_MEM_PC_plus4_data), 
 		.vic_is_delayslot(vic_is_delayslot), 
-		.vic_inst_addr(vic_inst_addr)
+		.vic_inst_addr(vic_inst_addr),
+		.exp_asid(exp_asid)
 	);
 	/*always@(*)
 		begin
@@ -261,11 +285,13 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	
 	// ID_EXE_REG_PACKED
 	wire ID_EXE_is_div_data, ID_EXE_is_sign_div_data, ID_EXE_wcp0_data, ID_EXE_hi_i_sel_data, ID_EXE_lo_i_sel_data, ID_EXE_whi_data, ID_EXE_wlo_data;
-	wire ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data, ID_EXE_tlbr_data, ID_EXE_tlbp_data, ID_EXE_wtlb_data;
+	wire ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data, ID_EXE_tlbr_data, ID_EXE_tlbp_data, ID_EXE_wtlb_data, ID_EXE_eret_data, ID_EXE_instMiss_data;
+	wire ID_EXE_instValid_data;
 	wire [1:0] ID_EXE_result_sel_data, ID_EXE_alusrc1_sel_data, ID_EXE_regdst_data;
 	wire [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data, ID_EXE_tlb_addr_data;
-	wire [7:0] ID_EXE_exc_mask_data, ID_EXE_aluop_data, ID_EXE_fetch_exc_data;
+	wire [7:0] ID_EXE_aluop_data;
 	wire [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data, ID_EXE_Instruction_data;
+	wire [31:0] ID_EXE_cu_inst_exc_type_data, ID_EXE_if_fetch_exc_type_data;
 	wire [89:0] ID_EXE_tlb_wdata_data;
 	ID_EXE_REG_PACKED m_ID_EXE_REG_PACKED(
 		.clk(clk), 
@@ -279,8 +305,8 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.ID_EXE_is_div_data(ID_EXE_is_div_data), 
 		.is_sign_div(is_sign_div), 
 		.ID_EXE_is_sign_div_data(ID_EXE_is_sign_div_data), 
-		.exc_mask(exc_mask), 
-		.ID_EXE_exc_mask_data(ID_EXE_exc_mask_data), 
+		.cu_inst_exc_type(cu_inst_exc_type), 
+		.ID_EXE_cu_inst_exc_type_data(ID_EXE_cu_inst_exc_type_data), 
 		.is_delayslot(is_delayslot_o), 
 		.ID_EXE_is_delayslot_data(ID_EXE_is_delayslot_data), 
 		.wcp0(wcp0), 
@@ -331,8 +357,8 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.ID_EXE_Imm32_data(ID_EXE_Imm32_data), 
 		.PC_plus4(IF_ID_PC_plus4_data), 
 		.ID_EXE_PC_plus4_data(ID_EXE_PC_plus4_data), 
-		.fetch_exc(IF_ID_fetch_exc_data), 
-		.ID_EXE_fetch_exc_data(ID_EXE_fetch_exc_data),
+		.if_fetch_exc_type(IF_ID_if_fetch_exc_type_data), 
+		.ID_EXE_if_fetch_exc_type_data(ID_EXE_if_fetch_exc_type_data),
 		.instruction(IF_ID_Instruction_data),
 		.ID_EXE_Instruction_data(ID_EXE_Instruction_data),
 		.tlb_addr(tlb_addr), 
@@ -344,7 +370,15 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.tlbp(tlbp), 
 		.ID_EXE_tlbp_data(ID_EXE_tlbp_data),
 		.wtlb(wtlb),
-		.ID_EXE_wtlb_data(ID_EXE_wtlb_data)
+		.ID_EXE_wtlb_data(ID_EXE_wtlb_data),
+		.asid(IF_ID_asid_data),
+		.ID_EXE_asid_data(ID_EXE_asid_data),
+		.eret(eret), 
+		.ID_EXE_eret_data(ID_EXE_eret_data), 
+		.instMiss(IF_ID_instMiss_data), 
+		.ID_EXE_instMiss_data(ID_EXE_instMiss_data), 
+		.instValid(IF_ID_instValid_data), 
+		.ID_EXE_instValid_data(ID_EXE_instValid_data)
 	);
 	/*always@(*)
 		begin
@@ -460,7 +494,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	);
 	
 	// MMU
-	wire inst_uncached, data_uncached;
+	wire inst_uncached, data_uncached, dataDirty;
 	wire [31:0] physical_inst_addr, physical_data_addr, tlbp_result;
 	wire [89:0] tlbr_result;
 	MMU m_MMU(
@@ -481,14 +515,18 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.inst_uncached(inst_uncached), 
 		.data_uncached(data_uncached), 
 		.tlbp_result(tlbp_result), 
-		.tlbr_result(tlbr_result)
+		.tlbr_result(tlbr_result),
+		.dataMiss(dataMiss), 
+		.instMiss(instMiss), 
+		.dataDirty(dataDirty), 
+		.dataValid(dataValid), 
+		.instValid(instValid)
 	);
 	
 	// ALU
 	wire ALU_we, ALU_mwe;
 	wire [3:0] byte_valid;
-	wire [7:0] ALU_exc;
-	wire [31:0] temp_ALU_result;
+	wire [31:0] ALU_exc_type, temp_ALU_result;
 	wire [63:0] Mul_result;
 	ALU m_ALU(
 		.aluop(ID_EXE_aluop_data), 
@@ -503,7 +541,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.ALU_mwe(ALU_mwe), 
 		.Mul_result(Mul_result), 
 		.byte_valid(byte_valid), 
-		.ALU_exc(ALU_exc)
+		.ALU_exc_type(ALU_exc_type)
 	);
 	
 	// ALU_result_mux
@@ -599,8 +637,8 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.stall1(stcl_ram_cache), 
 		.irq(exc_en), 
 		.clr(stcl_div), 
-		.exc_mask(ID_EXE_exc_mask_data | ID_EXE_fetch_exc_data | ALU_exc), 
-		.EXE_MEM_exc_mask_data(EXE_MEM_exc_mask_data), 
+		.exc_type(ID_EXE_cu_inst_exc_type_data | ID_EXE_if_fetch_exc_type_data | ALU_exc_type), 
+		.EXE_MEM_exc_type_data(EXE_MEM_exc_type_data), 
 		.is_delayslot(ID_EXE_is_delayslot_data), 
 		.EXE_MEM_is_delayslot_data(EXE_MEM_is_delayslot_data), 
 		.int_i(int_i), 
@@ -647,6 +685,14 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.EXE_MEM_tlbp_data(EXE_MEM_tlbp_data),
 		.tlbr_result(tlbr_result),
 		.EXE_MEM_tlbr_result_data(EXE_MEM_tlbr_result_data),
+		.asid(ID_EXE_asid_data), 
+		.EXE_MEM_asid_data(EXE_MEM_asid_data), 
+		.eret(ID_EXE_eret_data), 
+		.EXE_MEM_eret_data(EXE_MEM_eret_data), 
+		.instMiss(ID_EXE_instMiss_data), 
+		.EXE_MEM_instMiss_data(EXE_MEM_instMiss_data), 
+		.instValid(ID_EXE_instValid_data), 
+		.EXE_MEM_instValid_data(EXE_MEM_instValid_data),
 		// for test only
 		.instruction(ID_EXE_Instruction_data),
 		.EXE_MEM_Instruction_data(EXE_MEM_Instruction_data)
@@ -693,6 +739,17 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.mem_wdata_o(mem_wdata)
 	);
 	
+	// TLBExcDetector
+	TLBExcDetector m_TLBExcDetector(
+		.instMiss(EXE_MEM_instMiss_data), 
+		.dataMiss(dataMiss), 
+		.instValid(EXE_MEM_instValid_data), 
+		.dataValid(dataValid), 
+		.dataDirty(dataDirty), 
+		.wmem(EXE_MEM_wmem_data), 
+		.tlb_exc_type(MEM_tlb_exc_type)
+	);
+	
 	// MEM_hi_fw_mux
 	Mux2T1 m_MEM_hi_fw_mux(
 		.s(EXE_MEM_hi_i_sel_data), 
@@ -723,7 +780,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	wire MEM_WB_hi_i_sel_data, MEM_WB_lo_i_sel_data, MEM_WB_SC_result_sel_data;
 	wire [1:0] MEM_WB_result_sel_data;
 	wire [3:0] MEM_WB_byte_valid_data;
-	wire [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data, MEM_WB_PC_plus4_data, MEM_WB_Instruction_data;
+	wire [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data, MEM_WB_PC_plus4_data;
 	wire [63:0] MEM_WB_MulDiv_result_data;
 	MEM_WB_REG_PACKED m_MEM_WB_REG_PACKED(
 		.clk(clk), 
