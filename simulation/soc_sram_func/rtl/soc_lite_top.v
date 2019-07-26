@@ -229,4 +229,3 @@ confreg #(.SIMULATION(SIMULATION)) confreg
 );
 
 endmodule
-
