@@ -1,8 +1,8 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
-| Date         : Thu Jul 18 15:17:17 2019
-| Host         : DESKTOP-HFH0Q47 running 64-bit major release  (build 9200)
+| Date         : Mon Jul 22 20:03:29 2019
+| Host         : DESKTOP-258B0UK running 64-bit major release  (build 9200)
 | Command      : report_utilization -file inst_ram_utilization_synth.rpt -pb inst_ram_utilization_synth.pb
 | Design       : inst_ram
 | Device       : 7a200tfbg676-2

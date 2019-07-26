@@ -1,0 +1,145 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
+| Date         : Mon Jul 22 22:40:27 2019
+| Host         : DESKTOP-258B0UK running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file soc_lite_top_control_sets_placed.rpt
+| Design       : soc_lite_top
+| Device       : xc7a200t
+-----------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Number of unique control sets                            |    75 |
+| Unused register locations in slices containing registers |    89 |
++----------------------------------------------------------+-------+
+
+
+2. Histogram
+------------
+
++--------+--------------+
+| Fanout | Control Sets |
++--------+--------------+
+|      1 |            2 |
+|      3 |            1 |
+|      4 |            3 |
+|      5 |            1 |
+|      6 |            1 |
+|      8 |            1 |
+|    16+ |           66 |
++--------+--------------+
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |             172 |           52 |
+| No           | No                    | Yes                    |             412 |          175 |
+| No           | Yes                   | No                     |             143 |           39 |
+| Yes          | No                    | No                     |             107 |           38 |
+| Yes          | No                    | Yes                    |            1584 |          733 |
+| Yes          | Yes                   | No                     |             509 |          191 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++-----------------------------+------------------------------------------------------------------------------------------+-------------------------------------------+------------------+----------------+
+|         Clock Signal        |                                       Enable Signal                                      |              Set/Reset Signal             | Slice Load Count | Bel Load Count |
++-----------------------------+------------------------------------------------------------------------------------------+-------------------------------------------+------------------+----------------+
+|  pll.clk_pll/inst/cpu_clk   | confreg/step0_sample                                                                     | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                1 |              1 |
+|  pll.clk_pll/inst/cpu_clk   | confreg/step1_sample                                                                     | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                1 |              1 |
+|  n_0_4871_BUFG              |                                                                                          |                                           |                3 |              3 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/p_0_in__0[0]                                              | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                3 |              4 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          | confreg/state_count0                      |                1 |              4 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_load_type/ena                    |                                           |                2 |              4 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_exc_mask/data_o_reg[4]_0         | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                2 |              5 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_ID_EXE_REG_PACKED/m_ID_EXE_REG/m_ID_EXE_is_div/data_o_reg[0]_1[0]           |                                           |                2 |              6 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[12]_0[0]   | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                2 |              8 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          | confreg/step1_count0                      |                5 |             20 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          | confreg/step0_count0                      |                5 |             20 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          | confreg/key_count0                        |                5 |             20 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_COP0/COP0_Status[31]_i_1_n_1                                                | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               21 |             31 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_Divider/dividend[31]_i_1_n_1                                                |                                           |               18 |             31 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_Divider/dividend[63]_i_2_n_1                                                | cpu/m_Mips/m_Divider/dividend[63]_i_1_n_1 |                9 |             31 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_5[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               19 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_6[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               13 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_3[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[1]_4[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               10 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_11[0]                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               18 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_8[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               16 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[1]_1[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_14[0]                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_7[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_8[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               17 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[4]_1[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               13 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_12[0]                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               10 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_2[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               23 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_6[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_9[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                7 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[1]_2[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               10 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[1]_3[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               18 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_1[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_4[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               16 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_2[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               13 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_4[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               19 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[0]_7[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               13 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[3]_1[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               22 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_13[0]                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               22 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_10[0]                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               17 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_5[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                8 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[2]_3[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               10 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_regdst_data_reg[4]_2[0]                            | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               24 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_wreg_data_reg_7[0]                                 | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               25 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_wreg_data_reg_6[0]                                 | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               12 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_wreg_data_reg_8[0]                                 | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               17 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_wreg_data_reg_5[0]                                 | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  pll.clk_pll/inst/timer_clk |                                                                                          | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                8 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_COP0/COP0_EPC[31]_i_1_n_1                                                   | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                8 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_store_type/COP0_Status_reg[1][0] | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               20 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_whi_data                                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               15 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[3]_3[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[2]_2[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               15 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[15]_1[0]   | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               10 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/MEM_WB_wlo_data                                           | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               18 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[2]_4[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[3]_1[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               13 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_load_type/data_o_reg[3]_0[0]     | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               12 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[2]_0[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                7 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[4]_1[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |                7 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/cpu_resetn_reg[0]     |                                           |                7 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[2]_3[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               12 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[12]_2[0]   | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[3]_2[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               14 |             32 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_MEM_WB_REG_PACKED/E[0]                                                      | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               12 |             32 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[2]_5[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               15 |             34 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_ID_EXE_REG_PACKED/m_ID_EXE_REG/m_ID_EXE_is_div/E[0]                         |                                           |                9 |             34 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/data_o_reg[1]_1[0]    | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               11 |             34 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               15 |             47 |
+|  pll.clk_pll/inst/cpu_clk   | cpu/m_Mips/m_EXE_MEM_REG_PACKED/m_EXE_MEM_REG/m_EXE_MEM_ALU_result/E[0]                  | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               23 |             48 |
+|  pll.clk_pll/inst/timer_clk |                                                                                          |                                           |               14 |             67 |
+|  pll.clk_pll/inst/cpu_clk   |                                                                                          |                                           |               35 |            102 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_COP0/cpu_resetn_reg                                                         | cpu/m_Mips/m_Registers/cpu_resetn_reg     |               44 |            107 |
+|  n_0_4871_BUFG              | cpu/m_Mips/m_Divider/data_o_reg[0]                                                       | cpu/m_Mips/m_Registers/cpu_resetn_reg     |              112 |            253 |
+|  n_0_4871_BUFG              |                                                                                          | cpu/m_Mips/m_Registers/cpu_resetn_reg     |              175 |            412 |
++-----------------------------+------------------------------------------------------------------------------------------+-------------------------------------------+------------------+----------------+
+
+
