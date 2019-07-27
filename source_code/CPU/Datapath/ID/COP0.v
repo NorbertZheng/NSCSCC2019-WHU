@@ -218,7 +218,7 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 		end
 				
 
-	always@(posedge clk or negedge rst_n)
+	always@(posedge clk)
 		begin
 		if(!rst_n)
 			begin

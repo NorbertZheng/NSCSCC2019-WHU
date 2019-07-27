@@ -23,7 +23,7 @@ module hi_lo_reg(clk, rst_n, whi, wlo, hi_i, lo_i, hi_o, lo_o);
 	assign lo_o = (!rst_n) ? 32'b0 : ((wlo) ? lo_i : lo);
 	
 	// write hi register
-	always@(posedge clk or negedge rst_n)
+	always@(posedge clk)
 		begin
 		if(!rst_n)
 			begin
@@ -36,7 +36,7 @@ module hi_lo_reg(clk, rst_n, whi, wlo, hi_i, lo_i, hi_o, lo_o);
 		end
 	
 	// write lo register
-	always@(posedge clk or negedge rst_n)
+	always@(posedge clk)
 		begin
 		if(!rst_n)
 			begin

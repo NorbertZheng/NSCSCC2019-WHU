@@ -14,7 +14,7 @@ module PCReg(clk, rst_n, wpc, PC_i, PC_o);
 	input [31:0] PC_i;
 	output reg [31:0] PC_o;
 	
-	always@(posedge clk or negedge rst_n)
+	always@(posedge clk)
 		begin
 		if(!rst_n)							// reset
 			begin

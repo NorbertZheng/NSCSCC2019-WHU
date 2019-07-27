@@ -40,7 +40,7 @@ module TLB(clk, rst_n, wtlb, tlb_addr, tlb_wdata, inst_addr_i, data_addr_i, asid
 	// read TLB Entry
 	assign tlbr_result = TLB_Entries[tlb_addr];
 	// write TLB Entry
-	always@(posedge clk or negedge rst_n)
+	always@(posedge clk)
 		begin
 		if(!rst_n)
 			begin : label

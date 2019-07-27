@@ -96,19 +96,152 @@ module ID_EXE_REG_PACKED(clk, rst_n, stall0, irq, clr0, clr1, clr2, is_div, ID_E
 	input [7:0] aluop, asid;
 	input [31:0] rf_rdata0, rf_rdata1, hi, lo, COP0_data, Imm32, PC_plus4, instruction, if_fetch_exc_type, cu_inst_exc_type;
 	input [89:0] tlb_wdata;
-	output ID_EXE_is_div_data, ID_EXE_is_sign_div_data, ID_EXE_is_delayslot_data, ID_EXE_wcp0_data, ID_EXE_hi_i_sel_data, ID_EXE_lo_i_sel_data;
-	output ID_EXE_whi_data, ID_EXE_wlo_data, ID_EXE_wreg_data, ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data, ID_EXE_tlbr_data, ID_EXE_tlbp_data;
-	output ID_EXE_wtlb_data, ID_EXE_eret_data, ID_EXE_instMiss_data, ID_EXE_instValid_data;
-	output [1:0] ID_EXE_result_sel_data, ID_EXE_alusrc1_sel_data, ID_EXE_regdst_data;
-	output [3:0] ID_EXE_store_type_data, ID_EXE_load_type_data;
-	output [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data, ID_EXE_tlb_addr_data;
-	output [7:0] ID_EXE_aluop_data, ID_EXE_asid_data;
-	output [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data
+	output reg ID_EXE_is_div_data, ID_EXE_is_sign_div_data, ID_EXE_is_delayslot_data, ID_EXE_wcp0_data, ID_EXE_hi_i_sel_data, ID_EXE_lo_i_sel_data;
+	output reg ID_EXE_whi_data, ID_EXE_wlo_data, ID_EXE_wreg_data, ID_EXE_wmem_data, ID_EXE_alusrc0_sel_data, ID_EXE_tlbr_data, ID_EXE_tlbp_data;
+	output reg ID_EXE_wtlb_data, ID_EXE_eret_data, ID_EXE_instMiss_data, ID_EXE_instValid_data;
+	output reg [1:0] ID_EXE_result_sel_data, ID_EXE_alusrc1_sel_data, ID_EXE_regdst_data;
+	output reg [3:0] ID_EXE_store_type_data, ID_EXE_load_type_data;
+	output reg [4:0] ID_EXE_rs_data, ID_EXE_rt_data, ID_EXE_rd_data, ID_EXE_tlb_addr_data;
+	output reg [7:0] ID_EXE_aluop_data, ID_EXE_asid_data;
+	output reg [31:0] ID_EXE_rf_rdata0_data, ID_EXE_rf_rdata1_data, ID_EXE_hi_data, ID_EXE_lo_data, ID_EXE_COP0_data_data, ID_EXE_Imm32_data
 				, ID_EXE_PC_plus4_data, ID_EXE_Instruction_data, ID_EXE_cu_inst_exc_type_data, ID_EXE_if_fetch_exc_type_data;
-	output [89:0] ID_EXE_tlb_wdata_data;
+	output reg [89:0] ID_EXE_tlb_wdata_data;
 
 	wire ID_EXE_Stall = stall0 && ~irq;
 	wire ID_EXE_Flush = irq || clr0 || clr1 || clr2;
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			ID_EXE_is_div_data <= 1'b0;
+			ID_EXE_is_sign_div_data <= 1'b0;
+			ID_EXE_cu_inst_exc_type_data <= 32'b0;
+			ID_EXE_is_delayslot_data <= 1'b0;
+			ID_EXE_wcp0_data <= 1'b0;
+			ID_EXE_store_type_data <= 4'b0;
+			ID_EXE_load_type_data <= 4'b0;
+			ID_EXE_hi_i_sel_data <= 1'b0;
+			ID_EXE_lo_i_sel_data <= 1'b0;
+			ID_EXE_whi_data <= 1'b0;
+			ID_EXE_wlo_data <= 1'b0;
+			ID_EXE_wreg_data <= 1'b0; 
+			ID_EXE_result_sel_data <= 2'b0;
+			ID_EXE_wmem_data <= 1'b0;
+			ID_EXE_aluop_data <= 8'b0;
+			ID_EXE_alusrc0_sel_data <= 1'b0;
+			ID_EXE_alusrc1_sel_data <= 2'b0;
+			ID_EXE_regdst_data <= 2'b0;
+			ID_EXE_rf_rdata0_data <= 32'b0;
+			ID_EXE_rf_rdata1_data <= 32'b0;
+			ID_EXE_hi_data <= 32'b0;
+			ID_EXE_lo_data <= 32'b0;
+			ID_EXE_COP0_data_data <= 32'b0;
+			ID_EXE_rs_data <= 5'b0;
+			ID_EXE_rt_data <= 5'b0;
+			ID_EXE_rd_data <= 5'b0;
+			ID_EXE_Imm32_data <= 32'b0;
+			ID_EXE_PC_plus4_data <= 32'b0;
+			ID_EXE_if_fetch_exc_type_data <= 32'b0;
+			ID_EXE_Instruction_data <= 32'b0;
+			ID_EXE_tlb_addr_data <= 5'b0;
+			ID_EXE_tlb_wdata_data <= 90'b0;
+			ID_EXE_tlbr_data <= 1'b0;
+			ID_EXE_tlbp_data <= 1'b0;
+			ID_EXE_wtlb_data <= 1'b0;
+			ID_EXE_asid_data <= 8'b0;
+			ID_EXE_eret_data <= 1'b0;
+			ID_EXE_instMiss_data <= 1'b0;
+			ID_EXE_instValid_data <= 1'b0;
+			end
+		else if(!ID_EXE_Stall)
+			begin
+			if(ID_EXE_Flush)
+				begin
+				ID_EXE_is_div_data <= 1'b0;
+				ID_EXE_is_sign_div_data <= 1'b0;
+				ID_EXE_cu_inst_exc_type_data <= 32'b0;
+				ID_EXE_is_delayslot_data <= 1'b0;
+				ID_EXE_wcp0_data <= 1'b0;
+				ID_EXE_store_type_data <= 4'b0;
+				ID_EXE_load_type_data <= 4'b0;
+				ID_EXE_hi_i_sel_data <= 1'b0;
+				ID_EXE_lo_i_sel_data <= 1'b0;
+				ID_EXE_whi_data <= 1'b0;
+				ID_EXE_wlo_data <= 1'b0;
+				ID_EXE_wreg_data <= 1'b0; 
+				ID_EXE_result_sel_data <= 2'b0;
+				ID_EXE_wmem_data <= 1'b0;
+				ID_EXE_aluop_data <= 8'b0;
+				ID_EXE_alusrc0_sel_data <= 1'b0;
+				ID_EXE_alusrc1_sel_data <= 2'b0;
+				ID_EXE_regdst_data <= 2'b0;
+				ID_EXE_rf_rdata0_data <= 32'b0;
+				ID_EXE_rf_rdata1_data <= 32'b0;
+				ID_EXE_hi_data <= 32'b0;
+				ID_EXE_lo_data <= 32'b0;
+				ID_EXE_COP0_data_data <= 32'b0;
+				ID_EXE_rs_data <= 5'b0;
+				ID_EXE_rt_data <= 5'b0;
+				ID_EXE_rd_data <= 5'b0;
+				ID_EXE_Imm32_data <= 32'b0;
+				ID_EXE_PC_plus4_data <= 32'b0;
+				ID_EXE_if_fetch_exc_type_data <= 32'b0;
+				ID_EXE_Instruction_data <= 32'b0;
+				ID_EXE_tlb_addr_data <= 5'b0;
+				ID_EXE_tlb_wdata_data <= 90'b0;
+				ID_EXE_tlbr_data <= 1'b0;
+				ID_EXE_tlbp_data <= 1'b0;
+				ID_EXE_wtlb_data <= 1'b0;
+				ID_EXE_asid_data <= 8'b0;
+				ID_EXE_eret_data <= 1'b0;
+				ID_EXE_instMiss_data <= 1'b0;
+				ID_EXE_instValid_data <= 1'b0;
+				end
+			else
+				begin
+				ID_EXE_is_div_data <= is_div;
+				ID_EXE_is_sign_div_data <= is_sign_div;
+				ID_EXE_cu_inst_exc_type_data <= cu_inst_exc_type;
+				ID_EXE_is_delayslot_data <= is_delayslot;
+				ID_EXE_wcp0_data <= wcp0;
+				ID_EXE_store_type_data <= store_type;
+				ID_EXE_load_type_data <= load_type;
+				ID_EXE_hi_i_sel_data <= hi_i_sel;
+				ID_EXE_lo_i_sel_data <= lo_i_sel;
+				ID_EXE_whi_data <= whi;
+				ID_EXE_wlo_data <= wlo;
+				ID_EXE_wreg_data <= wreg; 
+				ID_EXE_result_sel_data <= result_sel;
+				ID_EXE_wmem_data <= wmem;
+				ID_EXE_aluop_data <= aluop;
+				ID_EXE_alusrc0_sel_data <= alusrc0_sel;
+				ID_EXE_alusrc1_sel_data <= alusrc1_sel;
+				ID_EXE_regdst_data <= regdst;
+				ID_EXE_rf_rdata0_data <= rf_rdata0;
+				ID_EXE_rf_rdata1_data <= rf_rdata1;
+				ID_EXE_hi_data <= hi;
+				ID_EXE_lo_data <= lo;
+				ID_EXE_COP0_data_data <= COP0_data;
+				ID_EXE_rs_data <= rs;
+				ID_EXE_rt_data <= rt;
+				ID_EXE_rd_data <= rd;
+				ID_EXE_Imm32_data <= Imm32;
+				ID_EXE_PC_plus4_data <= PC_plus4;
+				ID_EXE_if_fetch_exc_type_data <= if_fetch_exc_type;
+				ID_EXE_Instruction_data <= instruction;
+				ID_EXE_tlb_addr_data <= tlb_addr;
+				ID_EXE_tlb_wdata_data <= tlb_wdata;
+				ID_EXE_tlbr_data <= tlbr;
+				ID_EXE_tlbp_data <= tlbp;
+				ID_EXE_wtlb_data <= wtlb;
+				ID_EXE_asid_data <= asid;
+				ID_EXE_eret_data <= eret;
+				ID_EXE_instMiss_data <= instMiss;
+				ID_EXE_instValid_data <= instValid;
+				end
+			end
+		end
+	/*
 	// ID_EXE_REG
 	ID_EXE_REG m_ID_EXE_REG(
 		.clk(clk), 
@@ -194,4 +327,5 @@ module ID_EXE_REG_PACKED(clk, rst_n, stall0, irq, clr0, clr1, clr2, is_div, ID_E
 		.instValid(instValid),
 		.ID_EXE_instValid_data(ID_EXE_instValid_data)
 	);
+	*/
 endmodule

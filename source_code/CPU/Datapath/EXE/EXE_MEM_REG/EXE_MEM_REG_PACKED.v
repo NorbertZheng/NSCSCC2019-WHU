@@ -77,20 +77,124 @@ module EXE_MEM_REG_PACKED(clk, rst_n, stall0, stall1, irq, clr, exc_type, EXE_ME
 	input [31:0] rf_rdata0_fw, rf_rdata1_fw, ALU_result, PC_plus4, instruction, exc_type;
 	input [63:0] MulDiv_result;
 	input [89:0] tlbr_result;
-	output EXE_MEM_is_delayslot_data, EXE_MEM_wcp0_data, EXE_MEM_hi_i_sel_data, EXE_MEM_lo_i_sel_data, EXE_MEM_whi_data, EXE_MEM_wlo_data, EXE_MEM_wreg_data;
-	output EXE_MEM_wmem_data, EXE_MEM_SC_result_sel_data, EXE_MEM_tlbr_data, EXE_MEM_tlbp_data, EXE_MEM_eret_data, EXE_MEM_instMiss_data, EXE_MEM_instValid_data;
-	output [1:0] EXE_MEM_result_sel_data;
-	output [3:0] EXE_MEM_store_type_data, EXE_MEM_load_type_data, EXE_MEM_byte_valid_data;
-	output [4:0] EXE_MEM_regdst_data;
-	output [5:0] EXE_MEM_int_i_data;
-	output [7:0] EXE_MEM_asid_data;
-	output [31:0] EXE_MEM_rf_rdata0_fw_data, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_ALU_result_data, EXE_MEM_PC_plus4_data, EXE_MEM_Instruction_data
+	output reg EXE_MEM_is_delayslot_data, EXE_MEM_wcp0_data, EXE_MEM_hi_i_sel_data, EXE_MEM_lo_i_sel_data, EXE_MEM_whi_data, EXE_MEM_wlo_data, EXE_MEM_wreg_data;
+	output reg EXE_MEM_wmem_data, EXE_MEM_SC_result_sel_data, EXE_MEM_tlbr_data, EXE_MEM_tlbp_data, EXE_MEM_eret_data, EXE_MEM_instMiss_data, EXE_MEM_instValid_data;
+	output reg [1:0] EXE_MEM_result_sel_data;
+	output reg [3:0] EXE_MEM_store_type_data, EXE_MEM_load_type_data;
+	(* max_fanout = "32" *)output reg [3:0] EXE_MEM_byte_valid_data;
+	output reg [4:0] EXE_MEM_regdst_data;
+	output reg [5:0] EXE_MEM_int_i_data;
+	output reg [7:0] EXE_MEM_asid_data;
+	output reg [31:0] EXE_MEM_rf_rdata0_fw_data, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_ALU_result_data, EXE_MEM_PC_plus4_data, EXE_MEM_Instruction_data
 				, EXE_MEM_exc_type_data;
-	output [63:0] EXE_MEM_MulDiv_result_data;
-	output [89:0] EXE_MEM_tlbr_result_data;
+	output reg [63:0] EXE_MEM_MulDiv_result_data;
+	output reg [89:0] EXE_MEM_tlbr_result_data;
 	
 	wire EXE_MEM_Stall = (stall0 || stall1) && ~irq;
 	wire EXE_MEM_Flush = irq || clr;
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			EXE_MEM_exc_type_data <= 32'b0;
+			EXE_MEM_is_delayslot_data <= 1'b0;
+			EXE_MEM_int_i_data <= 6'b0;
+			EXE_MEM_wcp0_data <= 1'b0;
+			EXE_MEM_store_type_data <= 4'b0;
+			EXE_MEM_load_type_data <= 4'b0;
+			EXE_MEM_hi_i_sel_data <= 1'b0;
+			EXE_MEM_lo_i_sel_data <= 1'b0;
+			EXE_MEM_whi_data <= 1'b0;
+			EXE_MEM_wlo_data <= 1'b0;
+			EXE_MEM_wreg_data <= 1'b0;
+			EXE_MEM_result_sel_data <= 2'b0;
+			EXE_MEM_wmem_data <= 1'b0;
+			EXE_MEM_rf_rdata0_fw_data <= 32'b0;
+			EXE_MEM_rf_rdata1_fw_data <= 32'b0;
+			EXE_MEM_ALU_result_data <= 32'b0;
+			EXE_MEM_SC_result_sel_data <= 1'b0;
+			EXE_MEM_byte_valid_data <= 4'b0;
+			EXE_MEM_MulDiv_result_data <= 64'b0;
+			EXE_MEM_regdst_data <= 5'b0;
+			EXE_MEM_PC_plus4_data <= 32'b0;
+			EXE_MEM_tlbr_data <= 1'b0;
+			EXE_MEM_tlbp_data <= 1'b0;
+			EXE_MEM_tlbr_result_data <= 90'b0;
+			EXE_MEM_asid_data <= 8'b0;
+			EXE_MEM_eret_data <= 1'b0;
+			EXE_MEM_instMiss_data <= 1'b0;
+			EXE_MEM_instValid_data <= 1'b0;
+			EXE_MEM_Instruction_data <= 32'b0;
+			end
+		else if(!EXE_MEM_Stall)
+			begin
+			if(EXE_MEM_Flush)
+				begin
+				EXE_MEM_exc_type_data <= 32'b0;
+				EXE_MEM_is_delayslot_data <= 1'b0;
+				EXE_MEM_int_i_data <= 6'b0;
+				EXE_MEM_wcp0_data <= 1'b0;
+				EXE_MEM_store_type_data <= 4'b0;
+				EXE_MEM_load_type_data <= 4'b0;
+				EXE_MEM_hi_i_sel_data <= 1'b0;
+				EXE_MEM_lo_i_sel_data <= 1'b0;
+				EXE_MEM_whi_data <= 1'b0;
+				EXE_MEM_wlo_data <= 1'b0;
+				EXE_MEM_wreg_data <= 1'b0;
+				EXE_MEM_result_sel_data <= 2'b0;
+				EXE_MEM_wmem_data <= 1'b0;
+				EXE_MEM_rf_rdata0_fw_data <= 32'b0;
+				EXE_MEM_rf_rdata1_fw_data <= 32'b0;
+				EXE_MEM_ALU_result_data <= 32'b0;
+				EXE_MEM_SC_result_sel_data <= 1'b0;
+				EXE_MEM_byte_valid_data <= 4'b0;
+				EXE_MEM_MulDiv_result_data <= 64'b0;
+				EXE_MEM_regdst_data <= 5'b0;
+				EXE_MEM_PC_plus4_data <= 32'b0;
+				EXE_MEM_tlbr_data <= 1'b0;
+				EXE_MEM_tlbp_data <= 1'b0;
+				EXE_MEM_tlbr_result_data <= 90'b0;
+				EXE_MEM_asid_data <= 8'b0;
+				EXE_MEM_eret_data <= 1'b0;
+				EXE_MEM_instMiss_data <= 1'b0;
+				EXE_MEM_instValid_data <= 1'b0;
+				EXE_MEM_Instruction_data <= 32'b0;
+				end
+			else
+				begin
+				EXE_MEM_exc_type_data <= exc_type;
+				EXE_MEM_is_delayslot_data <= is_delayslot;
+				EXE_MEM_int_i_data <= int_i;
+				EXE_MEM_wcp0_data <= wcp0;
+				EXE_MEM_store_type_data <= store_type;
+				EXE_MEM_load_type_data <= load_type;
+				EXE_MEM_hi_i_sel_data <= hi_i_sel;
+				EXE_MEM_lo_i_sel_data <= lo_i_sel;
+				EXE_MEM_whi_data <= whi;
+				EXE_MEM_wlo_data <= wlo;
+				EXE_MEM_wreg_data <= wreg;
+				EXE_MEM_result_sel_data <= result_sel;
+				EXE_MEM_wmem_data <= wmem;
+				EXE_MEM_rf_rdata0_fw_data <= rf_rdata0_fw;
+				EXE_MEM_rf_rdata1_fw_data <= rf_rdata1_fw;
+				EXE_MEM_ALU_result_data <= ALU_result;
+				EXE_MEM_SC_result_sel_data <= SC_result_sel;
+				EXE_MEM_byte_valid_data <= byte_valid;
+				EXE_MEM_MulDiv_result_data <= MulDiv_result;
+				EXE_MEM_regdst_data <= regdst;
+				EXE_MEM_PC_plus4_data <= PC_plus4;
+				EXE_MEM_tlbr_data <= tlbr;
+				EXE_MEM_tlbp_data <= tlbp;
+				EXE_MEM_tlbr_result_data <= tlbr_result;
+				EXE_MEM_asid_data <= asid;
+				EXE_MEM_eret_data <= eret;
+				EXE_MEM_instMiss_data <= instMiss;
+				EXE_MEM_instValid_data <= instValid;
+				EXE_MEM_Instruction_data <= instruction;
+				end
+			end
+		end
+	/*
 	// EXE_MEM_REG
 	EXE_MEM_REG m_EXE_MEM_REG(
 		.clk(clk), 
@@ -157,4 +261,5 @@ module EXE_MEM_REG_PACKED(clk, rst_n, stall0, stall1, irq, clr, exc_type, EXE_ME
 		.instruction(instruction),
 		.EXE_MEM_Instruction_data(EXE_MEM_Instruction_data)
 	);
+	*/
 endmodule

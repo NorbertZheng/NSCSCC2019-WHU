@@ -57,18 +57,19 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 	input [31:0] rf_rdata0_fw, rf_rdata1_fw, ALU_result, mem_rdata, PC_plus4, instruction;
 	input [63:0] MulDiv_result;
 	input [89:0] tlbr_result;
-	output MEM_WB_wcp0_data, MEM_WB_hi_i_sel_data, MEM_WB_lo_i_sel_data, MEM_WB_whi_data, MEM_WB_wlo_data, MEM_WB_wreg_data, MEM_WB_SC_result_sel_data;
-	output MEM_WB_tlbr_data, MEM_WB_tlbp_data;
-	output [1:0] MEM_WB_result_sel_data;
-	output [3:0] MEM_WB_load_type_data, MEM_WB_byte_valid_data;
-	output [4:0] MEM_WB_regdst_data;
-	output [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data, MEM_WB_PC_plus4_data, MEM_WB_Instruction_data;
-	output [63:0] MEM_WB_MulDiv_result_data;
-	output [89:0] MEM_WB_tlbr_result_data;
+	output reg MEM_WB_wcp0_data, MEM_WB_hi_i_sel_data, MEM_WB_lo_i_sel_data, MEM_WB_whi_data, MEM_WB_wlo_data, MEM_WB_wreg_data, MEM_WB_SC_result_sel_data;
+	output reg MEM_WB_tlbr_data, MEM_WB_tlbp_data;
+	output reg [1:0] MEM_WB_result_sel_data;
+	output reg [3:0] MEM_WB_load_type_data;
+	(* max_fanout = "32" *)output reg [3:0] MEM_WB_byte_valid_data;
+	output reg [4:0] MEM_WB_regdst_data;
+	output reg [31:0] MEM_WB_rf_rdata0_fw_data, MEM_WB_rf_rdata1_fw_data, MEM_WB_ALU_result_data, MEM_WB_mem_rdata_data, MEM_WB_PC_plus4_data, MEM_WB_Instruction_data;
+	output reg [63:0] MEM_WB_MulDiv_result_data;
+	output reg [89:0] MEM_WB_tlbr_result_data;
 	
 	wire MEM_WB_Stall = stall0 & ~irq;
 	wire MEM_WB_Flush = irq;
-	/*always@(posedge clk or negedge rst_n)
+	always@(posedge clk or negedge rst_n)
 		begin
 		if(!rst_n)
 			begin
@@ -88,6 +89,9 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 			MEM_WB_MulDiv_result_data <= 64'b0;
 			MEM_WB_regdst_data <= 5'b0;
 			MEM_WB_mem_rdata_data <= 32'b0;
+			MEM_WB_tlbr_data <= 1'b0;
+			MEM_WB_tlbp_data <= 1'b0;
+			MEM_WB_tlbr_result_data <= 90'b0;
 			MEM_WB_PC_plus4_data <= 32'b0;
 			MEM_WB_Instruction_data <= 32'b0;
 			end
@@ -111,6 +115,9 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 				MEM_WB_MulDiv_result_data <= 64'b0;
 				MEM_WB_regdst_data <= 5'b0;
 				MEM_WB_mem_rdata_data <= 32'b0;
+				MEM_WB_tlbr_data <= 1'b0;
+				MEM_WB_tlbp_data <= 1'b0;
+				MEM_WB_tlbr_result_data <= 90'b0;
 				MEM_WB_PC_plus4_data <= 32'b0;
 				MEM_WB_Instruction_data <= 32'b0;
 				end
@@ -132,11 +139,15 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 				MEM_WB_MulDiv_result_data <= MulDiv_result;
 				MEM_WB_regdst_data <= regdst;
 				MEM_WB_mem_rdata_data <= mem_rdata;
+				MEM_WB_tlbr_data <= tlbr;
+				MEM_WB_tlbp_data <= tlbp;
+				MEM_WB_tlbr_result_data <= tlbr_result;
 				MEM_WB_PC_plus4_data <= PC_plus4;
 				MEM_WB_Instruction_data <= instruction;
 				end
 			end
-		end*/
+		end
+	/*
 	// MEM_WB_REG
 	MEM_WB_REG m_MEM_WB_REG(
 		.clk(clk), 
@@ -187,4 +198,5 @@ module MEM_WB_REG_PACKED(clk, rst_n, stall0, irq, wcp0, MEM_WB_wcp0_data, load_t
 		.instruction(instruction),
 		.MEM_WB_Instruction_data(MEM_WB_Instruction_data)
 	);
+	*/
 endmodule

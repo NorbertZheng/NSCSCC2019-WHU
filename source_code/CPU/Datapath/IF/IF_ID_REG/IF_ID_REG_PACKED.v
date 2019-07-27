@@ -30,13 +30,49 @@ module IF_ID_REG_PACKED(clk, rst_n, stall0, stall1, stall2, stall3, irq, PC_plus
 	input is_delayslot, instMiss, instValid;
 	input [7:0] asid;
 	input [31:0] PC_plus4, Instruction, if_fetch_exc_type;
-	output IF_ID_is_delayslot_data, IF_ID_instMiss_data, IF_ID_instValid_data;
-	output [7:0] IF_ID_asid_data;
-	output [31:0] IF_ID_PC_plus4_data, IF_ID_Instruction_data, IF_ID_if_fetch_exc_type_data;
+	output reg IF_ID_is_delayslot_data, IF_ID_instMiss_data, IF_ID_instValid_data;
+	output reg [7:0] IF_ID_asid_data;
+	output reg [31:0] IF_ID_PC_plus4_data, IF_ID_Instruction_data, IF_ID_if_fetch_exc_type_data;
 	
 	wire IF_ID_Flush = irq;
 	wire IF_ID_Stall = (stall0 || stall1 || stall2 || stall3) & ~irq;		// irq 的优先级更高，直接 flush 掉
-	
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			IF_ID_PC_plus4_data <= 32'b0;
+			IF_ID_Instruction_data <= 32'b0;
+			IF_ID_is_delayslot_data <= 1'b0;
+			IF_ID_if_fetch_exc_type_data <= 32'b0;
+			IF_ID_asid_data <= 8'b0;
+			IF_ID_instMiss_data <= 1'b0;
+			IF_ID_instValid_data <= 1'b0;
+			end
+		else if(!IF_ID_Stall)
+			begin
+			if(IF_ID_Flush)
+				begin
+				IF_ID_PC_plus4_data <= 32'b0;
+				IF_ID_Instruction_data <= 32'b0;
+				IF_ID_is_delayslot_data <= 1'b0;
+				IF_ID_if_fetch_exc_type_data <= 32'b0;
+				IF_ID_asid_data <= 8'b0;
+				IF_ID_instMiss_data <= 1'b0;
+				IF_ID_instValid_data <= 1'b0;
+				end
+			else
+				begin
+				IF_ID_PC_plus4_data <= PC_plus4;
+				IF_ID_Instruction_data <= Instruction;
+				IF_ID_is_delayslot_data <= is_delayslot;
+				IF_ID_if_fetch_exc_type_data <= if_fetch_exc_type;
+				IF_ID_asid_data <= asid;
+				IF_ID_instMiss_data <= instMiss;
+				IF_ID_instValid_data <= instValid;
+				end
+			end
+		end
+	/*
 	// IF_ID_REG
 	IF_ID_REG m_IF_ID_REG(
 		.clk(clk), 
@@ -58,4 +94,5 @@ module IF_ID_REG_PACKED(clk, rst_n, stall0, stall1, stall2, stall3, irq, PC_plus
 		.instValid(instValid),
 		.IF_ID_instValid_data(IF_ID_instValid_data)
 	);
+	*/
 endmodule
