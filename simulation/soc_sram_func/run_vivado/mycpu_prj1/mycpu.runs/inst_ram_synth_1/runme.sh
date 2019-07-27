@@ -11,9 +11,9 @@ echo "Please update the PATH and LD_LIBRARY_PATH variables below, before executi
 exit
 
 if [ -z "$PATH" ]; then
-  PATH=D:/SoftWare/Xilinx/Vivado/SDK/2018.3/bin;D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/ids_lite/ISE/bin/nt64;D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/ids_lite/ISE/lib/nt64:D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/bin
+  PATH=C:/Xilinx/SDK/2018.3/bin;C:/Xilinx/Vivado/2018.3/ids_lite/ISE/bin/nt64;C:/Xilinx/Vivado/2018.3/ids_lite/ISE/lib/nt64:C:/Xilinx/Vivado/2018.3/bin
 else
-  PATH=D:/SoftWare/Xilinx/Vivado/SDK/2018.3/bin;D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/ids_lite/ISE/bin/nt64;D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/ids_lite/ISE/lib/nt64:D:/SoftWare/Xilinx/Vivado/Vivado/2018.3/bin:$PATH
+  PATH=C:/Xilinx/SDK/2018.3/bin;C:/Xilinx/Vivado/2018.3/ids_lite/ISE/bin/nt64;C:/Xilinx/Vivado/2018.3/ids_lite/ISE/lib/nt64:C:/Xilinx/Vivado/2018.3/bin:$PATH
 fi
 export PATH
 
@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/inst_ram_synth_1'
+HD_PWD='E:/Project/NSCSCC/NSCSCC2019-WHU/simulation/soc_sram_func/run_vivado/mycpu_prj1/mycpu.runs/inst_ram_synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
