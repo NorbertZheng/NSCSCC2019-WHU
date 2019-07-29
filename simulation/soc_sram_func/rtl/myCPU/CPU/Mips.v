@@ -590,7 +590,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.virtual_sram_addr(EXE_MEM_ALU_result_data), 
 		.physical_sram_addr(physical_sram_addr)
 	);
-	/*always@(*)
+	always@(*)
 		begin
 		if(EXE_MEM_load_type_data != 4'd0)
 			begin
@@ -610,7 +610,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 					, EXE_MEM_wmem_data && !MEM_store_exc, EXE_MEM_byte_valid_data);
 			$display();
 			end
-		end*/
+		end
 	
 	// modifyStoreData
 	wire [31:0] mem_wdata;
@@ -714,11 +714,11 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.byte_valid(MEM_WB_byte_valid_data), 
 		.mem_rdata_o(modifiedLoadData)
 	);
-	/*always@(*)
+	always@(*)
 		begin
 		$display("MEM_WB_mem_rdata_data: 0x%8h, modifiedLoadData: 0x%8h, MEM_WB_load_type_data: 0d%2d"
 				, MEM_WB_mem_rdata_data, modifiedLoadData, MEM_WB_load_type_data);
-		end*/
+		end
 	/*always@(*)
 		begin
 		$display("MEM_WB_mem_rdata_data: 0x%8h, MEM_WB_load_type_data: 0d%2d"

@@ -1,6 +1,6 @@
-webtalk_init -webtalk_dir C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/
+webtalk_init -webtalk_dir C:/Users/Think/Desktop/test2/simulation/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/
 webtalk_register_client -client project
-webtalk_add_data -client project -key date_generated -value "Fri Jul 19 02:04:42 2019" -context "software_version_and_target_device"
+webtalk_add_data -client project -key date_generated -value "Mon Jul 29 02:06:15 2019" -context "software_version_and_target_device"
 webtalk_add_data -client project -key product_version -value "XSIM v2018.3 (64-bit)" -context "software_version_and_target_device"
 webtalk_add_data -client project -key build_version -value "2405991" -context "software_version_and_target_device"
 webtalk_add_data -client project -key os_platform -value "WIN64" -context "software_version_and_target_device"
@@ -14,7 +14,7 @@ webtalk_add_data -client project -key target_package -value "not_applicable" -co
 webtalk_add_data -client project -key target_speed -value "not_applicable" -context "software_version_and_target_device"
 webtalk_add_data -client project -key random_id -value "b0e8c106-ac71-4c4f-90b1-471000bf06b1" -context "software_version_and_target_device"
 webtalk_add_data -client project -key project_id -value "8de8692e6f7648c084645fde77f29b66" -context "software_version_and_target_device"
-webtalk_add_data -client project -key project_iteration -value "47" -context "software_version_and_target_device"
+webtalk_add_data -client project -key project_iteration -value "54" -context "software_version_and_target_device"
 webtalk_add_data -client project -key os_name -value "Microsoft Windows 8 or later , 64-bit" -context "user_environment"
 webtalk_add_data -client project -key os_release -value "major release  (build 9200)" -context "user_environment"
 webtalk_add_data -client project -key cpu_name -value "Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz" -context "user_environment"
@@ -30,13 +30,13 @@ webtalk_add_data -client xsim -key SDFModeling -value "false" -context "xsim\\co
 webtalk_add_data -client xsim -key HWCosim -value "false" -context "xsim\\command_line_options"
 webtalk_add_data -client xsim -key DPI_Used -value "false" -context "xsim\\command_line_options"
 webtalk_add_data -client xsim -key Debug -value "typical" -context "xsim\\command_line_options"
-webtalk_add_data -client xsim -key Simulation_Image_Code -value "1722 KB" -context "xsim\\usage"
+webtalk_add_data -client xsim -key Simulation_Image_Code -value "1734 KB" -context "xsim\\usage"
 webtalk_add_data -client xsim -key Simulation_Image_Data -value "873 KB" -context "xsim\\usage"
 webtalk_add_data -client xsim -key Total_Nets -value "0" -context "xsim\\usage"
-webtalk_add_data -client xsim -key Total_Processes -value "7634" -context "xsim\\usage"
-webtalk_add_data -client xsim -key Total_Instances -value "731" -context "xsim\\usage"
+webtalk_add_data -client xsim -key Total_Processes -value "7621" -context "xsim\\usage"
+webtalk_add_data -client xsim -key Total_Instances -value "713" -context "xsim\\usage"
 webtalk_add_data -client xsim -key Xilinx_HDL_Libraries_Used -value "secureip unimacro_ver unisims_ver " -context "xsim\\usage"
-webtalk_add_data -client xsim -key Compiler_Time -value "10.36_sec" -context "xsim\\usage"
-webtalk_add_data -client xsim -key Compiler_Memory -value "347636_KB" -context "xsim\\usage"
-webtalk_transmit -clientid 2565520470 -regid "" -xml C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.xml -html C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.html -wdm C:/Users/Think/Desktop/func_test_v0.01/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.wdm -intro "<H3>XSIM Usage Report</H3><BR>"
+webtalk_add_data -client xsim -key Compiler_Time -value "9.86_sec" -context "xsim\\usage"
+webtalk_add_data -client xsim -key Compiler_Memory -value "346848_KB" -context "xsim\\usage"
+webtalk_transmit -clientid 2318733691 -regid "" -xml C:/Users/Think/Desktop/test2/simulation/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.xml -html C:/Users/Think/Desktop/test2/simulation/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.html -wdm C:/Users/Think/Desktop/test2/simulation/soc_sram_func/run_vivado/mycpu_prj1/mycpu.sim/sim_1/behav/xsim/xsim.dir/tb_top_behav/webtalk/usage_statistics_ext_xsim.wdm -intro "<H3>XSIM Usage Report</H3><BR>"
 webtalk_terminate

@@ -4,7 +4,8 @@ module mycpu_top(clk, resetn, int, inst_sram_en, inst_sram_wen, inst_sram_addr, 
 	output inst_sram_en, inst_sram_wen;
 	output [31:0] inst_sram_addr, inst_sram_wdata;
 	input [31:0] inst_sram_rdata;
-	output data_sram_en, data_sram_wen;
+	output data_sram_en;
+	output [3:0] data_sram_wen;
 	output [31:0] data_sram_addr, data_sram_wdata;
 	input [31:0] data_sram_rdata;
 	output [31:0] debug_wb_pc, debug_wb_rf_wdata, debug_wb_inst;

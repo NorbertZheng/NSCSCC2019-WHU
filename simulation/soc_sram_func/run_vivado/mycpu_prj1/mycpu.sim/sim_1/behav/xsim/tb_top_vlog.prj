@@ -17,6 +17,7 @@ verilog xil_defaultlib  \
 "../../../../../../rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG.v" \
 "../../../../../../rtl/myCPU/CPU/Datapath/IF/IF_ID_REG/IF_ID_REG_PACKED.v" \
 "../../../../../../rtl/myCPU/CPU/Datapath/MEM/MEM_WB_REG_PACKED.v" \
+"../../../../../../rtl/myCPU/CPU/Datapath/MEM/MMU.v" \
 "../../../../../../rtl/myCPU/CPU/Mips.v" \
 "../../../../../../rtl/myCPU/CPU/Generatic/Mux.v" \
 "../../../../../../rtl/myCPU/CPU/Datapath/IF/PC/PC.v" \
