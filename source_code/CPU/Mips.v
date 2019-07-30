@@ -1,44 +1,142 @@
 `include "Define/LS_Define.v"
-module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout, ram_addr, ram_byte_valid, int_i, debug_wb_pc, debug_wb_rf_wen, debug_wb_rf_wnum, debug_wb_rf_wdata, debug_wb_inst);
-	/*********************
-	 *			Mips
-	 *input:
-	 *	clk					: clock
-	 *	rst_n				: negetive reset signal
-	 *	inst_data[31:0]		: instruction
-	 *	ram_din[31:0]		: ram read data
-	 *	int_i[5:0]			: interrupt signal
-	 *output:
-	 *	inst_addr[31:0]		: PC
-	 *	ram_en				: ram enable signal
-	 *	ram_we[3:0]			: write ram
-	 *	ram_dout[31:0]		: ram write data
-	 *	ram_addr[31:0]		: ram access addr
-	 *	ram_byte_valid[3:0]	: ram byte_valid signal
-	 *********************/
-	input clk, rst_n;
-	// interrupt signal
-	input [5:0] int_i;
-	// instruction
-	input [31:0] inst_data;
-	output [31:0] inst_addr;
-	// ram access
-	input [31:0] ram_din;
-	output ram_en;
-	output [3:0] ram_we;
-	output [3:0] ram_byte_valid;
-	output [31:0] ram_addr, ram_dout;
-	// for debug
-	output [31:0] debug_wb_pc, debug_wb_rf_wdata, debug_wb_inst;
-	output [3:0] debug_wb_rf_wen;
-	output [4:0] debug_wb_rf_wnum;
+module Mips(
+	input		[5 :0]	int_i				,		// high active
 	
-	wire [31:0] mem_rdata = ram_din;
+	input				clk					,
+	input				rst_n				,		// low active
+	
+	output		[3 :0]	arid				,
+	output		[31:0]	araddr				,
+	output		[3 :0]	arlen				,
+	output		[2 :0]	arsize				,
+	output		[1 :0]	arburst				,
+	output		[1 :0]	arlock				,
+	output		[3 :0]	arcache				,
+	output		[2 :0]	arprot				,
+	output				arvalid				,
+	input				arready				,
+	
+	input		[3 :0]	rid					,
+	input		[31:0]	rdata				,
+	input		[1 :0]	rresp				,
+	input				rlast				,
+	input				rvalid				,
+	output				rready				,
+
+	output		[3 :0]	awid				,
+	output		[31:0]	awaddr				,
+	output		[3 :0]	awlen				,
+	output		[2 :0]	awsize				,
+	output		[1 :0]	awburst				,
+	output		[1 :0]	awlock				,
+	output		[3 :0]	awcache				,
+	output		[2 :0]	awprot				,
+	output				awvalid				,
+	input				awready				,
+
+	output		[3 :0]	wid					,
+	output		[31:0]	wdata				,
+	output		[3 :0]	wstrb				,
+	output				wlast				,
+	output				wvalid				,
+	input				wready				,
+
+	input		[3 :0]	bid					,
+	input		[1 :0]	bresp				,
+	input				bvalid				,
+	output				bready				,
+
+	//debug interface
+	output		[31:0]	debug_wb_pc			,
+	output		[3 :0]	debug_wb_rf_wen		,
+	output		[4 :0]	debug_wb_rf_wnum	,
+	output		[31:0]	debug_wb_rf_wdata	
+);
+	always@(*)
+		begin
+		$display("rid: 0x%1h, rdata: 0x%8h, rresp: 0b%2b, rlast: 0b%1b, rvalid: 0b%1b, rready: 0b%1b"
+				, rid, rdata, rresp, rlast, rvalid, rready);
+		end
+	// AXI_Cache_Load_Bus
+	wire m0_req, m0_grnt, m0_arvalid, m0_arready, m0_rlast, m0_rvalid, m0_rready, m1_req, m1_grnt, m1_arvalid, m1_arready, m1_rlast, m1_rvalid, m1_rready;
+	wire [1 :0] m0_arburst, m0_arlock, m0_rresp, m1_arburst, m1_arlock, m1_rresp;
+	wire [2 :0] m0_arsize, m0_arprot, m1_arsize, m1_arprot;
+	wire [3 :0] m0_arid, m0_arlen, m0_arcache, m0_rid, m1_arid, m1_arlen, m1_arcache, m1_rid;
+	wire [31:0] m0_araddr, m0_rdata, m1_araddr, m1_rdata;
+	AXI_Cache_Load_Bus m_AXI_Cache_Load_Bus(
+		.clk(clk),
+		.rst_n(rst_n),
+		// AXI read channel signals
+		// read address channel signals
+		.arid(arid),
+		.araddr(araddr),
+		.arlen(arlen),
+		.arsize(arsize),
+		.arburst(arburst),
+		.arlock(arlock),
+		.arcache(arcache),
+		.arprot(arprot),
+		.arvalid(arvalid),
+		.arready(arready),
+		// read data channel signals           
+		.rid(rid),
+		.rdata(rdata),
+		.rresp(rresp),
+		.rlast(rlast),
+		.rvalid(rvalid),
+		.rready(rready),
+	
+		// master0
+		.m0_req(m0_req),
+		.m0_grnt(m0_grnt),
+		// master0 read address signals
+		.m0_arid(m0_arid),
+		.m0_araddr(m0_araddr),
+		.m0_arlen(m0_arlen),
+		.m0_arsize(m0_arsize),
+		.m0_arburst(m0_arburst),
+		.m0_arlock(m0_arlock),
+		.m0_arcache(m0_arcache),
+		.m0_arprot(m0_arprot),
+		.m0_arvalid(m0_arvalid),
+		.m0_arready(m0_arready),
+		// master0 read data signals
+		.m0_rid(m0_rid),
+		.m0_rdata(m0_rdata),
+		.m0_rresp(m0_rresp),
+		.m0_rlast(m0_rlast),
+		.m0_rvalid(m0_rvalid),
+		.m0_rready(m0_rready),
+	
+		// master1
+		.m1_req(m1_req),
+		.m1_grnt(m1_grnt),
+		// master1 read address signals
+		.m1_arid(m1_arid),
+		.m1_araddr(m1_araddr),
+		.m1_arlen(m1_arlen),
+		.m1_arsize(m1_arsize),
+		.m1_arburst(m1_arburst),
+		.m1_arlock(m1_arlock),
+		.m1_arcache(m1_arcache),
+		.m1_arprot(m1_arprot),
+		.m1_arvalid(m1_arvalid),
+		.m1_arready(m1_arready),
+		// master1 read data signals
+		.m1_rid(m1_rid),
+		.m1_rdata(m1_rdata),
+		.m1_rresp(m1_rresp),
+		.m1_rlast(m1_rlast),
+		.m1_rvalid(m1_rvalid),
+		.m1_rready(m1_rready)
+	);
+	
+	wire [31:0] mem_rdata;
 	/**************************/
 	/*           IF           */
 	/**************************/
 	// PC
-	wire PC_target_sel, exc_en, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div;
+	wire PC_target_sel, exc_en, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_ICache, stcl_DCache;
 	assign stcl_f = 1'b0;			// temp for test
 	assign stcl_ram_cache = 1'b0;	// temp for test
 	wire [31:0] if_fetch_exc_type, PC_branch, PC_exc, PC_o, PC_plus4;
@@ -47,8 +145,8 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.rst_n(rst_n), 
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
-		.stall2(stcl_f), 
-		.stall3(stcl_ram_cache | stcl_div), 
+		.stall2(stcl_f | stcl_ICache), 
+		.stall3(stcl_ram_cache | stcl_div | stcl_DCache), 
 		.PC_exc_i(PC_exc), 
 		.PC_target_i(PC_branch), 
 		.PC_exc_sel(exc_en), 
@@ -57,6 +155,73 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.PC_plus4(PC_plus4), 
 		.if_fetch_exc_type(if_fetch_exc_type)
 	);
+	always@(*)
+		begin
+		$display("stcl_ICache: 0b%1b, exc_en: 0b%1b, PC_o: 0x%8h"
+				, stcl_ICache, exc_en, PC_o);
+		end
+	
+	// ICache
+	wire ICache_grnt, ICache_req, ICache_arvalid, ICache_arready, ICache_rlast, ICache_rvalid, ICache_rready;
+	wire [1:0] ICache_arburst, ICache_arlock, ICache_rresp;
+	wire [2:0] ICache_arsize, ICache_arprot;
+	wire [3:0] ICache_arid, ICache_arlen, ICache_arcache, ICache_rid;
+	wire [31:0] ICache_araddr, ICache_rdata, inst_data;
+	wire [31:0] physical_inst_addr;
+	ICache m_ICache(
+		.clk(~clk),
+		.rst_n(rst_n),
+		.ICache_grnt(ICache_grnt),
+		.ICache_req(ICache_req),
+		.ICache_arid(ICache_arid),
+		.ICache_araddr(ICache_araddr),
+		.ICache_arlen(ICache_arlen),
+		.ICache_arsize(ICache_arsize),
+		.ICache_arburst(ICache_arburst),
+		.ICache_arlock(ICache_arlock),
+		.ICache_arcache(ICache_arcache),
+		.ICache_arprot(ICache_arprot),
+		.ICache_arvalid(ICache_arvalid),
+		.ICache_arready(ICache_arready),
+		.ICache_rid(ICache_rid),
+		.ICache_rdata(ICache_rdata),
+		.ICache_rresp(ICache_rresp),
+		.ICache_rlast(ICache_rlast),
+		.ICache_rvalid(ICache_rvalid),
+		.ICache_rready(ICache_rready),
+		.ICache_cpu_re(1'b1),
+		.ICache_cpu_addr(physical_inst_addr),
+		.ICache_cpu_rdata(inst_data),
+		.ICache_cpu_Stall(stcl_ICache)
+	);
+	assign ICache_grnt = m1_grnt;
+	assign m1_req = ICache_req;
+	assign m1_arid = ICache_arid;
+	assign m1_araddr = ICache_araddr;
+	assign m1_arlen = ICache_arlen;
+	assign m1_arsize = ICache_arsize;
+	assign m1_arburst = ICache_arburst;
+	assign m1_arlock = ICache_arlock;
+	assign m1_arcache = ICache_arcache;
+	assign m1_arprot = ICache_arprot;
+	assign m1_arvalid = ICache_arvalid;
+	assign ICache_arready = m1_arready;
+	assign ICache_rid = m1_rid;
+	assign ICache_rdata = m1_rdata;
+	assign ICache_rresp = m1_rresp;
+	assign ICache_rlast = m1_rlast;
+	assign ICache_rvalid = m1_rvalid;
+	assign m1_rready = ICache_rready;
+	always@(*)
+		begin
+		$display("ICache_req: 0b%1b, ICache_grnt: 0b%1b", ICache_req, ICache_grnt);
+		$display("ICache_arid: 0x%1h, ICache_araddr: 0x%8h, ICache_arlen: 0x%1h, ICache_arsize: 0x%1h, ICache_arburst: 0x%1h"
+				, ICache_arid, ICache_araddr, ICache_arlen, ICache_arsize, ICache_arburst);
+		$display("ICache_arlock: 0x%1h, ICache_arcache: 0x%1h, ICache_arprot: 0x%1h, ICache_arvalid: 0b%1b, ICache_arready: 0b%1b"
+				, ICache_arlock, ICache_arcache, ICache_arprot, ICache_arvalid, ICache_arready);
+		$display("ICache_rid: 0x%1h, ICache_rdata: 0x%8h, ICache_rvalid: 0b%1b, ICache_rready: 0b%1b"
+				, ICache_rid, ICache_rdata, ICache_rvalid, ICache_rready);
+		end
 	
 	// IF_ID_REG_PACKED
 	wire is_delayslot, IF_ID_is_delayslot_data, instMiss, IF_ID_instMiss_data, instValid, IF_ID_instValid_data;
@@ -68,8 +233,9 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
 		.stall2(stcl_f), 
-		.stall3(stcl_ram_cache | stcl_div), 
+		.stall3(stcl_ram_cache | stcl_div | stcl_DCache), 
 		.irq(exc_en), 
+		.clr0(stcl_ICache),
 		.PC_plus4(PC_plus4), 
 		.IF_ID_PC_plus4_data(IF_ID_PC_plus4_data), 
 		.Instruction(inst_data), 
@@ -183,12 +349,13 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	);
 	
 	// COP0 
+	wire [31:0] physical_data_addr;
 	wire EXE_MEM_instMiss_data, dataMiss, EXE_MEM_instValid_data, dataValid, EXE_MEM_eret_data;
 	wire [3:0] EXE_MEM_load_type_data, EXE_MEM_store_type_data;
-	wire MEM_load_exc = ((EXE_MEM_load_type_data == `LOAD_LH || EXE_MEM_load_type_data == `LOAD_LHU) && ram_addr[0])||
-						((EXE_MEM_load_type_data == `LOAD_LL || EXE_MEM_load_type_data == `LOAD_LW) && ram_addr[1:0] != 2'b00);
-	wire MEM_store_exc = (EXE_MEM_store_type_data == `STORE_SH && ram_addr[0])||
-						((EXE_MEM_store_type_data == `STORE_SW || EXE_MEM_store_type_data == `STORE_SC) && ram_addr[1:0] != 2'b00);
+	wire MEM_load_exc = ((EXE_MEM_load_type_data == `LOAD_LH || EXE_MEM_load_type_data == `LOAD_LHU) && physical_data_addr[0])||
+						((EXE_MEM_load_type_data == `LOAD_LL || EXE_MEM_load_type_data == `LOAD_LW) && physical_data_addr[1:0] != 2'b00);
+	wire MEM_store_exc = (EXE_MEM_store_type_data == `STORE_SH && physical_data_addr[0])||
+						((EXE_MEM_store_type_data == `STORE_SW || EXE_MEM_store_type_data == `STORE_SC) && physical_data_addr[1:0] != 2'b00);
 	wire MEM_WB_wcp0_data, vic_is_delayslot, kseg0_uncached, MEM_WB_tlbp_data, MEM_WB_tlbr_data, user_mode;
 	wire [4:0] tlb_addr;
 	wire [5:0] EXE_MEM_int_i_data;
@@ -296,7 +463,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	ID_EXE_REG_PACKED m_ID_EXE_REG_PACKED(
 		.clk(clk), 
 		.rst_n(rst_n), 
-		.stall0(stcl_ram_cache | stcl_div), 
+		.stall0(stcl_ram_cache | stcl_div | stcl_DCache), 
 		.irq(exc_en), 
 		.clr0(stcl_lw), 
 		.clr1(stcl_jmp), 
@@ -495,7 +662,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 	
 	// MMU
 	wire inst_uncached, data_uncached, dataDirty;
-	wire [31:0] physical_inst_addr, physical_data_addr, tlbp_result;
+	wire [31:0] tlbp_result;
 	wire [89:0] tlbr_result;
 	MMU m_MMU(
 		.clk(clk), 
@@ -634,7 +801,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(1'b0), 
-		.stall1(stcl_ram_cache), 
+		.stall1(stcl_ram_cache | stcl_DCache), 
 		.irq(exc_en), 
 		.clr(stcl_div), 
 		.exc_type(ID_EXE_cu_inst_exc_type_data | ID_EXE_if_fetch_exc_type_data | ALU_exc_type), 
@@ -713,7 +880,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		if(EXE_MEM_load_type_data != 4'd0)
 			begin
 			$display("Load data -> instruction: 0x%8h, addr: 0x%8h, destreg: 0x%2h"
-					, EXE_MEM_Instruction_data, physical_sram_addr, EXE_MEM_Instruction_data[20:16]);
+					, EXE_MEM_Instruction_data, physical_sphysical_data_addr, EXE_MEM_Instruction_data[20:16]);
 			$display("EXE_MEM_rf_rdata1_fw_data: 0x%8h, EXE_MEM_PC_data: 0x%8h, mem_en_M: 0b%1b, mem_wen: 0b%1b, EXE_MEM_byte_valid_data: 0b%4b"
 					, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_PC_plus4_data - 32'h4, (EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0)
 					, EXE_MEM_wmem_data && !MEM_store_exc, EXE_MEM_byte_valid_data);
@@ -722,7 +889,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		else if(EXE_MEM_store_type_data != 4'd0)
 			begin
 			$display("Store data -> instruction: 0x%8h, addr: 0x%8h, data: 0x%8h, mem_wdata: 0x%8h"
-					, EXE_MEM_Instruction_data, physical_sram_addr, EXE_MEM_rf_rdata1_fw_data, mem_wdata);
+					, EXE_MEM_Instruction_data, physical_sphysical_data_addr, EXE_MEM_rf_rdata1_fw_data, mem_wdata);
 			$display("EXE_MEM_rf_rdata1_fw_data: 0x%8h, EXE_MEM_PC_data: 0x%8h, mem_en_M: 0b%1b, mem_wen: 0b%1b, EXE_MEM_byte_valid_data: 0b%4b"
 					, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_PC_plus4_data - 32'h4, (EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0)
 					, EXE_MEM_wmem_data && !MEM_store_exc, EXE_MEM_byte_valid_data);
@@ -738,6 +905,103 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.byte_valid(EXE_MEM_byte_valid_data), 
 		.mem_wdata_o(mem_wdata)
 	);
+	
+	// DCache
+	wire DCache_grnt, DCache_req, DCache_arvalid, DCache_arready, DCache_rlast, DCache_rvalid, DCache_rready;
+	wire DCache_awvalid, DCache_awready, DCache_wlast, DCache_wvalid, DCache_wready, DCache_bvalid, DCache_bready;
+	wire [1:0] DCache_arburst, DCache_arlock, DCache_rresp, DCache_awburst, DCache_awlock, DCache_bresp;
+	wire [2:0] DCache_arsize, DCache_arprot, DCache_awsize, DCache_awprot;
+	wire [3:0] DCache_arid, DCache_arlen, DCache_arcache, DCache_rid, DCache_awid, DCache_awlen, DCache_awcache;
+	wire [3:0] DCache_bid, DCache_wid, DCache_wstrb;
+	wire [31:0] DCache_araddr, DCache_rdata, DCache_awaddr, DCache_wdata;
+	DCache m_DCache(
+		.clk					(~clk),
+		.rst_n					(rst_n),
+		.DCache_grnt			(DCache_grnt),
+		.DCache_req				(DCache_req),
+		.DCache_arid			(DCache_arid),
+		.DCache_araddr			(DCache_araddr),
+		.DCache_arlen			(DCache_arlen),
+		.DCache_arsize			(DCache_arsize),
+		.DCache_arburst			(DCache_arburst),
+		.DCache_arlock			(DCache_arlock),
+		.DCache_arcache			(DCache_arcache),
+		.DCache_arprot 			(DCache_arprot),
+		.DCache_arvalid 		(DCache_arvalid),
+		.DCache_arready			(DCache_arready),
+		.DCache_rid				(DCache_rid),
+		.DCache_rdata			(DCache_rdata),
+		.DCache_rresp			(DCache_rresp),
+		.DCache_rlast			(DCache_rlast),
+		.DCache_rvalid 			(DCache_rvalid),
+		.DCache_rready			(DCache_rready),
+		.DCache_awid			(DCache_awid),
+		.DCache_awaddr			(DCache_awaddr),
+		.DCache_awlen			(DCache_awlen),
+		.DCache_awsize			(DCache_awsize),
+		.DCache_awburst			(DCache_awburst),
+		.DCache_awlock			(DCache_awlock),
+		.DCache_awcache			(DCache_awcache),
+		.DCache_awprot			(DCache_awprot),
+		.DCache_awvalid			(DCache_awvalid),
+		.DCache_awready			(DCache_awready),
+		.DCache_wid				(DCache_wid),
+		.DCache_wdata			(DCache_wdata),
+		.DCache_wstrb			(DCache_wstrb),
+		.DCache_wlast			(DCache_wlast),
+		.DCache_wvalid			(DCache_wvalid),
+		.DCache_wready			(DCache_wready),
+		.DCache_bid				(DCache_bid),
+		.DCache_bresp			(DCache_bresp),
+		.DCache_bvalid			(DCache_bvalid),
+		.DCache_bready			(DCache_bready),
+		.DCache_cpu_re			(EXE_MEM_load_type_data != 4'b0),
+		.DCache_cpu_we			(EXE_MEM_store_type_data != 4'b0),
+		.DCache_cpu_addr		(physical_data_addr),
+		.DCache_cpu_byte_enable	(EXE_MEM_byte_valid_data),
+		.DCache_cpu_wdata		(mem_wdata),
+		.DCache_cpu_rdata		(mem_rdata),
+		.DCache_cpu_Stall		(stcl_DCache)
+	);
+	assign DCache_grnt = m0_grnt;
+	assign m0_req = DCache_req;
+	assign m0_arid = DCache_arid;
+	assign m0_araddr = DCache_araddr;
+	assign m0_arlen = DCache_arlen;
+	assign m0_arsize = DCache_arsize;
+	assign m0_arburst = DCache_arburst;
+	assign m0_arlock = DCache_arlock;
+	assign m0_arcache = DCache_arcache;
+	assign m0_arprot = DCache_arprot;
+	assign m0_arvalid = DCache_arvalid;
+	assign DCache_arready = m0_arready;
+	assign DCache_rid = m0_rid;
+	assign DCache_rdata = m0_rdata;
+	assign DCache_rresp = m0_rresp;
+	assign DCache_rlast = m0_rlast;
+	assign DCache_rvalid = m0_rvalid;
+	assign m0_rready = DCache_rready;
+	
+	assign awid = DCache_awid;
+	assign awaddr = DCache_awaddr;
+	assign awlen = DCache_awlen;
+	assign awsize = DCache_awsize;
+	assign awburst = DCache_awburst;
+	assign awlock = DCache_awlock;
+	assign awcache = DCache_awcache;
+	assign awprot = DCache_awprot;
+	assign awvalid = DCache_awvalid;
+	assign DCache_awready = awready;
+	assign wid = DCache_wid;
+	assign wdata = DCache_wdata;
+	assign wstrb = DCache_wstrb;
+	assign wlast = DCache_wlast;
+	assign wvalid = DCache_wvalid;
+	assign DCache_wready = wready;
+	assign DCache_bid = bid;
+	assign DCache_bresp = bresp;
+	assign DCache_bvalid = bvalid;
+	assign bready = DCache_bready;
 	
 	// TLBExcDetector
 	TLBExcDetector m_TLBExcDetector(
@@ -786,7 +1050,7 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(stcl_ram_cache), 
-		.irq(exc_en), 
+		.irq(exc_en | stcl_DCache), 
 		.wcp0(EXE_MEM_wcp0_data), 
 		.MEM_WB_wcp0_data(MEM_WB_wcp0_data), 
 		.load_type(EXE_MEM_load_type_data), 
@@ -898,19 +1162,12 @@ module Mips(clk, rst_n, inst_data, inst_addr, ram_en, ram_we, ram_din, ram_dout,
 		$display("Div_result: 0x%16h, result_mux_data: 0x%8h, MEM_WB_MulDiv_result_data: 0x%8h, WB_lo_data: 0x%8h"
 				, Div_result, result_mux_data, MEM_WB_MulDiv_result_data, WB_lo_data);
 		end*/
-
-	assign inst_addr = physical_inst_addr;
-	assign ram_en = (EXE_MEM_load_type_data != 4'd0) || (EXE_MEM_store_type_data != 4'd0);
-	assign ram_byte_valid = EXE_MEM_byte_valid_data;
-	assign ram_addr = physical_data_addr;		// virtual_addr -> physical addr
-	assign ram_dout = mem_wdata;
-	assign ram_we = (EXE_MEM_wmem_data && !MEM_store_exc) ? EXE_MEM_byte_valid_data : 4'b0;
 	
 	// for debug
 	always@(posedge clk)
 		begin
 		# 1;
-		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, wb_inst: 0x%8h", debug_wb_pc, debug_wb_pc[19:2], debug_wb_inst);
+		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, wb_inst: 0x%8h, IF_PC: 0x%8h", debug_wb_pc, debug_wb_pc[19:2], debug_wb_inst, physical_inst_addr);
 		end
 	assign debug_wb_inst = MEM_WB_Instruction_data;
 	assign debug_wb_pc = MEM_WB_PC_plus4_data - 32'h4;

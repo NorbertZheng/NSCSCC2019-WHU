@@ -25,28 +25,28 @@ module DCache(
 	output	reg			DCache_rready			,
 	// AXI write channel signals
 	// write address channel signals       
-    output 		[3 :0]	DCache_awid				,
-    output 		[31:0]	DCache_awaddr			,
-    output		[3 :0]	DCache_awlen			,
-    output		[2 :0]	DCache_awsize			,
-    output		[1 :0]	DCache_awburst			,
-    output		[1 :0]	DCache_awlock			,
-    output		[3 :0]	DCache_awcache			,
-    output		[2 :0]	DCache_awprot			,
-    output	reg			DCache_awvalid			,
-    input 				DCache_awready			,
-    // write data channel signals
-    output		[3 :0]	DCache_wid				,
-    output		[31:0]	DCache_wdata			,
-    output		[3 :0]	DCache_wstrb			,
-    output	reg			DCache_wlast			,
-    output	reg			DCache_wvalid			,
-    input				DCache_wready			,
-    // write response channel signals
-    input		[3 :0]	DCache_bid				,
-    input 		[1 :0]	DCache_bresp			,
-    input				DCache_bvalid			,
-    output				DCache_bready			,
+	output 		[3 :0]	DCache_awid				,
+	output 		[31:0]	DCache_awaddr			,
+	output		[3 :0]	DCache_awlen			,
+	output		[2 :0]	DCache_awsize			,
+	output		[1 :0]	DCache_awburst			,
+	output		[1 :0]	DCache_awlock			,
+	output		[3 :0]	DCache_awcache			,
+	output		[2 :0]	DCache_awprot			,
+	output	reg			DCache_awvalid			,
+	input 				DCache_awready			,
+	// write data channel signals
+	output		[3 :0]	DCache_wid				,
+	output		[31:0]	DCache_wdata			,
+	output		[3 :0]	DCache_wstrb			,
+	output	reg			DCache_wlast			,
+	output	reg			DCache_wvalid			,
+	input				DCache_wready			,
+	// write response channel signals
+	input		[3 :0]	DCache_bid				,
+	input 		[1 :0]	DCache_bresp			,
+	input				DCache_bvalid			,
+	output				DCache_bready			,
 	
 	// CPU read 
 	input				DCache_cpu_re			,
@@ -98,7 +98,7 @@ module DCache(
 	reg wvalid;
 	
 	// 2-way DCache
-	reg LRU[NUM_CACHE_LINES];		// record recent access which way 0 / 1
+	reg [NUM_CACHE_LINES - 1:0] LRU;		// record recent access which way 0 / 1
 	genvar i;
 	generate
 	// CacheLines0
@@ -248,13 +248,11 @@ module DCache(
 	assign DCache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
 	
 	always@(posedge clk)
+		begin
 		if(!rst_n)
 			begin
 			// reset LRU
-			for (i = 0; i < NUM_CACHE_LINES; i = i + 1)
-				begin
-				LRU[i] <= 1'b0;
-				end
+			LRU <= 0;
 			// cache replace / write select
 			cache_we <= 1'b0;
 			cache_replace <= 1'b0;
@@ -289,6 +287,7 @@ module DCache(
 		else
 			begin
 			DCache_cpu_addr_pre <= DCache_cpu_addr;
+			$display("DCache state: 0x%1h", state);
 			case(state)
 				DCache_IDLE:
 					begin
@@ -513,6 +512,7 @@ module DCache(
 							Mem_access_offset <= Mem_access_offset + 1;
 							DCache_wdata_fetched <= 1'b0;
 							DCache_wvalid <= 1'b0;
+							end
 						end
 					else if(!DCache_wdata_fetched)
 						begin
@@ -540,7 +540,7 @@ module DCache(
 					end
 				DCache_MemReadFirst:
 					begin
-					if(DCache_rready)
+					if(DCache_rvalid)
 						begin
 						DCache_access_offset <= DCache_access_offset +  1;
 						Mem_access_offset <= Mem_access_offset + 1;
@@ -563,7 +563,7 @@ module DCache(
 					end
 				DCache_MemRead:
 					begin
-					if(DCache_rready)
+					if(DCache_rvalid)
 						begin
 						// write cache
 						cache_we = 1'b1;

@@ -217,6 +217,7 @@ module TLB(clk, rst_n, wtlb, tlb_addr, tlb_wdata, inst_addr_i, data_addr_i, asid
 	wire [31:0] tlbpMatch;
 	wire [31:0] tlbp_addr_i = {tlb_wdata[`TLB_VPN2], 13'b0};
 	assign tlbp_result[31] = ~|tlbpMatch;
+	assign tlbp_result[30:5] = 26'b0;
 	// tlbpMatch
 	assign tlbpMatch[0] = (TLB_Entries[0][`TLB_VPN2] == tlbp_addr_i[31:13]) && ((TLB_Entries[0][`TLB_ASID] == asid) || TLB_Entries[0][`TLB_G]);
 	assign tlbpMatch[1] = (TLB_Entries[1][`TLB_VPN2] == tlbp_addr_i[31:13]) && ((TLB_Entries[1][`TLB_ASID] == asid) || TLB_Entries[1][`TLB_G]);
@@ -251,36 +252,36 @@ module TLB(clk, rst_n, wtlb, tlb_addr, tlb_wdata, inst_addr_i, data_addr_i, asid
 	assign tlbpMatch[30] = (TLB_Entries[30][`TLB_VPN2] == tlbp_addr_i[31:13]) && ((TLB_Entries[30][`TLB_ASID] == asid) || TLB_Entries[30][`TLB_G]);
 	assign tlbpMatch[31] = (TLB_Entries[31][`TLB_VPN2] == tlbp_addr_i[31:13]) && ((TLB_Entries[31][`TLB_ASID] == asid) || TLB_Entries[31][`TLB_G]);
 	// tlbp_result[4:0]
-	assign tlbp_result[4:0] =  tlbpMatch[0] 	? 5'd0 	: 
-							(tlbpMatch[1] 	? 5'd1 	: 
-							(tlbpMatch[2] 	? 5'd2 	: 
-							(tlbpMatch[3] 	? 5'd3 	: 
-							(tlbpMatch[4] 	? 5'd4 	: 
-							(tlbpMatch[5] 	? 5'd5 	: 
-							(tlbpMatch[6] 	? 5'd6 	: 
-							(tlbpMatch[7] 	? 5'd7 	: 
-							(tlbpMatch[8] 	? 5'd8 	: 
-							(tlbpMatch[9] 	? 5'd9 	: 
-							(tlbpMatch[10] 	? 5'd10 : 
-							(tlbpMatch[11] 	? 5'd11 : 
-							(tlbpMatch[12] 	? 5'd12	: 
-							(tlbpMatch[13] 	? 5'd13	: 
-							(tlbpMatch[14] 	? 5'd14	: 
-							(tlbpMatch[15] 	? 5'd15	: 
-							(tlbpMatch[16] 	? 5'd16	: 
-							(tlbpMatch[17] 	? 5'd17	: 
-							(tlbpMatch[18] 	? 5'd18	: 
-							(tlbpMatch[19] 	? 5'd19	: 
-							(tlbpMatch[20] 	? 5'd20	: 
-							(tlbpMatch[21] 	? 5'd21	: 
-							(tlbpMatch[22] 	? 5'd22	: 
-							(tlbpMatch[23] 	? 5'd23	: 
-							(tlbpMatch[24] 	? 5'd24	: 
-							(tlbpMatch[25] 	? 5'd25	: 
-							(tlbpMatch[26] 	? 5'd26	: 
-							(tlbpMatch[27] 	? 5'd27	: 
-							(tlbpMatch[28] 	? 5'd28	: 
-							(tlbpMatch[29] 	? 5'd29	: 
-							(tlbpMatch[30] 	? 5'd30	: 
-							(tlbpMatch[31] 	? 5'd31	: 5'd0)))))))))))))))))))))))))))))));
+	assign tlbp_result[4:0] =	 tlbpMatch[0] 	? 5'd0 	: 
+								(tlbpMatch[1] 	? 5'd1 	: 
+								(tlbpMatch[2] 	? 5'd2 	: 
+								(tlbpMatch[3] 	? 5'd3 	: 
+								(tlbpMatch[4] 	? 5'd4 	: 
+								(tlbpMatch[5] 	? 5'd5 	: 
+								(tlbpMatch[6] 	? 5'd6 	: 
+								(tlbpMatch[7] 	? 5'd7 	: 
+								(tlbpMatch[8] 	? 5'd8 	: 
+								(tlbpMatch[9] 	? 5'd9 	: 
+								(tlbpMatch[10] 	? 5'd10 : 
+								(tlbpMatch[11] 	? 5'd11 : 
+								(tlbpMatch[12] 	? 5'd12	: 
+								(tlbpMatch[13] 	? 5'd13	: 
+								(tlbpMatch[14] 	? 5'd14	: 
+								(tlbpMatch[15] 	? 5'd15	: 
+								(tlbpMatch[16] 	? 5'd16	: 
+								(tlbpMatch[17] 	? 5'd17	: 
+								(tlbpMatch[18] 	? 5'd18	: 
+								(tlbpMatch[19] 	? 5'd19	: 
+								(tlbpMatch[20] 	? 5'd20	: 
+								(tlbpMatch[21] 	? 5'd21	: 
+								(tlbpMatch[22] 	? 5'd22	: 
+								(tlbpMatch[23] 	? 5'd23	: 
+								(tlbpMatch[24] 	? 5'd24	: 
+								(tlbpMatch[25] 	? 5'd25	: 
+								(tlbpMatch[26] 	? 5'd26	: 
+								(tlbpMatch[27] 	? 5'd27	: 
+								(tlbpMatch[28] 	? 5'd28	: 
+								(tlbpMatch[29] 	? 5'd29	: 
+								(tlbpMatch[30] 	? 5'd30	: 
+								(tlbpMatch[31] 	? 5'd31	: 5'd0)))))))))))))))))))))))))))))));
 endmodule

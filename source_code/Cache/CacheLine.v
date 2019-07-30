@@ -31,7 +31,7 @@ module CacheLine(clk, rst_n, rtag, roff, rdata, rdirty, rvalid, we, wtag, woff, 
 	input [3:0] w_byte_enable;
 	input [31:0] wdata;
 	// read
-	input [TAG_WIDTH - 1:0] roff;
+	input [OFFSET_WIDTH - 1:0] roff;
 	output rdirty, rvalid;
 	output [TAG_WIDTH - 1:0] rtag;
 	output [31:0] rdata;
