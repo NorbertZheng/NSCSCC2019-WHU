@@ -106,4 +106,14 @@ module mycpu_top(
 		.debug_wb_rf_wnum	(debug_wb_rf_wnum	),
 		.debug_wb_rf_wdata	(debug_wb_rf_wdata	)
 	);
+	/*assign arid = 4'b0001;
+	assign araddr = 32'h1faff000;
+	assign arlen = 4'b0000;
+	assign arsize = 3'b010;
+	assign arburst = 2'b00;		// ?
+	assign arlock = 2'b00;		// single CPU, no need for lock
+	assign arcache = 4'b0000;
+	assign arprot = 3'b000;
+	assign arvalid = 1'b1;
+	assign rready = 1'b1;*/
 endmodule

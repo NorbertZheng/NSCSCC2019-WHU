@@ -20,17 +20,17 @@ module bus_arbiter(clk, rst_n, m0_req, m0_grnt, m1_req, m1_grnt);
 		begin
 		if(!rst_n)
 			begin
-			owner = 1'b0;
+			owner <= 1'b0;
 			end
 		else
 			begin
 			if(m0_req == 1'b1)		// prefer m0(data req)
 				begin
-				owner = 1'b0;
+				owner <= 1'b0;
 				end
 			else if(m1_req == 1'b1)
 				begin
-				owner = 1'b1;
+				owner <= 1'b1;
 				end
 			end
 		end

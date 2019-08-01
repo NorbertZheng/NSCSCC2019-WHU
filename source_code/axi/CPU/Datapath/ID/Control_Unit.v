@@ -462,7 +462,14 @@ module Control_Unit(rst_n, inst, rf_read_data0, rf_read_data1, PC_plus4, is_dela
 							end
 						default:
 							begin
-							cu_inst_exc_type[10] = 1'b1;
+							if(inst == `INST_NOP)
+								begin
+								// nop instruction should not cause RI exc!
+								end
+							else
+								begin
+								cu_inst_exc_type[10] = 1'b1;
+								end
 							end
 					endcase
 					end

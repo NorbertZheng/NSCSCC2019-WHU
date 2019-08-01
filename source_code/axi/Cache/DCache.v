@@ -55,7 +55,9 @@ module DCache(
 	input		[3 :0]	DCache_cpu_byte_enable	,
 	input		[31:0]	DCache_cpu_wdata		,
 	output		[31:0]	DCache_cpu_rdata		,
-	output				DCache_cpu_Stall		
+	output				DCache_cpu_Stall		,
+	output				DCache_IF_Stall			,
+	output				DCache_State_Hit		
 );
 	parameter	CACHE_LINE_WIDTH		=	6,
 				TAG_WIDTH				=	20,
@@ -66,12 +68,15 @@ module DCache(
 				DCache_Hit				=	4'd1,
 				DCache_CheckDirty		=	4'd2,
 				DCache_MemReadWait		=	4'd3,
-				DCache_MemReadFirst		=	4'd4,
-				DCache_MemRead			=	4'd5,
-				DCache_WriteBackWait	=	4'd6,
-				DCache_WriteBackFirst	=	4'd7,
-				DCache_WriteBack		=	4'd8,
-				DCache_WaitWrFinish		=	4'd9;
+				DCache_MemReadWaitLast	=	4'd4,
+				DCache_MemReadWaitNow	=	4'd5,
+				DCache_MemReadFirst		=	4'd6,
+				DCache_MemRead			=	4'd7,
+				DCache_WriteBackWait	=	4'd8,
+				DCache_WriteBackFirst	=	4'd9,
+				DCache_WriteBack		=	4'd10,
+				DCache_WaitWrFinish		=	4'd11,
+				DCache_MemReadExc		=	4'd12;
 	
 	// wires to CacheLines0
 	wire [TAG_WIDTH - 1:0] rtag0[NUM_CACHE_LINES - 1:0];
@@ -150,6 +155,7 @@ module DCache(
 	endgenerate
 	
 	reg [3:0] state;
+	reg [3:0] pre_state;
 	// Cache access tag, index, offset, byteoffset
 	wire [TAG_WIDTH - 1:0] DCache_addr_tag;
 	wire [INDEX_WIDTH - 1:0] DCache_addr_index;
@@ -206,7 +212,7 @@ module DCache(
 	assign DCache_araddr = {Mem_access_tag, DCache_addr_index, Mem_access_offset, 2'b00};
 	assign DCache_arlen = 4'b1111;
 	assign DCache_arsize = 3'b010;
-	assign DCache_arburst = 2'b00;		// ?
+	assign DCache_arburst = 2'b01;		// ?
 	assign DCache_arlock = 2'b00;		// single CPU, no need for lock
 	assign DCache_arcache = 4'b0000;
 	assign DCache_arprot = 3'b000;
@@ -214,7 +220,7 @@ module DCache(
 	assign DCache_awaddr = {Mem_access_tag, DCache_addr_index, Mem_access_offset, 2'b00};
 	assign DCache_awlen = 4'b1111;
 	assign DCache_awsize = 3'b010;
-	assign DCache_awburst = 2'b00;		// ?
+	assign DCache_awburst = 2'b01;		// ?
 	assign DCache_awlock = 2'b00;
 	assign DCache_awcache = 4'b00;
 	assign DCache_awprot = 3'b000;
@@ -241,12 +247,24 @@ module DCache(
 		(DCache_cpu_we && (~CacheLines0_hit || ~CacheLines0_valid) && (~CacheLines1_hit || ~CacheLines1_valid))
 	);
 	assign DCache_cpu_Stall = ~(											// Here is a ~
-		(state == DCache_Hit) ||											// Hit! read / write data
-		(state == DCache_IDLE && ~(need_memread || need_writeback))		// IDLE! and will not change into other state soon
+		// (state == DCache_Hit) ||											// Hit! read / write data
+		(state == DCache_IDLE && ~(need_memread || need_writeback)) //&& (pre_state == DCache_IDLE || pre_state == DCache_Hit))		// IDLE! and will not change into other state soon
 	);
+	assign DCache_IF_Stall = ~(
+		(state == DCache_IDLE || state == DCache_Hit)
+	);
+	assign DCache_State_Hit = (pre_state == DCache_Hit);
 	// already wait for 1 cycle
 	assign DCache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
 	
+	always@(posedge clk)
+		begin
+		# 1;
+		$display("DCache-> CacheLines0_rdata: 0x%8h, CacheLines1_rdata: 0x%8h", CacheLines0_rdata, CacheLines1_rdata);
+		$display("DCache state: 0x%1h, DCache_cpu_Stall: 0b%1b, DCache_cpu_rdata: 0x%8h", state, DCache_cpu_Stall, DCache_cpu_rdata);
+		end
+	
+	reg flag;
 	always@(posedge clk)
 		begin
 		if(!rst_n)
@@ -283,11 +301,12 @@ module DCache(
 			DCache_awvalid <= 1'b0;
 			DCache_wlast <= 1'b0;
 			DCache_wvalid <= 1'b0;
+			pre_state <= DCache_IDLE;
 			end
 		else
 			begin
+			pre_state <= state;
 			DCache_cpu_addr_pre <= DCache_cpu_addr;
-			$display("DCache state: 0x%1h", state);
 			case(state)
 				DCache_IDLE:
 					begin
@@ -319,7 +338,7 @@ module DCache(
 					else if(need_memread)
 						begin
 						state <= DCache_MemReadWait;
-						DCache_access_offset <= 0 - 1;
+						DCache_access_offset <= 0;
 						Mem_access_tag <= DCache_addr_tag;
 						Mem_access_offset <= 0;
 						DCache_req <= 1'b1;
@@ -334,12 +353,13 @@ module DCache(
 						wdirty <= 1'b0;
 						wvalid <= 1'b0;
 						DCache_arvalid <= 1'b0;
-						DCache_rready <= 1'b0;
+						DCache_rready <= 1'b1;
 						DCache_awvalid <= 1'b0;
 						DCache_wlast <= 1'b0;
 						DCache_wvalid <= 1'b0;
 						DCache_wdata_prefetch <= 32'b0;
 						DCache_wdata_fetched <= 1'b0;
+						flag <= 1'b0;
 						end
 					else if(DCache_cpu_we)
 						begin
@@ -523,7 +543,7 @@ module DCache(
 					end
 				DCache_MemReadWait:
 					begin
-					if(DCache_grnt)
+					/*if(DCache_grnt)
 						begin
 						// do nothing
 						end
@@ -532,56 +552,120 @@ module DCache(
 						state <= DCache_MemReadFirst;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b1;
+						end*/
+					if(DCache_grnt)
+						begin
+						if(DCache_arready == 1'b1)
+							begin
+							state <= DCache_MemReadWaitLast;
+							end
+						else
+							begin
+							state <= DCache_MemReadWaitNow;
+							end
 						end
 					else
 						begin
 						// do nothing
+						end
+					end
+				DCache_MemReadWaitLast:
+					begin
+					DCache_arvalid <= 1'b1;
+					if(DCache_arready)// && (DCache_rid == 4'b0001))
+						begin
+						state <= DCache_MemReadFirst;
+						// DCache_arvalid <= 1'b0;
+						DCache_rready <= 1'b1;
+						end
+					end
+				DCache_MemReadWaitNow:
+					begin
+					DCache_arvalid <= 1'b1;
+					if(DCache_arready)// && (DCache_rid == 4'b0001))
+						begin
+						state <= DCache_MemReadFirst;
+						DCache_arvalid <= 1'b0;
+						DCache_rready <= 1'b1;
 						end
 					end
 				DCache_MemReadFirst:
 					begin
-					if(DCache_rvalid)
+					if(DCache_rvalid && (DCache_rid == 4'b0001))
 						begin
-						DCache_access_offset <= DCache_access_offset +  1;
-						Mem_access_offset <= Mem_access_offset + 1;
-						// write cache
-						cache_we = 1'b1;
-						cache_windex <= DCache_addr_index;
-						wtag <= Mem_access_tag;
-						woff <= DCache_addr_offset;
-						wdata <= DCache_rdata;
-						w_byte_enable <= 4'b1111;
-						wdirty <= 1'b0;
-						wvalid <= 1'b0;
-						DCache_rready <= 1'b1;
-						state <= DCache_MemRead;
+						if(DCache_rlast)
+							begin
+							/*cache_we = 1'b1;
+							cache_replace <= 1'b1;			// replace cache block
+							cache_windex <= DCache_addr_index;
+							wtag <= Mem_access_tag;
+							woff <= DCache_access_offset;
+							wdata <= 32'b0;
+							w_byte_enable <= 4'b1111;
+							wdirty <= 1'b0;
+							wvalid <= 1'b0;*/
+							DCache_rready <= 1'b1;
+							state <= DCache_MemReadExc;
+							flag <= 1'b1;
+							end
+						else
+							begin
+							DCache_access_offset <= DCache_access_offset + 1;
+							Mem_access_offset <= Mem_access_offset + 1;
+							// write cache
+							cache_we = 1'b1;
+							cache_replace <= 1'b1;			// replace cache block
+							cache_windex <= DCache_addr_index;
+							wtag <= Mem_access_tag;
+							woff <= DCache_access_offset;
+							wdata <= DCache_rdata;
+							w_byte_enable <= 4'b1111;
+							wdirty <= 1'b0;
+							wvalid <= 1'b0;
+							DCache_rready <= 1'b1;
+							state <= DCache_MemRead;
+							end
+						DCache_arvalid <= 1'b0;
+						# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
 						end
 					else
 						begin
 						// do nothing
+						DCache_arvalid <= 1'b0;
 						end
 					end
 				DCache_MemRead:
 					begin
-					if(DCache_rvalid)
+					if(DCache_rvalid && (DCache_rid == 4'b0001))
 						begin
 						// write cache
-						cache_we = 1'b1;
+						cache_we <= 1'b1;
+						cache_replace <= 1'b1;
 						cache_windex <= DCache_addr_index;
 						wtag <= Mem_access_tag;
-						woff <= DCache_addr_offset;
-						wdata <= DCache_rdata;
-						w_byte_enable <= 4'b1111;
-						wvalid <= 1'b0;
-						if(Mem_access_offset == 0)
+						if(flag == 1'b1)
+							begin
+							woff <= DCache_access_offset;
+							wdata <= 32'b0;
+							w_byte_enable <= 4'b1111;
+							end
+						else
+							begin
+							woff <= DCache_access_offset;
+							wdata <= DCache_rdata;
+							w_byte_enable <= 4'b1111;
+							end
+						wdirty <= 1'b0;
+						if(Mem_access_offset == {OFFSET_WIDTH{1'b1}})
 							begin
 							// finish all AXI transaction
-							DCache_req <= 1'b0;		// release bus
-							DCache_arvalid <= 1'b0;
-							DCache_rready <= 1'b0;
-							DCache_awvalid <= 1'b0;
-							DCache_wlast <= 1'b0;
-							DCache_wvalid <= 1'b0;
+							// DCache_req <= 1'b0;		// release bus
+							// DCache_arvalid <= 1'b0;
+							DCache_rready <= 1'b1;
+							// DCache_awvalid <= 1'b0;
+							// DCache_wlast <= 1'b0;
+							// DCache_wvalid <= 1'b0;
 							// set valid
 							wvalid <= 1'b1;
 							state <= DCache_WaitWrFinish;
@@ -593,11 +677,15 @@ module DCache(
 							Mem_access_offset <= Mem_access_offset + 1;
 							DCache_rready <= 1'b1;
 							end
+						# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
 						end
 					else
 						begin
 						// no write cache
-						cache_we = 1'b0;
+						cache_we <= 1'b0;
+						cache_replace <= 1'b0;
+						DCache_rready <= 1'b0;
 						end
 					end
 				DCache_WaitWrFinish:
@@ -617,12 +705,44 @@ module DCache(
 					Mem_access_offset <= 0;
 					DCache_req <= 1'b0;
 					DCache_arvalid <= 1'b0;
-					DCache_rready <= 1'b0;
+					DCache_rready <= 1'b1;
 					DCache_awvalid <= 1'b0;
 					DCache_wlast <= 1'b0;
 					DCache_wvalid <= 1'b0;
 					DCache_wdata_prefetch <= 32'b0;
 					DCache_wdata_fetched <= 1'b0;
+					end
+				DCache_MemReadExc:
+					begin
+					if(DCache_access_offset == {OFFSET_WIDTH{1'b1}})
+						begin
+						// finish all AXI transaction
+						// DCache_req <= 1'b0;		// release bus
+						// DCache_arvalid <= 1'b0;
+						DCache_rready <= 1'b1;
+						// DCache_awvalid <= 1'b0;
+						// DCache_wlast <= 1'b0;
+						// DCache_wvalid <= 1'b0;
+						// set valid
+						wvalid <= 1'b1;
+						state <= DCache_WaitWrFinish;
+						end
+					else
+						begin
+						wvalid <= 1'b0;
+						DCache_access_offset <= DCache_access_offset +  1;
+						DCache_rready <= 1'b1;
+						end
+					cache_we = 1'b1;
+					cache_replace <= 1'b1;			// replace cache block
+					cache_windex <= DCache_addr_index;
+					wtag <= Mem_access_tag;
+					woff <= DCache_access_offset;
+					wdata <= 32'b0;
+					w_byte_enable <= 4'b1111;
+					wdirty <= 1'b0;
+					# 1;
+					$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
 					end
 				default:
 					begin

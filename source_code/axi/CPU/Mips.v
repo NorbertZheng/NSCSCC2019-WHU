@@ -52,10 +52,20 @@ module Mips(
 	output		[4 :0]	debug_wb_rf_wnum	,
 	output		[31:0]	debug_wb_rf_wdata	
 );
-	always@(*)
+	always@(posedge clk)
 		begin
+		$display();
+		$display("arid: 0x%1h, araddr: 0x%8h, arlen: 0x%1h, arsize: 0x%1h, arburst: 0x%1h, arvalid: 0b%1b, arready: 0b%1b"
+				, arid, araddr, arlen, arsize, arburst, arvalid, arready);
 		$display("rid: 0x%1h, rdata: 0x%8h, rresp: 0b%2b, rlast: 0b%1b, rvalid: 0b%1b, rready: 0b%1b"
 				, rid, rdata, rresp, rlast, rvalid, rready);
+		$display("awid: 0x%1h, awaddr: 0x%8h, awlen: 0x%1h, awsize: 0x%1h, awburst: 0x%1h, awvalid: 0b%1b, awready: 0b%1b"
+				, awid, awaddr, awlen, awsize, awburst, awvalid, awready);
+		$display("wid: 0x%1h, wdata: 0x%8h, wstrb: 0b%2b, wlast: 0b%1b, wvalid: 0b%1b, wready: 0b%1b"
+				, wid, wdata, wstrb, wlast, wvalid, wready);
+		$display("bid: 0x%1h, bresp: 0b%2b, bvalid: 0b%1b, bready: 0b%1b"
+				, bid, bresp, bvalid, bready);
+		$display();
 		end
 	// AXI_Cache_Load_Bus
 	wire m0_req, m0_grnt, m0_arvalid, m0_arready, m0_rlast, m0_rvalid, m0_rready, m1_req, m1_grnt, m1_arvalid, m1_arready, m1_rlast, m1_rvalid, m1_rready;
@@ -133,19 +143,32 @@ module Mips(
 	
 	wire [31:0] mem_rdata;
 	/**************************/
-	/*           IF           */
+	/*           IPF          */
 	/**************************/
 	// PC
+	wire ICache_IF_Clr;
 	wire PC_target_sel, exc_en, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_ICache, stcl_DCache;
 	assign stcl_f = 1'b0;			// temp for test
 	assign stcl_ram_cache = 1'b0;	// temp for test
 	wire [31:0] if_fetch_exc_type, PC_branch, PC_exc, PC_o, PC_plus4;
+	reg stcl_DCache_delay;			// for 1-cycle stcl_DCache delay
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			stcl_DCache_delay <= 1'b0;
+			end
+		else
+			begin
+			stcl_DCache_delay <= stcl_DCache;
+			end
+		end
 	PC m_PC(
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
-		.stall2(stcl_f | stcl_ICache), 
+		.stall2(stcl_f | (stcl_ICache && ~PC_target_sel)), 
 		.stall3(stcl_ram_cache | stcl_div | stcl_DCache), 
 		.PC_exc_i(PC_exc), 
 		.PC_target_i(PC_branch), 
@@ -155,13 +178,56 @@ module Mips(
 		.PC_plus4(PC_plus4), 
 		.if_fetch_exc_type(if_fetch_exc_type)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("stcl_ICache: 0b%1b, exc_en: 0b%1b, PC_o: 0x%8h"
 				, stcl_ICache, exc_en, PC_o);
+		end*/
+	reg PC_target_sel_delay;		// for 1-cycle delay of PC_target_sel signal to flush IF/ID instruction
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			PC_target_sel_delay <= 1'b0;
+			end
+		else
+			begin
+			PC_target_sel_delay <= PC_target_sel;
+			end
 		end
+		
+	// IPF_IF_REG_PACKED
+	wire DCache_IF_Stall;
+	wire is_delayslot, IPF_IF_is_delayslot_data, instMiss, IPF_IF_instMiss_data, instValid, IPF_IF_instValid_data;
+	wire [7:0] asid, IPF_IF_asid_data;
+	wire [31:0] IPF_IF_if_fetch_exc_type_data, IPF_IF_PC_plus4_data, IPF_IF_Instruction_data;
+	IPF_IF_REG_PACKED m_IPF_IF_REG_PACKED(
+		.clk							(clk															), 
+		.rst_n							(rst_n															), 
+		// control signals
+		.stall0							(stcl_lw														), 
+		.stall1							(stcl_jmp														), 
+		.stall2							(stcl_f | (stcl_ICache)											), 
+		.stall3							(stcl_ram_cache | stcl_div | DCache_IF_Stall					), //(stcl_DCache)						), 
+		.irq							(exc_en															), 
+		.clr0							(PC_target_sel													), 
+		// data
+		.PC_plus4						(PC_plus4														), 
+		.IPF_IF_PC_plus4_data			(IPF_IF_PC_plus4_data											),
+		.is_delayslot					(is_delayslot													), 
+		.IPF_IF_is_delayslot_data		(IPF_IF_is_delayslot_data										), 
+		.if_fetch_exc_type				(if_fetch_exc_type												), 
+		.IPF_IF_if_fetch_exc_type_data	(IPF_IF_if_fetch_exc_type_data									), 
+		.asid							(asid															), 
+		.IPF_IF_asid_data				(IPF_IF_asid_data												), 
+		.instMiss						(instMiss														), 
+		.IPF_IF_instMiss_data			(IPF_IF_instMiss_data											), 
+		.instValid						(instValid														), 
+		.IPF_IF_instValid_data			(IPF_IF_instValid_data											)
+	);
 	
 	// ICache
+	wire ICache_IF_ID_Stall;
 	wire ICache_grnt, ICache_req, ICache_arvalid, ICache_arready, ICache_rlast, ICache_rvalid, ICache_rready;
 	wire [1:0] ICache_arburst, ICache_arlock, ICache_rresp;
 	wire [2:0] ICache_arsize, ICache_arprot;
@@ -169,7 +235,7 @@ module Mips(
 	wire [31:0] ICache_araddr, ICache_rdata, inst_data;
 	wire [31:0] physical_inst_addr;
 	ICache m_ICache(
-		.clk(~clk),
+		.clk(clk),
 		.rst_n(rst_n),
 		.ICache_grnt(ICache_grnt),
 		.ICache_req(ICache_req),
@@ -192,7 +258,9 @@ module Mips(
 		.ICache_cpu_re(1'b1),
 		.ICache_cpu_addr(physical_inst_addr),
 		.ICache_cpu_rdata(inst_data),
-		.ICache_cpu_Stall(stcl_ICache)
+		.ICache_cpu_Stall(stcl_ICache),
+		.ICache_IF_Clr(ICache_IF_Clr),
+		.ICache_IF_ID_Stall(ICache_IF_ID_Stall)
 	);
 	assign ICache_grnt = m1_grnt;
 	assign m1_req = ICache_req;
@@ -224,8 +292,9 @@ module Mips(
 		end
 	
 	// IF_ID_REG_PACKED
-	wire is_delayslot, IF_ID_is_delayslot_data, instMiss, IF_ID_instMiss_data, instValid, IF_ID_instValid_data;
-	wire [7:0] asid, IF_ID_asid_data;
+	wire DCache_State_Hit;
+	wire IF_ID_is_delayslot_data, IF_ID_instMiss_data, IF_ID_instValid_data;
+	wire [7:0] IF_ID_asid_data;
 	wire [31:0] IF_ID_if_fetch_exc_type_data, IF_ID_PC_plus4_data, IF_ID_Instruction_data;
 	IF_ID_REG_PACKED m_IF_ID_REG_PACKED(
 		.clk(clk), 
@@ -233,24 +302,34 @@ module Mips(
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
 		.stall2(stcl_f), 
-		.stall3(stcl_ram_cache | stcl_div | stcl_DCache), 
+		.stall3(stcl_ram_cache | stcl_div | DCache_IF_Stall), // (stcl_DCache)), 
 		.irq(exc_en), 
-		.clr0(stcl_ICache),
-		.PC_plus4(PC_plus4), 
+		.clr0(ICache_IF_ID_Stall | ICache_IF_Clr | PC_target_sel_delay | DCache_State_Hit),		// .clr0(stcl_ICache | ICache_IF_Clr),
+		.PC_plus4(IPF_IF_PC_plus4_data), 
 		.IF_ID_PC_plus4_data(IF_ID_PC_plus4_data), 
 		.Instruction(inst_data), 
 		.IF_ID_Instruction_data(IF_ID_Instruction_data), 
-		.is_delayslot(is_delayslot), 
+		.is_delayslot(IPF_IF_is_delayslot_data), 
 		.IF_ID_is_delayslot_data(IF_ID_is_delayslot_data), 
-		.if_fetch_exc_type(if_fetch_exc_type), 
+		.if_fetch_exc_type(IPF_IF_if_fetch_exc_type_data), 
 		.IF_ID_if_fetch_exc_type_data(IF_ID_if_fetch_exc_type_data),
-		.asid(asid),
+		.asid(IPF_IF_asid_data),
 		.IF_ID_asid_data(IF_ID_asid_data),
-		.instMiss(instMiss),
+		.instMiss(IPF_IF_instMiss_data),
 		.IF_ID_instMiss_data(IF_ID_instMiss_data),
-		.instValid(instValid),
+		.instValid(IPF_IF_instValid_data),
 		.IF_ID_instValid_data(IF_ID_instValid_data)
 	);
+	always@(*)
+		begin
+		$display("IF_ID_Instruction_data: 0x%8h, IF_ID_PC_plus4_data: 0x%8h, IPF_IF_PC_plus4_data: 0x%8h"
+				, IF_ID_Instruction_data, IF_ID_PC_plus4_data, IPF_IF_PC_plus4_data);
+		end
+	/*always@(*)
+		begin
+		$display("IF_ID->stcl_lw: 0b%1b, stcl_jmp: 0b%1b, stcl_f: 0b%1b, stcl_ram_cache: 0b%1b, stcl_div: 0b%1b, stcl_DCache: 0b%1b"
+				, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_DCache);
+		end*/
 
 	/**************************/
 	/*           ID           */
@@ -318,6 +397,11 @@ module Mips(
 		.tlbp(tlbp),
 		.wtlb(wtlb)
 	);
+	/*always@(*)
+		begin
+		$display("IF_ID_Instruction_data: 0x%8h, cu_inst_exc_type: 0x%8h"
+				, IF_ID_Instruction_data, cu_inst_exc_type);
+		end*/
 
 	// Registers
 	wire MEM_WB_wreg_data;
@@ -547,11 +631,11 @@ module Mips(
 		.instValid(IF_ID_instValid_data), 
 		.ID_EXE_instValid_data(ID_EXE_instValid_data)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("ID_EXE_load_type_data: 0d%2d, IF_ID_rs_data: 0x%2h, IF_ID_rt_data: 0x%2h, EXE_regdst_data: 0x%2h, ID_EXE_Instruction_data: 0x%8h"
 				, ID_EXE_load_type_data, IF_ID_Instruction_data[25:21], IF_ID_Instruction_data[20:16], EXE_regdst_data, ID_EXE_Instruction_data);
-		end
+		end*/
 
 	/**************************/
 	/*          EXE           */
@@ -797,11 +881,16 @@ module Mips(
 	wire [3:0] EXE_MEM_byte_valid_data;
 	wire [31:0] EXE_MEM_rf_rdata0_fw_data, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_Instruction_data;
 	wire [63:0] EXE_MEM_MulDiv_result_data;
+	always@(*)
+		begin
+		$display("stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0): 0b%1b, EXE_MEM_load_type_data: 0x%1h"
+				, (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0)), EXE_MEM_load_type_data);
+		end
 	EXE_MEM_REG_PACKED m_EXE_MEM_REG_PACKED(
-		.clk(clk), 
+		.clk(~clk), 
 		.rst_n(rst_n), 
 		.stall0(1'b0), 
-		.stall1(stcl_ram_cache | stcl_DCache), 
+		.stall1(stcl_ram_cache | (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0))), 
 		.irq(exc_en), 
 		.clr(stcl_div), 
 		.exc_type(ID_EXE_cu_inst_exc_type_data | ID_EXE_if_fetch_exc_type_data | ALU_exc_type), 
@@ -961,7 +1050,9 @@ module Mips(
 		.DCache_cpu_byte_enable	(EXE_MEM_byte_valid_data),
 		.DCache_cpu_wdata		(mem_wdata),
 		.DCache_cpu_rdata		(mem_rdata),
-		.DCache_cpu_Stall		(stcl_DCache)
+		.DCache_cpu_Stall		(stcl_DCache),
+		.DCache_IF_Stall		(DCache_IF_Stall),
+		.DCache_State_Hit		(DCache_State_Hit)
 	);
 	assign DCache_grnt = m0_grnt;
 	assign m0_req = DCache_req;
@@ -1002,6 +1093,16 @@ module Mips(
 	assign DCache_bresp = bresp;
 	assign DCache_bvalid = bvalid;
 	assign bready = DCache_bready;
+	always@(*)
+		begin
+		$display("DCache_req: 0b%1b, DCache_grnt: 0b%1b", DCache_req, DCache_grnt);
+		$display("DCache_arid: 0x%1h, DCache_araddr: 0x%8h, DCache_arlen: 0x%1h, DCache_arsize: 0x%1h, DCache_arburst: 0x%1h"
+				, DCache_arid, DCache_araddr, DCache_arlen, DCache_arsize, DCache_arburst);
+		$display("DCache_arlock: 0x%1h, DCache_arcache: 0x%1h, DCache_arprot: 0x%1h, DCache_arvalid: 0b%1b, DCache_arready: 0b%1b"
+				, DCache_arlock, DCache_arcache, DCache_arprot, DCache_arvalid, DCache_arready);
+		$display("DCache_rid: 0x%1h, DCache_rdata: 0x%8h, DCache_rvalid: 0b%1b, DCache_rready: 0b%1b"
+				, DCache_rid, DCache_rdata, DCache_rvalid, DCache_rready);
+		end
 	
 	// TLBExcDetector
 	TLBExcDetector m_TLBExcDetector(
@@ -1050,7 +1151,7 @@ module Mips(
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(stcl_ram_cache), 
-		.irq(exc_en | stcl_DCache), 
+		.irq(exc_en | (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0))), 
 		.wcp0(EXE_MEM_wcp0_data), 
 		.MEM_WB_wcp0_data(MEM_WB_wcp0_data), 
 		.load_type(EXE_MEM_load_type_data), 
@@ -1167,7 +1268,8 @@ module Mips(
 	always@(posedge clk)
 		begin
 		# 1;
-		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, wb_inst: 0x%8h, IF_PC: 0x%8h", debug_wb_pc, debug_wb_pc[19:2], debug_wb_inst, physical_inst_addr);
+		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, MEM_WB_Instruction_data: 0x%8h, WB_result_data: 0x%8h, debug_wb_rf_wnum: 0x%2h, debug_wb_rf_wen: 0b%4b, IF_PC: 0x%8h"
+				, debug_wb_pc, debug_wb_pc[19:2], MEM_WB_Instruction_data, WB_result_data, debug_wb_rf_wnum, debug_wb_rf_wen, physical_inst_addr);
 		end
 	assign debug_wb_inst = MEM_WB_Instruction_data;
 	assign debug_wb_pc = MEM_WB_PC_plus4_data - 32'h4;

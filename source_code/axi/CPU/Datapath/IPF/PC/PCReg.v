@@ -19,6 +19,7 @@ module PCReg(clk, rst_n, wpc, PC_i, PC_o);
 		if(!rst_n)							// reset
 			begin
 			PC_o <= 32'hbfc00000;
+			// PC_o <= 32'hbfaff000;
 			end
 		else if(wpc)
 			begin

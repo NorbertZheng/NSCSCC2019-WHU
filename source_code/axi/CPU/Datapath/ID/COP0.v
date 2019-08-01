@@ -75,6 +75,11 @@ module COP0(clk, rst_n, wcp0, waddr, wsel, raddr, rsel, wdata, eret, tlbp_we, tl
 						(exc_type[13]	?	`Tr		:
 						(eret			?	`Int	:
 						(((hardware_irq != 6'b0) || (software_irq != 2'b0))	?	`Int	:	5'h1d))))))))))));
+	always@(*)
+		begin
+		$display("exc_type: 0x%8h, cause: 0x%2h"
+				, exc_type, cause);
+		end
 						
 
 	// user_mode

@@ -64,9 +64,9 @@ module bus_master_mux(
 		begin
 		arid = 4'b0;
 		araddr = 32'b0;
-		arlen = 4'b0;
-		arsize = 3'b0;
-		arburst = 2'b0;
+		arlen = 4'b1111;
+		arsize = 3'b010;
+		arburst = 2'b01;
 		arlock = 2'b0;
 		arcache = 4'b0;
 		arprot = 3'b0;
