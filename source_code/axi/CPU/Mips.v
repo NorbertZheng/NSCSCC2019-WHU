@@ -153,6 +153,7 @@ module Mips(
 	);
 	
 	// AXI_Cache_Load_Bus
+	wire AXI_Load_Bus_busy;
 	wire m0_req, m0_grnt, m0_arvalid, m0_arready, m0_rlast, m0_rvalid, m0_rready, m1_req, m1_grnt, m1_arvalid, m1_arready, m1_rlast, m1_rvalid, m1_rready;
 	wire m2_req, m2_grnt, m2_arvalid, m2_arready, m2_rlast, m2_rvalid, m2_rready;
 	wire [1 :0] m0_arburst, m0_arlock, m0_rresp, m1_arburst, m1_arlock, m1_rresp;
@@ -166,6 +167,7 @@ module Mips(
 	AXI_Cache_Load_Bus m_AXI_Cache_Load_Bus(
 		.clk(clk),
 		.rst_n(rst_n),
+		.busy(AXI_Load_Bus_busy), 
 		// AXI read channel signals
 		// read address channel signals
 		.arid(arid),
@@ -1364,7 +1366,7 @@ module Mips(
 	uncachedLoader m_uncachedLoader(
 		.clk							(~clk							),
 		.rst_n							(rst_n							),
-		
+		.AXI_Load_Bus_busy				(AXI_Load_Bus_busy				),
 		// AXI read channel signals
 		.uncachedLoader_req				(uncachedLoader_req				),
 		.uncachedLoader_grnt			(uncachedLoader_grnt			),

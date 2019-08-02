@@ -1,6 +1,7 @@
 module uncachedLoader(
 	input				clk								,
 	input				rst_n							,
+	input				AXI_Load_Bus_busy				,
 	
 	// AXI read channel signals
 	output	reg			uncachedLoader_req				,
@@ -47,8 +48,9 @@ module uncachedLoader(
 	
 	reg [2:0] state;
 	reg [2:0] pre_state;
+	wire busy = AXI_Load_Bus_busy && (uncachedLoader_req == 1'b0 || uncachedLoader_grnt == 1'b0);
 	assign uncachedLoader_cpu_Stall = ~(
-		((state == uncachedLoader_IDLE) && ~(need_read)) ||
+		((state == uncachedLoader_IDLE) && ~(need_read && ~busy)) ||
 		// (state == uncachedLoader_Delay)
 		((state == uncachedLoader_IDLE) && (pre_state == uncachedLoader_Delay))
 	);
@@ -98,7 +100,16 @@ module uncachedLoader(
 			case(state)
 				uncachedLoader_IDLE:
 					begin
-					if(need_read && pre_state != uncachedLoader_Delay)
+					if(AXI_Load_Bus_busy == 1'b1)
+						begin
+						state <= uncachedLoader_IDLE;
+						// set to 0
+						uncachedLoader_req <= 1'b0;
+						uncachedLoader_arvalid <= 1'b0;
+						uncachedLoader_rready <= 1'b0;
+						// uncachedLoader_cpu_rdata_reg <= 32'b0;
+						end
+					else if(need_read && pre_state != uncachedLoader_Delay)
 						begin
 						state <= uncachedLoader_MemReadWait;		// state <= uncachedLoader_MemReadWaitPre;
 						uncachedLoader_req <= 1'b1;

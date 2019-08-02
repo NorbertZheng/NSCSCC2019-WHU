@@ -1,6 +1,7 @@
 module AXI_Cache_Load_Bus(
 	input			clk			,
 	input			rst_n		,
+	output			busy		,
 	// AXI read channel signals
 	// read address channel signals
 	output	[3 :0]	arid		,
@@ -90,6 +91,7 @@ module AXI_Cache_Load_Bus(
 	bus_arbiter m_bus_arbiter(
 		.clk(clk), 
 		.rst_n(rst_n), 
+		.busy(busy), 
 		.m0_req(m0_req), 
 		.m0_grnt(m0_grnt), 
 		.m1_req(m1_req), 

@@ -1,4 +1,4 @@
-module bus_arbiter(clk, rst_n, m0_req, m0_grnt, m1_req, m1_grnt, m2_req, m2_grnt);
+module bus_arbiter(clk, rst_n, busy, m0_req, m0_grnt, m1_req, m1_grnt, m2_req, m2_grnt);
 	/*********************
 	 *		Bus Arbiter
 	 *input:
@@ -14,9 +14,13 @@ module bus_arbiter(clk, rst_n, m0_req, m0_grnt, m1_req, m1_grnt, m2_req, m2_grnt
 	 *********************/
 	input clk, rst_n;
 	input m0_req, m1_req, m2_req;
+	output busy;
 	output reg m0_grnt, m1_grnt, m2_grnt;
 	
 	reg [1:0] owner;
+	assign busy = 	((owner == 2'b00 && m0_req == 1'b1) ||
+					 (owner == 2'b01 && m1_req == 1'b1) ||
+					 (owner == 2'b10 && m2_req == 1'b1));
 	
 	always@(posedge clk)
 		begin
