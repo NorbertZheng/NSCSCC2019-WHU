@@ -24,6 +24,8 @@ module DCache(
 	input 				DCache_rvalid 			,
 	output	reg			DCache_rready			,
 	// AXI write channel signals
+	input				DCache_write_grnt		,
+	output	reg			DCache_write_req		,
 	// write address channel signals       
 	output 		[3 :0]	DCache_awid				,
 	output 		[31:0]	DCache_awaddr			,
@@ -49,6 +51,7 @@ module DCache(
 	output				DCache_bready			,
 	
 	// CPU read 
+	input				DCache_cpu_uncached		,
 	input				DCache_cpu_re			,
 	input				DCache_cpu_we			,
 	input		[31:0]	DCache_cpu_addr			,
@@ -73,10 +76,12 @@ module DCache(
 				DCache_MemReadFirst		=	4'd6,
 				DCache_MemRead			=	4'd7,
 				DCache_WriteBackWait	=	4'd8,
-				DCache_WriteBackFirst	=	4'd9,
-				DCache_WriteBack		=	4'd10,
-				DCache_WaitWrFinish		=	4'd11,
-				DCache_MemReadExc		=	4'd12;
+				DCache_WriteBackWaitLast=	4'd9,
+				DCache_WriteBackWaitNow	=	4'd10,
+				DCache_WriteBackFirst	=	4'd11,
+				DCache_WriteBack		=	4'd12,
+				DCache_WaitWrFinish		=	4'd13,
+				DCache_MemReadExc		=	4'd14;
 	
 	// wires to CacheLines0
 	wire [TAG_WIDTH - 1:0] rtag0[NUM_CACHE_LINES - 1:0];
@@ -248,7 +253,8 @@ module DCache(
 	);
 	assign DCache_cpu_Stall = ~(											// Here is a ~
 		// (state == DCache_Hit) ||											// Hit! read / write data
-		(state == DCache_IDLE && ~(need_memread || need_writeback)) //&& (pre_state == DCache_IDLE || pre_state == DCache_Hit))		// IDLE! and will not change into other state soon
+		(state == DCache_IDLE && ~(need_memread || need_writeback)) || //&& (pre_state == DCache_IDLE || pre_state == DCache_Hit))		// IDLE! and will not change into other state soon
+		(state == DCache_IDLE && DCache_cpu_uncached)
 	);
 	assign DCache_IF_Stall = ~(
 		(state == DCache_IDLE || state == DCache_Hit)
@@ -298,6 +304,7 @@ module DCache(
 			DCache_req <= 1'b0;
 			DCache_arvalid <= 1'b0;
 			DCache_rready <= 1'b0;
+			DCache_write_req <= 1'b0;
 			DCache_awvalid <= 1'b0;
 			DCache_wlast <= 1'b0;
 			DCache_wvalid <= 1'b0;
@@ -310,7 +317,32 @@ module DCache(
 			case(state)
 				DCache_IDLE:
 					begin
-					if(need_writeback)
+					if(DCache_cpu_uncached)
+						begin
+						DCache_access_offset <= 0;
+						state <= DCache_IDLE;
+						cache_we <= 1'b0;
+						wtag <= 0;
+						woff <= 0;
+						wdata <= 32'b0;
+						w_byte_enable <= 4'b0000;
+						wdirty <= 1'b0;
+						wvalid <= 1'b0;
+						cache_windex <= 0;
+						cache_replace <= 1'b0;
+						Mem_access_tag <= 0;
+						Mem_access_offset <= 0;
+						DCache_req <= 1'b0;
+						DCache_arvalid <= 1'b0;
+						DCache_rready <= 1'b0;
+						DCache_write_req <= 1'b0;
+						DCache_awvalid <= 1'b0;
+						DCache_wlast <= 1'b0;
+						DCache_wvalid <= 1'b0;
+						DCache_wdata_prefetch <= 32'b0;
+						DCache_wdata_fetched <= 1'b0;
+						end
+					else if(need_writeback)
 						begin
 						state <= DCache_WriteBackWait;
 						Mem_access_tag <= LRU[DCache_addr_index] ? CacheLines0_tag : CacheLines1_tag;
@@ -318,6 +350,7 @@ module DCache(
 						Mem_access_offset <= 0;
 						DCache_awvalid <= 1'b1;
 						cache_windex <= DCache_addr_index;
+						DCache_write_req <= 1'b1;
 						// set to 0
 						cache_we <= 1'b0;
 						cache_replace <= 1'b0;
@@ -354,6 +387,7 @@ module DCache(
 						wvalid <= 1'b0;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b1;
+						DCache_write_req <= 1'b0;
 						DCache_awvalid <= 1'b0;
 						DCache_wlast <= 1'b0;
 						DCache_wvalid <= 1'b0;
@@ -380,6 +414,7 @@ module DCache(
 						DCache_req <= 1'b0;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b0;
+						DCache_write_req <= 1'b0;
 						DCache_awvalid <= 1'b0;
 						DCache_wlast <= 1'b0;
 						DCache_wvalid <= 1'b0;
@@ -405,6 +440,7 @@ module DCache(
 						DCache_req <= 1'b0;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b0;
+						DCache_write_req <= 1'b0;
 						DCache_awvalid <= 1'b0;
 						DCache_wlast <= 1'b0;
 						DCache_wvalid <= 1'b0;
@@ -429,6 +465,7 @@ module DCache(
 						DCache_req <= 1'b0;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b0;
+						DCache_write_req <= 1'b0;
 						DCache_awvalid <= 1'b0;
 						DCache_wlast <= 1'b0;
 						DCache_wvalid <= 1'b0;
@@ -462,7 +499,22 @@ module DCache(
 					end
 				DCache_WriteBackWait:
 					begin
-					if(DCache_awready)		// AXI write req is accepted by slave
+					if(DCache_write_grnt)
+						begin
+						if(DCache_awready == 1'b1)
+							begin
+							state <= DCache_WriteBackWaitLast;
+							end
+						else
+							begin
+							state <= DCache_WriteBackWaitNow;
+							end
+						end
+					else
+						begin
+						// do nothing
+						end
+					/*if(DCache_awready)		// AXI write req is accepted by slave
 						begin
 						state <= DCache_WriteBackFirst;
 						DCache_wdata_fetched <= 1'b0;
@@ -475,6 +527,30 @@ module DCache(
 					else
 						begin
 						// do nothing
+						end*/
+					end
+				DCache_WriteBackWaitLast:
+					begin
+					DCache_awvalid <= 1'b1;
+					if(DCache_awready)
+						begin
+						state <= DCache_WriteBackFirst;
+						DCache_wdata_fetched <= 1'b0;
+						DCache_wdata_prefetch <= 32'b0;
+						end
+					end
+				DCache_WriteBackWaitNow:
+					begin
+					if(DCache_awready)
+						begin
+						state <= DCache_WriteBackFirst;
+						DCache_wdata_fetched <= 1'b0;
+						DCache_wdata_prefetch <= 32'b0;
+						DCache_awvalid <= 1'b0;
+						end
+					else
+						begin
+						DCache_awvalid <= 1'b1;
 						end
 					end
 				DCache_WriteBackFirst:
@@ -581,12 +657,15 @@ module DCache(
 					end
 				DCache_MemReadWaitNow:
 					begin
-					DCache_arvalid <= 1'b1;
 					if(DCache_arready)// && (DCache_rid == 4'b0001))
 						begin
 						state <= DCache_MemReadFirst;
 						DCache_arvalid <= 1'b0;
 						DCache_rready <= 1'b1;
+						end
+					else
+						begin
+						DCache_arvalid <= 1'b1;
 						end
 					end
 				DCache_MemReadFirst:
@@ -706,6 +785,7 @@ module DCache(
 					DCache_req <= 1'b0;
 					DCache_arvalid <= 1'b0;
 					DCache_rready <= 1'b1;
+					DCache_write_req <= 1'b0;
 					DCache_awvalid <= 1'b0;
 					DCache_wlast <= 1'b0;
 					DCache_wvalid <= 1'b0;
@@ -762,6 +842,7 @@ module DCache(
 					DCache_req <= 1'b0;
 					DCache_arvalid <= 1'b0;
 					DCache_rready <= 1'b0;
+					DCache_write_req <= 1'b0;
 					DCache_awvalid <= 1'b0;
 					DCache_wlast <= 1'b0;
 					DCache_wvalid <= 1'b0;

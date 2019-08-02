@@ -63,7 +63,29 @@ module AXI_Cache_Load_Bus(
 	output	[1 :0]	m1_rresp	,
 	output			m1_rlast	,
 	output			m1_rvalid	,
-	input			m1_rready	
+	input			m1_rready	,
+	
+	// master2
+	input			m2_req		,
+	output			m2_grnt		,
+	// master1 read address signals
+	input	[3 :0]	m2_arid		,
+	input	[31:0]	m2_araddr	,
+	input	[3 :0]	m2_arlen	,
+	input	[2 :0]	m2_arsize	,
+	input	[1 :0]	m2_arburst	,
+	input	[1 :0]	m2_arlock	,
+	input	[3 :0]	m2_arcache	,
+	input	[2 :0]	m2_arprot	,
+	input			m2_arvalid	,
+	output			m2_arready	,
+	// master1 read data signals
+	output	[3 :0]	m2_rid		,
+	output	[31:0]	m2_rdata	,
+	output	[1 :0]	m2_rresp	,
+	output			m2_rlast	,
+	output			m2_rvalid	,
+	input			m2_rready	
 );
 	bus_arbiter m_bus_arbiter(
 		.clk(clk), 
@@ -71,7 +93,9 @@ module AXI_Cache_Load_Bus(
 		.m0_req(m0_req), 
 		.m0_grnt(m0_grnt), 
 		.m1_req(m1_req), 
-		.m1_grnt(m1_grnt)
+		.m1_grnt(m1_grnt),
+		.m2_req(m2_req), 
+		.m2_grnt(m2_grnt)
 	);
 
 	bus_master_mux m_bus_master_mux(
@@ -126,6 +150,24 @@ module AXI_Cache_Load_Bus(
 		.m1_rresp(m1_rresp),
 		.m1_rlast(m1_rlast),
 		.m1_rvalid(m1_rvalid),
-		.m1_rready(m1_rready)
+		.m1_rready(m1_rready),
+		// master2
+		.m2_grnt(m2_grnt),
+		.m2_arid(m2_arid),
+		.m2_araddr(m2_araddr),
+		.m2_arlen(m2_arlen),
+		.m2_arsize(m2_arsize),
+		.m2_arburst(m2_arburst),
+		.m2_arlock(m2_arlock),
+		.m2_arcache(m2_arcache),
+		.m2_arprot(m2_arprot),
+		.m2_arvalid(m2_arvalid),
+		.m2_arready(m2_arready),
+		.m2_rid(m2_rid),
+		.m2_rdata(m2_rdata),
+		.m2_rresp(m2_rresp),
+		.m2_rlast(m2_rlast),
+		.m2_rvalid(m2_rvalid),
+		.m2_rready(m2_rready)
 	);
 endmodule

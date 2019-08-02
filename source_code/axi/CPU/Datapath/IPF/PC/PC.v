@@ -19,6 +19,7 @@ module PC(clk, rst_n, stall0, stall1, stall2, stall3, PC_exc_i, PC_target_i, PC_
 	 *********************/
 	input clk, rst_n;
 	input stall0, stall1, stall2, stall3;
+	// input minus4;
 	input PC_exc_sel, PC_target_sel;
 	input [31:0] PC_exc_i, PC_target_i;
 	output [31:0] PC_o, PC_plus4, if_fetch_exc_type;
@@ -44,6 +45,7 @@ module PC(clk, rst_n, stall0, stall1, stall2, stall3, PC_exc_i, PC_target_i, PC_
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.wpc(wpc), 
+		// .minus4(minus4),
 		.PC_i(PC_i), 
 		.PC_o(PC_o)
 	);

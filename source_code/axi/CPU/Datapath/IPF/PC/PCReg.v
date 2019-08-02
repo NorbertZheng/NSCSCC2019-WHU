@@ -11,6 +11,7 @@ module PCReg(clk, rst_n, wpc, PC_i, PC_o);
 	 *********************/
 	input clk, rst_n;
 	input wpc;
+	// input minus4;
 	input [31:0] PC_i;
 	output reg [31:0] PC_o;
 	
@@ -25,5 +26,9 @@ module PCReg(clk, rst_n, wpc, PC_i, PC_o);
 			begin
 			PC_o <= PC_i;
 			end
+		/*else if(minus4)
+			begin
+			PC_o <= PC_o - 32'h4;
+			end*/
 		end
 endmodule

@@ -67,12 +67,102 @@ module Mips(
 				, bid, bresp, bvalid, bready);
 		$display();
 		end
+	// AXI_Cache_Store_Bus
+	wire m0_write_req, m0_write_grnt, m1_write_req, m1_write_grnt;
+	wire m0_awvalid, m0_awready, m0_wlast, m0_wvalid, m0_wready, m0_bvalid, m0_bready;
+	wire m1_awvalid, m1_awready, m1_wlast, m1_wvalid, m1_wready, m1_bvalid, m1_bready;
+	wire [1 :0] m0_awburst, m0_awlock, m0_bresp, m1_awburst, m1_awlock, m1_bresp;
+	wire [2 :0] m0_awsize, m0_awprot, m1_awsize, m1_awprot;
+	wire [3 :0] m0_awid, m0_awlen, m0_awcache, m0_wid, m0_wstrb, m0_bid;
+	wire [3 :0] m1_awid, m1_awlen, m1_awcache, m1_wid, m1_wstrb, m1_bid;
+	wire [31:0] m0_awaddr, m0_wdata, m1_awaddr, m1_wdata;
+	AXI_Cache_Store_Bus AXI_Cache_Store_Bus(
+		.clk				(clk),
+		.rst_n				(rst_n),
+		// write address channel signals
+		.awid				(awid),
+		.awaddr				(awaddr),
+		.awlen				(awlen),
+		.awsize				(awsize),
+		.awburst			(awburst),
+		.awlock				(awlock),
+		.awcache			(awcache),
+		.awprot				(awprot),
+		.awvalid			(awvalid),
+		.awready			(awready),
+		// write data channel signals
+		.wid				(wid),
+		.wdata				(wdata),
+		.wstrb				(wstrb),
+		.wlast				(wlast),
+		.wvalid				(wvalid),
+		.wready				(wready),
+		// write response channel signals
+		.bid				(bid),
+		.bresp				(bresp),
+		.bvalid				(bvalid),
+		.bready				(bready),
+		
+		// master0
+		.m0_req				(m0_write_req),
+		.m0_grnt			(m0_write_grnt),
+		.m0_awid			(m0_awid),
+		.m0_awaddr			(m0_awaddr),
+		.m0_awlen			(m0_awlen),
+		.m0_awsize			(m0_awsize),
+		.m0_awburst			(m0_awburst),
+		.m0_awlock			(m0_awlock),
+		.m0_awcache			(m0_awcache),
+		.m0_awprot			(m0_awprot),
+		.m0_awvalid			(m0_awvalid),
+		.m0_awready			(m0_awready),
+		.m0_wid				(m0_wid),
+		.m0_wdata			(m0_wdata),
+		.m0_wstrb			(m0_wstrb),
+		.m0_wlast			(m0_wlast),
+		.m0_wvalid			(m0_wvalid),
+		.m0_wready			(m0_wready),
+		.m0_bid				(m0_bid),
+		.m0_bresp			(m0_bresp),
+		.m0_bvalid			(m0_bvalid),
+		.m0_bready			(m0_bready),
+		
+		// master1
+		.m1_req				(m1_write_req),
+		.m1_grnt			(m1_write_grnt),
+		.m1_awid			(m1_awid),
+		.m1_awaddr			(m1_awaddr),
+		.m1_awlen			(m1_awlen),
+		.m1_awsize			(m1_awsize),
+		.m1_awburst			(m1_awburst),
+		.m1_awlock			(m1_awlock),
+		.m1_awcache			(m1_awcache),
+		.m1_awprot			(m1_awprot),
+		.m1_awvalid			(m1_awvalid),
+		.m1_awready			(m1_awready),
+		.m1_wid				(m1_wid),
+		.m1_wdata			(m1_wdata),
+		.m1_wstrb			(m1_wstrb),
+		.m1_wlast			(m1_wlast),
+		.m1_wvalid			(m1_wvalid),
+		.m1_wready			(m1_wready),
+		.m1_bid				(m1_bid),
+		.m1_bresp			(m1_bresp),
+		.m1_bvalid			(m1_bvalid),
+		.m1_bready			(m1_bready)
+	);
+	
 	// AXI_Cache_Load_Bus
 	wire m0_req, m0_grnt, m0_arvalid, m0_arready, m0_rlast, m0_rvalid, m0_rready, m1_req, m1_grnt, m1_arvalid, m1_arready, m1_rlast, m1_rvalid, m1_rready;
+	wire m2_req, m2_grnt, m2_arvalid, m2_arready, m2_rlast, m2_rvalid, m2_rready;
 	wire [1 :0] m0_arburst, m0_arlock, m0_rresp, m1_arburst, m1_arlock, m1_rresp;
+	wire [1 :0] m2_arburst, m2_arlock, m2_rresp;
 	wire [2 :0] m0_arsize, m0_arprot, m1_arsize, m1_arprot;
+	wire [2 :0] m2_arsize, m2_arprot;
 	wire [3 :0] m0_arid, m0_arlen, m0_arcache, m0_rid, m1_arid, m1_arlen, m1_arcache, m1_rid;
+	wire [3 :0] m2_arid, m2_arlen, m2_arcache, m2_rid;
 	wire [31:0] m0_araddr, m0_rdata, m1_araddr, m1_rdata;
+	wire [31:0] m2_araddr, m2_rdata;
 	AXI_Cache_Load_Bus m_AXI_Cache_Load_Bus(
 		.clk(clk),
 		.rst_n(rst_n),
@@ -138,7 +228,29 @@ module Mips(
 		.m1_rresp(m1_rresp),
 		.m1_rlast(m1_rlast),
 		.m1_rvalid(m1_rvalid),
-		.m1_rready(m1_rready)
+		.m1_rready(m1_rready),
+		
+		// master2
+		.m2_req(m2_req),
+		.m2_grnt(m2_grnt),
+		// master1 read address signals
+		.m2_arid(m2_arid),
+		.m2_araddr(m2_araddr),
+		.m2_arlen(m2_arlen),
+		.m2_arsize(m2_arsize),
+		.m2_arburst(m2_arburst),
+		.m2_arlock(m2_arlock),
+		.m2_arcache(m2_arcache),
+		.m2_arprot(m2_arprot),
+		.m2_arvalid(m2_arvalid),
+		.m2_arready(m2_arready),
+		// master1 read data signals
+		.m2_rid(m2_rid),
+		.m2_rdata(m2_rdata),
+		.m2_rresp(m2_rresp),
+		.m2_rlast(m2_rlast),
+		.m2_rvalid(m2_rvalid),
+		.m2_rready(m2_rready)
 	);
 	
 	wire [31:0] mem_rdata;
@@ -148,6 +260,7 @@ module Mips(
 	// PC
 	wire ICache_IF_Clr;
 	wire PC_target_sel, exc_en, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_ICache, stcl_DCache;
+	wire uncachedLoader_cpu_Stall, uncachedStorer_cpu_Stall, uncachedLoader_cpu_PC_Stall, uncachedStorer_cpu_PC_Stall;
 	assign stcl_f = 1'b0;			// temp for test
 	assign stcl_ram_cache = 1'b0;	// temp for test
 	wire [31:0] if_fetch_exc_type, PC_branch, PC_exc, PC_o, PC_plus4;
@@ -163,13 +276,38 @@ module Mips(
 			stcl_DCache_delay <= stcl_DCache;
 			end
 		end
+	reg uncachedStorer_cpu_Stall_delay;		// for 1-cycle delay of uncachedStorer_cpu_Stall
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			uncachedStorer_cpu_Stall_delay <= 1'b0;
+			end
+		else
+			begin
+			uncachedStorer_cpu_Stall_delay <= uncachedStorer_cpu_Stall;
+			end
+		end
+	reg uncachedLoader_cpu_Stall_delay;		// for 1-cycle delay of uncachedLoader_cpu_Stall
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			uncachedLoader_cpu_Stall_delay <= 1'b0;
+			end
+		else
+			begin
+			uncachedLoader_cpu_Stall_delay <= uncachedLoader_cpu_Stall;
+			end
+		end
 	PC m_PC(
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
 		.stall2(stcl_f | (stcl_ICache && ~PC_target_sel)), 
-		.stall3(stcl_ram_cache | stcl_div | stcl_DCache), 
+		.stall3(stcl_ram_cache | stcl_div | stcl_DCache | (uncachedLoader_cpu_PC_Stall | uncachedStorer_cpu_PC_Stall)),// (uncachedLoader_cpu_Stall | uncachedStorer_cpu_Stall)), 
+		// .minus4((uncachedLoader_cpu_Stall && ~uncachedLoader_cpu_Stall_delay) | (uncachedStorer_cpu_Stall && ~uncachedStorer_cpu_Stall_delay)),
 		.PC_exc_i(PC_exc), 
 		.PC_target_i(PC_branch), 
 		.PC_exc_sel(exc_en), 
@@ -207,7 +345,7 @@ module Mips(
 		// control signals
 		.stall0							(stcl_lw														), 
 		.stall1							(stcl_jmp														), 
-		.stall2							(stcl_f | (stcl_ICache)											), 
+		.stall2							(stcl_f | (stcl_ICache)	| ((uncachedLoader_cpu_Stall) | (uncachedStorer_cpu_Stall))				), 
 		.stall3							(stcl_ram_cache | stcl_div | DCache_IF_Stall					), //(stcl_DCache)						), 
 		.irq							(exc_en															), 
 		.clr0							(PC_target_sel													), 
@@ -262,24 +400,24 @@ module Mips(
 		.ICache_IF_Clr(ICache_IF_Clr),
 		.ICache_IF_ID_Stall(ICache_IF_ID_Stall)
 	);
-	assign ICache_grnt = m1_grnt;
-	assign m1_req = ICache_req;
-	assign m1_arid = ICache_arid;
-	assign m1_araddr = ICache_araddr;
-	assign m1_arlen = ICache_arlen;
-	assign m1_arsize = ICache_arsize;
-	assign m1_arburst = ICache_arburst;
-	assign m1_arlock = ICache_arlock;
-	assign m1_arcache = ICache_arcache;
-	assign m1_arprot = ICache_arprot;
-	assign m1_arvalid = ICache_arvalid;
-	assign ICache_arready = m1_arready;
-	assign ICache_rid = m1_rid;
-	assign ICache_rdata = m1_rdata;
-	assign ICache_rresp = m1_rresp;
-	assign ICache_rlast = m1_rlast;
-	assign ICache_rvalid = m1_rvalid;
-	assign m1_rready = ICache_rready;
+	assign ICache_grnt = m2_grnt;
+	assign m2_req = ICache_req;
+	assign m2_arid = ICache_arid;
+	assign m2_araddr = ICache_araddr;
+	assign m2_arlen = ICache_arlen;
+	assign m2_arsize = ICache_arsize;
+	assign m2_arburst = ICache_arburst;
+	assign m2_arlock = ICache_arlock;
+	assign m2_arcache = ICache_arcache;
+	assign m2_arprot = ICache_arprot;
+	assign m2_arvalid = ICache_arvalid;
+	assign ICache_arready = m2_arready;
+	assign ICache_rid = m2_rid;
+	assign ICache_rdata = m2_rdata;
+	assign ICache_rresp = m2_rresp;
+	assign ICache_rlast = m2_rlast;
+	assign ICache_rvalid = m2_rvalid;
+	assign m2_rready = ICache_rready;
 	always@(*)
 		begin
 		$display("ICache_req: 0b%1b, ICache_grnt: 0b%1b", ICache_req, ICache_grnt);
@@ -302,7 +440,7 @@ module Mips(
 		.stall0(stcl_lw), 
 		.stall1(stcl_jmp), 
 		.stall2(stcl_f), 
-		.stall3(stcl_ram_cache | stcl_div | DCache_IF_Stall), // (stcl_DCache)), 
+		.stall3(stcl_ram_cache | stcl_div | DCache_IF_Stall | ((uncachedLoader_cpu_Stall) | (uncachedStorer_cpu_Stall))), // (stcl_DCache)), 
 		.irq(exc_en), 
 		.clr0(ICache_IF_ID_Stall | ICache_IF_Clr | PC_target_sel_delay | DCache_State_Hit),		// .clr0(stcl_ICache | ICache_IF_Clr),
 		.PC_plus4(IPF_IF_PC_plus4_data), 
@@ -547,7 +685,7 @@ module Mips(
 	ID_EXE_REG_PACKED m_ID_EXE_REG_PACKED(
 		.clk(clk), 
 		.rst_n(rst_n), 
-		.stall0(stcl_ram_cache | stcl_div | stcl_DCache), 
+		.stall0(stcl_ram_cache | stcl_div | stcl_DCache | (uncachedLoader_cpu_Stall | uncachedStorer_cpu_Stall)), 
 		.irq(exc_en), 
 		.clr0(stcl_lw), 
 		.clr1(stcl_jmp), 
@@ -890,7 +1028,7 @@ module Mips(
 		.clk(~clk), 
 		.rst_n(rst_n), 
 		.stall0(1'b0), 
-		.stall1(stcl_ram_cache | (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0))), 
+		.stall1(stcl_ram_cache | (stcl_DCache) | (uncachedLoader_cpu_Stall | uncachedStorer_cpu_Stall)), 
 		.irq(exc_en), 
 		.clr(stcl_div), 
 		.exc_type(ID_EXE_cu_inst_exc_type_data | ID_EXE_if_fetch_exc_type_data | ALU_exc_type), 
@@ -997,12 +1135,12 @@ module Mips(
 	
 	// DCache
 	wire DCache_grnt, DCache_req, DCache_arvalid, DCache_arready, DCache_rlast, DCache_rvalid, DCache_rready;
-	wire DCache_awvalid, DCache_awready, DCache_wlast, DCache_wvalid, DCache_wready, DCache_bvalid, DCache_bready;
+	wire DCache_write_grnt, DCache_write_req, DCache_awvalid, DCache_awready, DCache_wlast, DCache_wvalid, DCache_wready, DCache_bvalid, DCache_bready;
 	wire [1:0] DCache_arburst, DCache_arlock, DCache_rresp, DCache_awburst, DCache_awlock, DCache_bresp;
 	wire [2:0] DCache_arsize, DCache_arprot, DCache_awsize, DCache_awprot;
 	wire [3:0] DCache_arid, DCache_arlen, DCache_arcache, DCache_rid, DCache_awid, DCache_awlen, DCache_awcache;
 	wire [3:0] DCache_bid, DCache_wid, DCache_wstrb;
-	wire [31:0] DCache_araddr, DCache_rdata, DCache_awaddr, DCache_wdata;
+	wire [31:0] DCache_araddr, DCache_rdata, DCache_awaddr, DCache_wdata, DCache_mem_rdata;
 	DCache m_DCache(
 		.clk					(~clk),
 		.rst_n					(rst_n),
@@ -1024,6 +1162,8 @@ module Mips(
 		.DCache_rlast			(DCache_rlast),
 		.DCache_rvalid 			(DCache_rvalid),
 		.DCache_rready			(DCache_rready),
+		.DCache_write_grnt		(DCache_write_grnt),
+		.DCache_write_req		(DCache_write_req),
 		.DCache_awid			(DCache_awid),
 		.DCache_awaddr			(DCache_awaddr),
 		.DCache_awlen			(DCache_awlen),
@@ -1044,55 +1184,58 @@ module Mips(
 		.DCache_bresp			(DCache_bresp),
 		.DCache_bvalid			(DCache_bvalid),
 		.DCache_bready			(DCache_bready),
+		.DCache_cpu_uncached	(data_uncached),
 		.DCache_cpu_re			(EXE_MEM_load_type_data != 4'b0),
 		.DCache_cpu_we			(EXE_MEM_store_type_data != 4'b0),
 		.DCache_cpu_addr		(physical_data_addr),
 		.DCache_cpu_byte_enable	(EXE_MEM_byte_valid_data),
 		.DCache_cpu_wdata		(mem_wdata),
-		.DCache_cpu_rdata		(mem_rdata),
+		.DCache_cpu_rdata		(DCache_mem_rdata),
 		.DCache_cpu_Stall		(stcl_DCache),
 		.DCache_IF_Stall		(DCache_IF_Stall),
 		.DCache_State_Hit		(DCache_State_Hit)
 	);
-	assign DCache_grnt = m0_grnt;
-	assign m0_req = DCache_req;
-	assign m0_arid = DCache_arid;
-	assign m0_araddr = DCache_araddr;
-	assign m0_arlen = DCache_arlen;
-	assign m0_arsize = DCache_arsize;
-	assign m0_arburst = DCache_arburst;
-	assign m0_arlock = DCache_arlock;
-	assign m0_arcache = DCache_arcache;
-	assign m0_arprot = DCache_arprot;
-	assign m0_arvalid = DCache_arvalid;
-	assign DCache_arready = m0_arready;
-	assign DCache_rid = m0_rid;
-	assign DCache_rdata = m0_rdata;
-	assign DCache_rresp = m0_rresp;
-	assign DCache_rlast = m0_rlast;
-	assign DCache_rvalid = m0_rvalid;
-	assign m0_rready = DCache_rready;
+	assign DCache_grnt = m1_grnt;
+	assign m1_req = DCache_req;
+	assign m1_arid = DCache_arid;
+	assign m1_araddr = DCache_araddr;
+	assign m1_arlen = DCache_arlen;
+	assign m1_arsize = DCache_arsize;
+	assign m1_arburst = DCache_arburst;
+	assign m1_arlock = DCache_arlock;
+	assign m1_arcache = DCache_arcache;
+	assign m1_arprot = DCache_arprot;
+	assign m1_arvalid = DCache_arvalid;
+	assign DCache_arready = m1_arready;
+	assign DCache_rid = m1_rid;
+	assign DCache_rdata = m1_rdata;
+	assign DCache_rresp = m1_rresp;
+	assign DCache_rlast = m1_rlast;
+	assign DCache_rvalid = m1_rvalid;
+	assign m1_rready = DCache_rready;
 	
-	assign awid = DCache_awid;
-	assign awaddr = DCache_awaddr;
-	assign awlen = DCache_awlen;
-	assign awsize = DCache_awsize;
-	assign awburst = DCache_awburst;
-	assign awlock = DCache_awlock;
-	assign awcache = DCache_awcache;
-	assign awprot = DCache_awprot;
-	assign awvalid = DCache_awvalid;
-	assign DCache_awready = awready;
-	assign wid = DCache_wid;
-	assign wdata = DCache_wdata;
-	assign wstrb = DCache_wstrb;
-	assign wlast = DCache_wlast;
-	assign wvalid = DCache_wvalid;
-	assign DCache_wready = wready;
-	assign DCache_bid = bid;
-	assign DCache_bresp = bresp;
-	assign DCache_bvalid = bvalid;
-	assign bready = DCache_bready;
+	assign DCache_write_grnt = m1_write_grnt;
+	assign m1_write_req = DCache_write_req;
+	assign m1_awid = DCache_awid;
+	assign m1_awaddr = DCache_awaddr;
+	assign m1_awlen = DCache_awlen;
+	assign m1_awsize = DCache_awsize;
+	assign m1_awburst = DCache_awburst;
+	assign m1_awlock = DCache_awlock;
+	assign m1_awcache = DCache_awcache;
+	assign m1_awprot = DCache_awprot;
+	assign m1_awvalid = DCache_awvalid;
+	assign DCache_awready = m1_awready;
+	assign m1_wid = DCache_wid;
+	assign m1_wdata = DCache_wdata;
+	assign m1_wstrb = DCache_wstrb;
+	assign m1_wlast = DCache_wlast;
+	assign m1_wvalid = DCache_wvalid;
+	assign DCache_wready = m1_wready;
+	assign DCache_bid = m1_bid;
+	assign DCache_bresp = m1_bresp;
+	assign DCache_bvalid = m1_bvalid;
+	assign m1_bready = DCache_bready;
 	always@(*)
 		begin
 		$display("DCache_req: 0b%1b, DCache_grnt: 0b%1b", DCache_req, DCache_grnt);
@@ -1103,6 +1246,151 @@ module Mips(
 		$display("DCache_rid: 0x%1h, DCache_rdata: 0x%8h, DCache_rvalid: 0b%1b, DCache_rready: 0b%1b"
 				, DCache_rid, DCache_rdata, DCache_rvalid, DCache_rready);
 		end
+	
+	// uncachedLoader
+	wire uncachedLoader_req, uncachedLoader_grnt;
+	wire uncachedLoader_arvalid, uncachedLoader_arready, uncachedLoader_rlast, uncachedLoader_rvalid, uncachedLoader_rready;
+	wire [1 :0] uncachedLoader_arburst, uncachedLoader_arlock, uncachedLoader_rresp;
+	wire [2 :0] uncachedLoader_arsize, uncachedLoader_arprot;
+	wire [3 :0] uncachedLoader_arid, uncachedLoader_arlen, uncachedLoader_arcache, uncachedLoader_rid;
+	wire [31:0] uncachedLoader_araddr, uncachedLoader_rdata, uncachedLoader_mem_rdata;
+	uncachedLoader m_uncachedLoader(
+		.clk							(~clk							),
+		.rst_n							(rst_n							),
+		
+		// AXI read channel signals
+		.uncachedLoader_req				(uncachedLoader_req				),
+		.uncachedLoader_grnt			(uncachedLoader_grnt			),
+		// read address channel signals
+		.uncachedLoader_arid			(uncachedLoader_arid			),
+		.uncachedLoader_araddr			(uncachedLoader_araddr			),
+		.uncachedLoader_arlen			(uncachedLoader_arlen			),
+		.uncachedLoader_arsize			(uncachedLoader_arsize			),
+		.uncachedLoader_arburst			(uncachedLoader_arburst			),
+		.uncachedLoader_arlock			(uncachedLoader_arlock			),
+		.uncachedLoader_arcache			(uncachedLoader_arcache			),
+		.uncachedLoader_arprot 			(uncachedLoader_arprot			),
+		.uncachedLoader_arvalid 		(uncachedLoader_arvalid			),
+		.uncachedLoader_arready			(uncachedLoader_arready			),
+		// read data channel signals           
+		.uncachedLoader_rid				(uncachedLoader_rid				),
+		.uncachedLoader_rdata			(uncachedLoader_rdata			),
+		.uncachedLoader_rresp			(uncachedLoader_rresp			),
+		.uncachedLoader_rlast			(uncachedLoader_rlast			),
+		.uncachedLoader_rvalid 			(uncachedLoader_rvalid			),
+		.uncachedLoader_rready			(uncachedLoader_rready			),
+		
+		// CPU read 
+		.uncachedLoader_cpu_uncached	(data_uncached					),
+		.uncachedLoader_cpu_re			(EXE_MEM_load_type_data != 4'b0	),
+		.uncachedLoader_cpu_addr		(physical_data_addr				),
+		.uncachedLoader_cpu_rdata		(uncachedLoader_mem_rdata		),
+		.uncachedLoader_cpu_Stall		(uncachedLoader_cpu_Stall		),
+		.uncachedLoader_cpu_PC_Stall	(uncachedLoader_cpu_PC_Stall	)
+	);
+	always@(*)
+		begin
+		$display("data_uncached: 0b%1b, EXE_MEM_load_type_data: 0x%1h, uncachedLoader_cpu_Stall: 0b%1b, uncachedLoader_mem_rdata: 0x%8h, DCache_mem_rdata: 0x%8h"
+				, data_uncached, EXE_MEM_load_type_data, uncachedLoader_cpu_Stall, uncachedLoader_mem_rdata, DCache_mem_rdata);
+		end
+	assign uncachedLoader_grnt = m0_grnt;
+	assign m0_req = uncachedLoader_req;
+	assign m0_arid = uncachedLoader_arid;
+	assign m0_araddr = uncachedLoader_araddr;
+	assign m0_arlen = uncachedLoader_arlen;
+	assign m0_arsize = uncachedLoader_arsize;
+	assign m0_arburst = uncachedLoader_arburst;
+	assign m0_arlock = uncachedLoader_arlock;
+	assign m0_arcache = uncachedLoader_arcache;
+	assign m0_arprot = uncachedLoader_arprot;
+	assign m0_arvalid = uncachedLoader_arvalid;
+	assign uncachedLoader_arready = m0_arready;
+	assign uncachedLoader_rid = m0_rid;
+	assign uncachedLoader_rdata = m0_rdata;
+	assign uncachedLoader_rresp = m0_rresp;
+	assign uncachedLoader_rlast = m0_rlast;
+	assign uncachedLoader_rvalid = m0_rvalid;
+	assign m0_rready = uncachedLoader_rready;
+	
+	// mem_rdata_mux
+	Mux2T1 mem_rdata_mux(
+		.s(data_uncached), 
+		.y(mem_rdata), 
+		.d0(DCache_mem_rdata), 
+		.d1(uncachedLoader_mem_rdata)
+	);
+	
+	// uncachedStorer
+	wire uncachedStorer_grnt, uncachedStorer_req, uncachedStorer_awvalid, uncachedStorer_awready, uncachedStorer_wlast;
+	wire uncachedStorer_wvalid, uncachedStorer_wready, uncachedStorer_bvalid, uncachedStorer_bready;
+	wire [1:0] uncachedStorer_awburst, uncachedStorer_awlock, uncachedStorer_bresp;
+	wire [2:0] uncachedStorer_awsize, uncachedStorer_awprot;
+	wire [3:0] uncachedStorer_awid, uncachedStorer_awlen, uncachedStorer_awcache;
+	wire [3:0] uncachedStorer_bid, uncachedStorer_wid, uncachedStorer_wstrb;
+	wire [31:0] uncachedStorer_awaddr, uncachedStorer_wdata;
+	uncachedStorer m_uncachedStorer(
+		.clk							(~clk),
+		.rst_n							(rst_n),
+		
+		// AXI read channel signals
+		.uncachedStorer_req				(uncachedStorer_req),
+		.uncachedStorer_grnt			(uncachedStorer_grnt),
+		// AXI write channel signals
+		// write address channel signals       
+		.uncachedStorer_awid			(uncachedStorer_awid),
+		.uncachedStorer_awaddr			(uncachedStorer_awaddr),
+		.uncachedStorer_awlen			(uncachedStorer_awlen),
+		.uncachedStorer_awsize			(uncachedStorer_awsize),
+		.uncachedStorer_awburst			(uncachedStorer_awburst),
+		.uncachedStorer_awlock			(uncachedStorer_awlock),
+		.uncachedStorer_awcache			(uncachedStorer_awcache),
+		.uncachedStorer_awprot			(uncachedStorer_awprot),
+		.uncachedStorer_awvalid			(uncachedStorer_awvalid),
+		.uncachedStorer_awready			(uncachedStorer_awready),
+		// write data channel signals
+		.uncachedStorer_wid				(uncachedStorer_wid),
+		.uncachedStorer_wdata			(uncachedStorer_wdata),
+		.uncachedStorer_wstrb			(uncachedStorer_wstrb),
+		.uncachedStorer_wlast			(uncachedStorer_wlast),
+		.uncachedStorer_wvalid			(uncachedStorer_wvalid),
+		.uncachedStorer_wready			(uncachedStorer_wready),
+		// write response channel signals
+		.uncachedStorer_bid				(uncachedStorer_bid),
+		.uncachedStorer_bresp			(uncachedStorer_bresp),
+		.uncachedStorer_bvalid			(uncachedStorer_bvalid),
+		.uncachedStorer_bready			(uncachedStorer_bready),
+		
+		// CPU read
+		.uncachedStorer_cpu_uncached	(data_uncached),
+		.uncachedStorer_cpu_we			(EXE_MEM_store_type_data != 4'b0),
+		.uncachedStorer_cpu_addr		(physical_data_addr),
+		.uncachedStorer_cpu_byte_enable	(EXE_MEM_byte_valid_data),
+		.uncachedStorer_cpu_wdata		(mem_wdata),
+		.uncachedStorer_cpu_Stall		(uncachedStorer_cpu_Stall),
+		.uncachedStorer_cpu_PC_Stall	(uncachedStorer_cpu_PC_Stall)
+	);
+	assign uncachedStorer_grnt = m0_write_grnt;
+	assign m0_write_req = uncachedStorer_req;
+	assign m0_awid = uncachedStorer_awid;
+	assign m0_awaddr = uncachedStorer_awaddr;
+	assign m0_awlen = uncachedStorer_awlen;
+	assign m0_awsize = uncachedStorer_awsize;
+	assign m0_awburst = uncachedStorer_awburst;
+	assign m0_awlock = uncachedStorer_awlock;
+	assign m0_awcache = uncachedStorer_awcache;
+	assign m0_awprot = uncachedStorer_awprot;
+	assign m0_awvalid = uncachedStorer_awvalid;
+	assign uncachedStorer_awready = m0_awready;
+	assign m0_wid = uncachedStorer_wid;
+	assign m0_wdata = uncachedStorer_wdata;
+	assign m0_wstrb = uncachedStorer_wstrb;
+	assign m0_wlast = uncachedStorer_wlast;
+	assign m0_wvalid = uncachedStorer_wvalid;
+	assign uncachedStorer_wready = m0_wready;
+	assign uncachedStorer_bid = m0_bid;
+	assign uncachedStorer_bresp = m0_bresp;
+	assign uncachedStorer_bvalid = m0_bvalid;
+	assign m0_bready = uncachedStorer_bready;
 	
 	// TLBExcDetector
 	TLBExcDetector m_TLBExcDetector(
@@ -1151,7 +1439,7 @@ module Mips(
 		.clk(clk), 
 		.rst_n(rst_n), 
 		.stall0(stcl_ram_cache), 
-		.irq(exc_en | (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0))), 
+		.irq(exc_en | (stcl_DCache) | (uncachedLoader_cpu_Stall | uncachedStorer_cpu_Stall)), 
 		.wcp0(EXE_MEM_wcp0_data), 
 		.MEM_WB_wcp0_data(MEM_WB_wcp0_data), 
 		.load_type(EXE_MEM_load_type_data), 

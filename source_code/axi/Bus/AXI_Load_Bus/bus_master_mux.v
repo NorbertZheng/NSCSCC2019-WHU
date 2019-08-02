@@ -58,7 +58,28 @@ module bus_master_mux(
 	output	reg	[1 :0]	m1_rresp	,
 	output	reg			m1_rlast	,
 	output	reg			m1_rvalid	,
-	input				m1_rready	
+	input				m1_rready	,
+	
+	// master2
+	input				m2_grnt		,
+	// master1 read address signals
+	input		[3 :0]	m2_arid		,
+	input		[31:0]	m2_araddr	,
+	input		[3 :0]	m2_arlen	,
+	input		[2 :0]	m2_arsize	,
+	input		[1 :0]	m2_arburst	,
+	input		[1 :0]	m2_arlock	,
+	input		[3 :0]	m2_arcache	,
+	input		[2 :0]	m2_arprot	,
+	input				m2_arvalid	,
+	output	reg			m2_arready	,
+	// master1 read data signals
+	output	reg	[3 :0]	m2_rid		,
+	output	reg	[31:0]	m2_rdata	,
+	output	reg	[1 :0]	m2_rresp	,
+	output	reg			m2_rlast	,
+	output	reg			m2_rvalid	,
+	input				m2_rready	
 );
 	always@(*)
 		begin
@@ -84,6 +105,12 @@ module bus_master_mux(
 		m1_rresp = 2'b0;
 		m1_rlast = 1'b0;
 		m1_rvalid = 1'b0;
+		m2_arready = 1'b0;
+		m2_rid = 4'b0;
+		m2_rdata = 32'b0;
+		m2_rresp = 2'b0;
+		m2_rlast = 1'b0;
+		m2_rvalid = 1'b0;
 		if(m0_grnt == 1'b1)
 			begin
 			// master0_i
@@ -125,6 +152,27 @@ module bus_master_mux(
 			arprot = m1_arprot;
 			arvalid = m1_arvalid;
 			rready = m1_rready;
+			end
+		else if(m2_grnt == 1'b1)
+			begin
+			// master1_i
+			m2_arready = arready;
+			m2_rid = rid;
+			m2_rdata = rdata;
+			m2_rresp = rresp;
+			m2_rlast = rlast;
+			m2_rvalid = rvalid;
+			// master1_o
+			arid = m2_arid;
+			araddr = m2_araddr;
+			arlen = m2_arlen;
+			arsize = m2_arsize;
+			arburst = m2_arburst;
+			arlock = m2_arlock;
+			arcache = m2_arcache;
+			arprot = m2_arprot;
+			arvalid = m2_arvalid;
+			rready = m2_rready;
 			end
 		else
 			begin
