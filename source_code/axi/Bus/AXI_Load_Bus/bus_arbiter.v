@@ -26,15 +26,15 @@ module bus_arbiter(clk, rst_n, m0_req, m0_grnt, m1_req, m1_grnt, m2_req, m2_grnt
 			end
 		else
 			begin
-			if(m0_req == 1'b1)		// prefer m0(data req)
+			if(m0_req == 1'b1 && ~(owner == 2'b01 && m1_req == 1'b1) && ~(owner == 2'b10 && m2_req == 1'b1))		// prefer m0(data req)
 				begin
 				owner <= 2'b00;
 				end
-			else if(m1_req == 1'b1)
+			else if(m1_req == 1'b1 && ~(owner == 2'b00 && m0_req == 1'b1) && ~(owner == 2'b10 && m2_req == 1'b1))
 				begin
 				owner <= 2'b01;
 				end
-			else if(m2_req == 1'b1)
+			else if(m2_req == 1'b1 && ~(owner == 2'b01 && m1_req == 1'b1) && ~(owner == 2'b00 && m0_req == 1'b1))
 				begin
 				owner <= 2'b10;
 				end
