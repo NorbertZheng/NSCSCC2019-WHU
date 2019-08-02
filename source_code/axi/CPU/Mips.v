@@ -338,7 +338,7 @@ module Mips(
 	wire DCache_IF_Stall;
 	wire is_delayslot, IPF_IF_is_delayslot_data, instMiss, IPF_IF_instMiss_data, instValid, IPF_IF_instValid_data;
 	wire [7:0] asid, IPF_IF_asid_data;
-	wire [31:0] IPF_IF_if_fetch_exc_type_data, IPF_IF_PC_plus4_data, IPF_IF_Instruction_data;
+	wire [31:0] IPF_IF_if_fetch_exc_type_data, IPF_IF_PC_plus4_data;
 	IPF_IF_REG_PACKED m_IPF_IF_REG_PACKED(
 		.clk							(clk															), 
 		.rst_n							(rst_n															), 
@@ -364,13 +364,73 @@ module Mips(
 		.IPF_IF_instValid_data			(IPF_IF_instValid_data											)
 	);
 	
+	reg flag;
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			flag <= 1'b0;
+			end
+		else
+			begin
+			if((uncachedLoader_cpu_Stall && ~uncachedLoader_cpu_Stall_delay) || (uncachedStorer_cpu_Stall && ~uncachedStorer_cpu_Stall_delay))
+				begin
+				flag <= 1'b1;
+				end
+			else
+				begin
+				flag <= 1'b0;
+				end
+			end
+		end
+	wire [31:0] inst_data;
+	reg [31:0] IPF_IF_Instruction_data, IPF_IF_Instruction_data_pre;
+	always@(negedge clk)
+		begin
+		if(!rst_n)
+			begin
+			IPF_IF_Instruction_data <= 32'b0;
+			IPF_IF_Instruction_data_pre <= 32'b0;
+			end
+		else
+			begin
+			if(flag)
+				begin
+				$display("I'm here!!!!");
+				IPF_IF_Instruction_data_pre <= inst_data;
+				IPF_IF_Instruction_data <= IPF_IF_Instruction_data_pre;;
+				end
+			else
+				begin
+				IPF_IF_Instruction_data_pre <= inst_data;
+				$display("!!!!!!!!!I'm here!!!!");
+				// do nothing
+				end
+			end
+		# 1;
+		$display("IPF!!!: 0b%1b, inst_data: 0x%8h, IPF_IF_Instruction_data: 0x%8h"
+				, ((uncachedLoader_cpu_Stall && ~uncachedLoader_cpu_Stall_delay) || (uncachedStorer_cpu_Stall && ~uncachedStorer_cpu_Stall_delay))
+				, inst_data, IPF_IF_Instruction_data);
+		end
+		
+	wire IF_ID_Instruction_data_sel = (
+		(~uncachedLoader_cpu_Stall && uncachedLoader_cpu_Stall_delay) || 
+		(~uncachedStorer_cpu_Stall && uncachedStorer_cpu_Stall_delay)
+	);
+	wire [31:0] IF_ID_Instruction_i = IF_ID_Instruction_data_sel ? IPF_IF_Instruction_data : inst_data;
+	always@(posedge clk)
+		begin
+		$display("IF_ID_Instruction_data_sel: 0b%1b, IPF_IF_Instruction_data: 0x%8h, inst_data: 0x%8h"
+				, IF_ID_Instruction_data_sel, IPF_IF_Instruction_data, inst_data);
+		end
+	
 	// ICache
 	wire ICache_IF_ID_Stall;
 	wire ICache_grnt, ICache_req, ICache_arvalid, ICache_arready, ICache_rlast, ICache_rvalid, ICache_rready;
 	wire [1:0] ICache_arburst, ICache_arlock, ICache_rresp;
 	wire [2:0] ICache_arsize, ICache_arprot;
 	wire [3:0] ICache_arid, ICache_arlen, ICache_arcache, ICache_rid;
-	wire [31:0] ICache_araddr, ICache_rdata, inst_data;
+	wire [31:0] ICache_araddr, ICache_rdata;
 	wire [31:0] physical_inst_addr;
 	ICache m_ICache(
 		.clk(clk),
@@ -445,7 +505,7 @@ module Mips(
 		.clr0(ICache_IF_ID_Stall | ICache_IF_Clr | PC_target_sel_delay | DCache_State_Hit),		// .clr0(stcl_ICache | ICache_IF_Clr),
 		.PC_plus4(IPF_IF_PC_plus4_data), 
 		.IF_ID_PC_plus4_data(IF_ID_PC_plus4_data), 
-		.Instruction(inst_data), 
+		.Instruction(IF_ID_Instruction_i), 
 		.IF_ID_Instruction_data(IF_ID_Instruction_data), 
 		.is_delayslot(IPF_IF_is_delayslot_data), 
 		.IF_ID_is_delayslot_data(IF_ID_is_delayslot_data), 

@@ -48,14 +48,14 @@ module uncachedLoader(
 	reg [2:0] state;
 	reg [2:0] pre_state;
 	assign uncachedLoader_cpu_Stall = ~(
-		((state == uncachedLoader_IDLE) && ~(need_read))// ||
-		//((state == uncachedLoader_IDLE) && (pre_state == uncachedLoader_Delay))
+		((state == uncachedLoader_IDLE) && ~(need_read)) ||
+		((state == uncachedLoader_IDLE) && (pre_state == uncachedLoader_Delay))
 	);
 	
-	assign uncachedLoader_cpu_PC_Stall = ~(
+	assign uncachedLoader_cpu_PC_Stall = uncachedLoader_cpu_Stall;/*~(
 		(state == uncachedLoader_IDLE) ||
 		(state == uncachedLoader_Delay)
-	);
+	);*/
 	
 	assign uncachedLoader_arid = 4'b0010;
 	assign uncachedLoader_araddr = {uncachedLoader_cpu_addr[31:2], 2'b0};

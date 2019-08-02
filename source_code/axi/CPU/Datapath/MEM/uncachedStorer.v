@@ -53,14 +53,16 @@ module uncachedStorer(
 	);
 	
 	reg [2:0] state;
+	reg [2:0] pre_state;
 	assign uncachedStorer_cpu_Stall = ~(
-		(state == uncachedStorer_IDLE)// || 
+		(state == uncachedStorer_IDLE) && ~(need_writeback) || // && (pre_state != uncachedStorer_Delay)// || 
+		(state == uncachedStorer_Delay)
 		// (state == uncachedStorer_WriteBackWaitPre)
 	);
-	assign uncachedStorer_cpu_PC_Stall = ~(
+	assign uncachedStorer_cpu_PC_Stall = uncachedStorer_cpu_Stall;/*~(
 		(state == uncachedStorer_IDLE)// || 
-		// (state == uncachedStorer_Delay)
-	);
+		//(state == uncachedStorer_Delay)
+	);*/
 	
 	assign uncachedStorer_awid = 4'b0010;
 	assign uncachedStorer_awaddr = {uncachedStorer_cpu_addr[31:2], 2'b0};
@@ -87,6 +89,7 @@ module uncachedStorer(
 		if(!rst_n)
 			begin
 			state <= uncachedStorer_IDLE;
+			pre_state <= uncachedStorer_IDLE;
 			// outputs
 			uncachedStorer_req <= 1'b0;
 			uncachedStorer_awvalid <= 1'b0;
@@ -95,6 +98,7 @@ module uncachedStorer(
 			end
 		else
 			begin
+			pre_state <= state;
 			case(state)
 				uncachedStorer_IDLE:
 					begin
