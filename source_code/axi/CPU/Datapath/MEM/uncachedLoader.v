@@ -49,6 +49,7 @@ module uncachedLoader(
 	reg [2:0] pre_state;
 	assign uncachedLoader_cpu_Stall = ~(
 		((state == uncachedLoader_IDLE) && ~(need_read)) ||
+		// (state == uncachedLoader_Delay)
 		((state == uncachedLoader_IDLE) && (pre_state == uncachedLoader_Delay))
 	);
 	

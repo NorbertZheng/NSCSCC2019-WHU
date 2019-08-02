@@ -363,6 +363,10 @@ module Mips(
 		.instValid						(instValid														), 
 		.IPF_IF_instValid_data			(IPF_IF_instValid_data											)
 	);
+	always@(*)
+		begin
+		$display("stcl_lw: 0b%1b, stcl_jmp: 0b%1b, stcl_div: 0b%1b", stcl_lw, stcl_jmp, stcl_div);
+		end
 	
 	reg flag;
 	always@(posedge clk)
@@ -373,7 +377,8 @@ module Mips(
 			end
 		else
 			begin
-			if((uncachedLoader_cpu_Stall && ~uncachedLoader_cpu_Stall_delay) || (uncachedStorer_cpu_Stall && ~uncachedStorer_cpu_Stall_delay))
+			if(	(uncachedLoader_cpu_Stall && ~uncachedLoader_cpu_Stall_delay) || 
+				(uncachedStorer_cpu_Stall && ~uncachedStorer_cpu_Stall_delay))
 				begin
 				flag <= 1'b1;
 				end
@@ -417,7 +422,49 @@ module Mips(
 		(~uncachedLoader_cpu_Stall && uncachedLoader_cpu_Stall_delay) || 
 		(~uncachedStorer_cpu_Stall && uncachedStorer_cpu_Stall_delay)
 	);
-	wire [31:0] IF_ID_Instruction_i = IF_ID_Instruction_data_sel ? IPF_IF_Instruction_data : inst_data;
+	reg IF_ID_Instruction_data_sel_reg;
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			IF_ID_Instruction_data_sel_reg <= 1'b0;
+			end
+		else
+			begin
+			if(IF_ID_Instruction_data_sel && stcl_lw)
+				begin
+				IF_ID_Instruction_data_sel_reg <= 1'b1;
+				end
+			else
+				begin
+				IF_ID_Instruction_data_sel_reg <= 1'b0;
+				end
+			end
+		end
+	reg IF_stcl;
+	reg [31:0] IPF_IF_Instruction_data_stcl;
+	always@(posedge clk)
+		begin
+		if(!rst_n)
+			begin
+			IF_stcl <= 1'b0;
+			IPF_IF_Instruction_data_stcl <= 32'b0;
+			end
+		else
+			begin
+			if(stcl_jmp)
+				begin
+				IF_stcl <= stcl_jmp;
+				IPF_IF_Instruction_data_stcl <= inst_data;
+				end
+			else
+				begin
+				IF_stcl <= stcl_jmp;
+				end
+			end
+		end
+	wire [31:0] IF_ID_Instruction_i = 	(IF_ID_Instruction_data_sel | IF_ID_Instruction_data_sel_reg) ? IPF_IF_Instruction_data : 
+										(IF_stcl ? IPF_IF_Instruction_data_stcl : inst_data);
 	always@(posedge clk)
 		begin
 		$display("IF_ID_Instruction_data_sel: 0b%1b, IPF_IF_Instruction_data: 0x%8h, inst_data: 0x%8h"
