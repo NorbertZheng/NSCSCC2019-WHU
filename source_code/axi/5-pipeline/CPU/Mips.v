@@ -281,6 +281,11 @@ module Mips(
 		.PC_plus4(PC_plus4), 
 		.if_fetch_exc_type(if_fetch_exc_type)
 	);
+	always@(*)
+		begin
+		$display("IF_ID->stcl_lw: 0b%1b, stcl_jmp: 0b%1b, stcl_f: 0b%1b, stcl_ram_cache: 0b%1b, stcl_div: 0b%1b, stcl_DCache: 0b%1b"
+				, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_DCache);
+		end
 	
 	// ICache
 	wire ICache_grnt, ICache_req, ICache_arvalid, ICache_arready, ICache_rlast, ICache_rvalid, ICache_rready;
@@ -566,6 +571,18 @@ module Mips(
 		$display("COP0_EPC: 0x%8h, EXE_MEM_PC_data: 0x%8h, ID_EXE_PC_data: 0x%8h, IF_ID_PC_data: 0x%8h, vic_inst_addr: 0x%8h"
 				, COP0_EPC, EXE_MEM_PC_plus4_data - 32'h4, ID_EXE_PC_plus4_data - 32'h4, IF_ID_PC_plus4_data - 32'h4, vic_inst_addr);
 		end*/
+	reg ID_EXE_PC_same;
+	always@(negedge clk)
+		begin
+		if(!rst_n)
+			begin
+			ID_EXE_PC_same <= 1'b0;
+			end
+		else
+			begin
+			ID_EXE_PC_same <= (ID_EXE_PC_plus4_data == IF_ID_PC_plus4_data);
+			end
+		end
 	
 	// Hazard_Detection_Unit
 	wire ID_EXE_wreg_data;
@@ -604,7 +621,7 @@ module Mips(
 		.irq(exc_en), 
 		.clr0(stcl_lw), 
 		.clr1(stcl_jmp), 
-		.clr2(stcl_f), 
+		.clr2(stcl_f | ID_EXE_PC_same), 
 		.is_div(is_div), 
 		.ID_EXE_is_div_data(ID_EXE_is_div_data), 
 		.is_sign_div(is_sign_div), 
