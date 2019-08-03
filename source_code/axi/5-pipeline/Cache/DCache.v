@@ -63,7 +63,7 @@ module DCache(
 	output				DCache_State_Hit		
 );
 	parameter	CACHE_LINE_WIDTH		=	6,
-				TAG_WIDTH				=	20,
+				TAG_WIDTH				=	19,
 				INDEX_WIDTH				=	32 - CACHE_LINE_WIDTH - TAG_WIDTH,
 				NUM_CACHE_LINES			=	2 ** INDEX_WIDTH,
 				OFFSET_WIDTH			=	CACHE_LINE_WIDTH - 2;
