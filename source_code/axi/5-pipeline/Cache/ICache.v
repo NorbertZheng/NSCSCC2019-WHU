@@ -79,7 +79,7 @@ module ICache(
 	// CacheLines0
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLine #(
+		CacheLineDist #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines0 (
@@ -102,7 +102,7 @@ module ICache(
 	// CacheLines1
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLine #(
+		CacheLineDist #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines1 (
@@ -198,7 +198,7 @@ module ICache(
 	);
 	// already wait for 1 cycle
 	assign ICache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("CacheLines0_rdata: 0x%8h, CacheLines1_rdata: 0x%8h"
 				, CacheLines0_rdata, CacheLines1_rdata);
@@ -212,7 +212,7 @@ module ICache(
 		begin
 		# 1;
 		$display("ICache state: 0x%1h, ICache_cpu_Stall: 0b%1b", state, ICache_cpu_Stall);
-		end
+		end*/
 	
 	always@(posedge clk)
 		begin
@@ -396,8 +396,8 @@ module ICache(
 						ICache_rready <= 1'b1;
 						// ICache_arvalid <= 1'b0;
 						state <= ICache_MemRead;
-						# 1;
-						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
+						/*# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
 						end
 					else
 						begin
@@ -436,9 +436,9 @@ module ICache(
 							ICache_rready <= 1'b1;
 							// ICache_arvalid <= 1'b0;
 							end
-						# 1;
+						/*# 1;
 						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h, {OFFSET_WIDTH{1'b1}}: 0x%2h"
-								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});
+								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});*/
 						end
 					else
 						begin

@@ -52,7 +52,7 @@ module Mips(
 	output		[4 :0]	debug_wb_rf_wnum	,
 	output		[31:0]	debug_wb_rf_wdata	
 );
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		$display();
 		$display("arid: 0x%1h, araddr: 0x%8h, arlen: 0x%1h, arsize: 0x%1h, arburst: 0x%1h, arvalid: 0b%1b, arready: 0b%1b"
@@ -66,7 +66,7 @@ module Mips(
 		$display("bid: 0x%1h, bresp: 0b%2b, bvalid: 0b%1b, bready: 0b%1b"
 				, bid, bresp, bvalid, bready);
 		$display();
-		end
+		end*/
 	// AXI_Cache_Store_Bus
 	wire m0_write_req, m0_write_grnt, m1_write_req, m1_write_grnt;
 	wire m0_awvalid, m0_awready, m0_wlast, m0_wvalid, m0_wready, m0_bvalid, m0_bready;
@@ -281,11 +281,11 @@ module Mips(
 		.PC_plus4(PC_plus4), 
 		.if_fetch_exc_type(if_fetch_exc_type)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("IF_ID->stcl_lw: 0b%1b, stcl_jmp: 0b%1b, stcl_f: 0b%1b, stcl_ram_cache: 0b%1b, stcl_div: 0b%1b, stcl_DCache: 0b%1b"
 				, stcl_lw, stcl_jmp, stcl_f, stcl_ram_cache, stcl_div, stcl_DCache);
-		end
+		end*/
 	
 	// ICache
 	wire ICache_grnt, ICache_req, ICache_arvalid, ICache_arready, ICache_rlast, ICache_rvalid, ICache_rready;
@@ -338,7 +338,7 @@ module Mips(
 	assign ICache_rlast = m2_rlast;
 	assign ICache_rvalid = m2_rvalid;
 	assign m2_rready = ICache_rready;
-	always@(*)
+	/*always@(*)
 		begin
 		$display("ICache_req: 0b%1b, ICache_grnt: 0b%1b", ICache_req, ICache_grnt);
 		$display("ICache_arid: 0x%1h, ICache_araddr: 0x%8h, ICache_arlen: 0x%1h, ICache_arsize: 0x%1h, ICache_arburst: 0x%1h"
@@ -347,7 +347,7 @@ module Mips(
 				, ICache_arlock, ICache_arcache, ICache_arprot, ICache_arvalid, ICache_arready);
 		$display("ICache_rid: 0x%1h, ICache_rdata: 0x%8h, ICache_rvalid: 0b%1b, ICache_rready: 0b%1b"
 				, ICache_rid, ICache_rdata, ICache_rvalid, ICache_rready);
-		end
+		end*/
 	
 	// IF_ID_REG_PACKED
 	wire DCache_State_Hit;
@@ -378,11 +378,11 @@ module Mips(
 		.instValid(instValid),
 		.IF_ID_instValid_data(IF_ID_instValid_data)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("IF_ID_Instruction_data: 0x%8h, IF_ID_PC_plus4_data: 0x%8h, PC_o: 0x%8h"
 				, IF_ID_Instruction_data, IF_ID_PC_plus4_data, PC_o);
-		end
+		end*/
 
 	/**************************/
 	/*           ID           */
@@ -955,11 +955,11 @@ module Mips(
 	wire [3:0] EXE_MEM_byte_valid_data;
 	wire [31:0] EXE_MEM_rf_rdata0_fw_data, EXE_MEM_rf_rdata1_fw_data, EXE_MEM_Instruction_data;
 	wire [63:0] EXE_MEM_MulDiv_result_data;
-	always@(*)
+	/*always@(*)
 		begin
 		$display("stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0): 0b%1b, EXE_MEM_load_type_data: 0x%1h"
 				, (stcl_DCache ^ (EXE_MEM_load_type_data != 4'b0)), EXE_MEM_load_type_data);
-		end
+		end*/
 	EXE_MEM_REG_PACKED m_EXE_MEM_REG_PACKED(
 		.clk(clk), 
 		.rst_n(rst_n), 
@@ -1172,7 +1172,7 @@ module Mips(
 	assign DCache_bresp = m1_bresp;
 	assign DCache_bvalid = m1_bvalid;
 	assign m1_bready = DCache_bready;
-	always@(*)
+	/*always@(*)
 		begin
 		$display("DCache_req: 0b%1b, DCache_grnt: 0b%1b", DCache_req, DCache_grnt);
 		$display("DCache_arid: 0x%1h, DCache_araddr: 0x%8h, DCache_arlen: 0x%1h, DCache_arsize: 0x%1h, DCache_arburst: 0x%1h"
@@ -1181,7 +1181,7 @@ module Mips(
 				, DCache_arlock, DCache_arcache, DCache_arprot, DCache_arvalid, DCache_arready);
 		$display("DCache_rid: 0x%1h, DCache_rdata: 0x%8h, DCache_rvalid: 0b%1b, DCache_rready: 0b%1b"
 				, DCache_rid, DCache_rdata, DCache_rvalid, DCache_rready);
-		end
+		end*/
 	
 	// uncachedLoader
 	wire uncachedLoader_req, uncachedLoader_grnt;
@@ -1224,11 +1224,11 @@ module Mips(
 		.uncachedLoader_cpu_Stall		(uncachedLoader_cpu_Stall		),
 		.uncachedLoader_cpu_PC_Stall	(uncachedLoader_cpu_PC_Stall	)
 	);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("data_uncached: 0b%1b, EXE_MEM_load_type_data: 0x%1h, uncachedLoader_cpu_Stall: 0b%1b, uncachedLoader_mem_rdata: 0x%8h, DCache_mem_rdata: 0x%8h"
 				, data_uncached, EXE_MEM_load_type_data, uncachedLoader_cpu_Stall, uncachedLoader_mem_rdata, DCache_mem_rdata);
-		end
+		end*/
 	assign uncachedLoader_grnt = m0_grnt;
 	assign m0_req = uncachedLoader_req;
 	assign m0_arid = uncachedLoader_arid;
@@ -1420,7 +1420,7 @@ module Mips(
 		.instruction(EXE_MEM_Instruction_data),
 		.MEM_WB_Instruction_data(MEM_WB_Instruction_data)
 	);
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("MEM_WB_Instruction_data: 0x%8h, MEM_WB_PC_plus4_data: 0x%8h"
@@ -1429,7 +1429,7 @@ module Mips(
 				, EXE_MEM_Instruction_data, EXE_MEM_PC_plus4_data);
 		$display("ID_EXE_Instruction_data: 0x%8h, ID_EXE_PC_plus4_data: 0x%8h"
 				, ID_EXE_Instruction_data, ID_EXE_PC_plus4_data);
-		end
+		end*/
 	/*always@(*)
 		begin
 		$display("MEM_WB_mem_rdata_data: 0x%8h, MEM_WB_ALU_result_data: 0x%8h"
@@ -1499,12 +1499,12 @@ module Mips(
 		end*/
 	
 	// for debug
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("wb_pc: 0x%8h, wb_pc_d: 0d%8d, MEM_WB_Instruction_data: 0x%8h, WB_result_data: 0x%8h, debug_wb_rf_wnum: 0x%2h, debug_wb_rf_wen: 0b%4b, IF_PC: 0x%8h"
 				, debug_wb_pc, debug_wb_pc[19:2], MEM_WB_Instruction_data, WB_result_data, debug_wb_rf_wnum, debug_wb_rf_wen, physical_inst_addr);
-		end
+		end*/
 	assign debug_wb_inst = MEM_WB_Instruction_data;
 	assign debug_wb_pc = MEM_WB_PC_plus4_data - 32'h4;
 	assign debug_wb_rf_wdata = WB_result_data;

@@ -77,12 +77,12 @@ module uncachedStorer(
 	assign uncachedStorer_wstrb = uncachedStorer_cpu_byte_enable;
 	assign uncachedStorer_bready = 1'b1;
 	
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("uncachedStorer state: 0x%1h, uncachedStorer_cpu_Stall: 0b%1b, uncachedStorer_wdata: 0x%8h, uncachedStorer_awaddr: 0x%8h"
 				, state, uncachedStorer_cpu_Stall, uncachedStorer_wdata, uncachedStorer_awaddr);
-		end
+		end*/
 	
 	always@(posedge clk)
 		begin

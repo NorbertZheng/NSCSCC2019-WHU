@@ -114,7 +114,7 @@ module DCache(
 	// CacheLines0
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLine #(
+		CacheLineDist #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines0 (
@@ -137,7 +137,7 @@ module DCache(
 	// CacheLines1
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLine #(
+		CacheLineDist #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines1 (
@@ -263,13 +263,13 @@ module DCache(
 	// already wait for 1 cycle
 	assign DCache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
 	
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("DCache-> CacheLines0_rdata: 0x%8h, CacheLines1_rdata: 0x%8h", CacheLines0_rdata, CacheLines1_rdata);
 		$display("DCache state: 0x%1h, DCache_cpu_Stall: 0b%1b, DCache_cpu_rdata: 0x%8h, DCache_cpu_uncached"
 				, state, DCache_cpu_Stall, DCache_cpu_rdata, DCache_cpu_uncached);
-		end
+		end*/
 	
 	reg flag;
 	always@(posedge clk)
@@ -706,8 +706,8 @@ module DCache(
 							state <= DCache_MemRead;
 							end
 						DCache_arvalid <= 1'b0;
-						# 1;
-						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
+						/*# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
 						end
 					else
 						begin
@@ -757,8 +757,8 @@ module DCache(
 							Mem_access_offset <= Mem_access_offset + 1;
 							DCache_rready <= 1'b1;
 							end
-						# 1;
-						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
+						/*# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
 						end
 					else
 						begin
@@ -822,8 +822,8 @@ module DCache(
 					wdata <= 32'b0;
 					w_byte_enable <= 4'b1111;
 					wdirty <= 1'b0;
-					# 1;
-					$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
+					/*# 1;
+					$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
 					end
 				default:
 					begin

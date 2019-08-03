@@ -72,12 +72,12 @@ module uncachedLoader(
 	reg [31:0] uncachedLoader_cpu_rdata_reg;
 	assign uncachedLoader_cpu_rdata = uncachedLoader_cpu_rdata_reg;
 	
-	always@(posedge clk)
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("uncachedLoader state: 0x%1h, uncachedLoader_cpu_Stall: 0b%1b, uncachedLoader_cpu_rdata: 0x%8h, uncachedLoader_rdata: 0x%8h"
 				, state, uncachedLoader_cpu_Stall, uncachedLoader_cpu_rdata, uncachedLoader_rdata);
-		end
+		end*/
 	
 	reg [1:0] cnt;
 	always@(posedge clk)
