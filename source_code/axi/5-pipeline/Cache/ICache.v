@@ -31,7 +31,7 @@ module ICache(
 	output				ICache_cpu_Stall		
 );
 	parameter	CACHE_LINE_WIDTH		=	6,
-				TAG_WIDTH				=	19,
+				TAG_WIDTH				=	20,
 				INDEX_WIDTH				=	32 - CACHE_LINE_WIDTH - TAG_WIDTH,
 				NUM_CACHE_LINES			=	2 ** INDEX_WIDTH,
 				OFFSET_WIDTH			=	CACHE_LINE_WIDTH - 2;
@@ -79,7 +79,7 @@ module ICache(
 	// CacheLines0
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLineDist #(
+		CacheLineBlock #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines0 (
@@ -102,7 +102,7 @@ module ICache(
 	// CacheLines1
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
-		CacheLineDist #(
+		CacheLineBlock #(
 			.CACHE_LINE_WIDTH (CACHE_LINE_WIDTH),
 			.TAG_WIDTH        (TAG_WIDTH)
 		) m_CacheLines1 (
@@ -159,6 +159,14 @@ module ICache(
 	wire [TAG_WIDTH-1:0] CacheLines1_tag = rtag1[ICache_addr_index];
 	wire CacheLines1_hit = (CacheLines1_tag == ICache_addr_tag);
 	wire [31:0] CacheLines1_rdata = rdata1[ICache_addr_pre_index];		// get last period roff read data
+	always@(posedge clk)
+		begin
+		# 1;
+		$display("CacheLines1_valid: 0b%1b, CacheLines1_tag: 0x%5h, CacheLines1_hit: 0b%1b, ICache_cpu_addr: 0x%8h, ICache_cpu_addr_pre: 0x%8h"
+				, CacheLines1_valid, CacheLines1_tag, CacheLines1_hit, ICache_cpu_addr, ICache_cpu_addr_pre);
+		$display("rtag1[6'h1c]: 0x%5h, rvalid1[6'h1c]: 0b%1b, rdata1[6'h1c]: 0x%8h, rtag1[6'h36]: 0x%5h, rvalid1[6'h36]: 0b%1b, rdata1[6'h36]: 0x%8h"
+				, rtag1[6'h1c], rvalid1[6'h1c], rdata1[6'h1c], rtag1[6'h36], rvalid1[6'h36], rdata1[6'h36]);
+		end
 	
 	// cache write control signals
 	reg cache_we;
@@ -198,7 +206,7 @@ module ICache(
 	);
 	// already wait for 1 cycle
 	assign ICache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
-	/*always@(*)
+	always@(*)
 		begin
 		$display("CacheLines0_rdata: 0x%8h, CacheLines1_rdata: 0x%8h"
 				, CacheLines0_rdata, CacheLines1_rdata);
@@ -212,7 +220,7 @@ module ICache(
 		begin
 		# 1;
 		$display("ICache state: 0x%1h, ICache_cpu_Stall: 0b%1b", state, ICache_cpu_Stall);
-		end*/
+		end
 	
 	always@(posedge clk)
 		begin
@@ -396,8 +404,8 @@ module ICache(
 						ICache_rready <= 1'b1;
 						// ICache_arvalid <= 1'b0;
 						state <= ICache_MemRead;
-						/*# 1;
-						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
+						# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
 						end
 					else
 						begin
@@ -436,9 +444,9 @@ module ICache(
 							ICache_rready <= 1'b1;
 							// ICache_arvalid <= 1'b0;
 							end
-						/*# 1;
+						# 1;
 						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h, {OFFSET_WIDTH{1'b1}}: 0x%2h"
-								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});*/
+								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});
 						end
 					else
 						begin
