@@ -66,11 +66,11 @@ module CacheLineBlock(clk, rst_n, rtag, roff, rdata, rdirty, rvalid, we, wtag, w
 	
 	wire [OFFSET_WIDTH - 1:0] access_offset = we ? woff : roff;
 	// block_cacheline_data
-	block_cacheline_data m_block_cacheline_data(
+	/*block_cacheline_data m_block_cacheline_data(
 		.clka(clk), 
 		.wea(w_byte_enable & {4{we}}), 
 		.addra(access_offset), 
 		.dina(wdata), 
 		.douta(dout)
-	);
+	);*/
 endmodule

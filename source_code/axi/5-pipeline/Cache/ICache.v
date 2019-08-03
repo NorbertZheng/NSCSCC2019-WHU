@@ -50,18 +50,20 @@ module ICache(
 
 	// wires to CacheLines0
 	wire [TAG_WIDTH - 1:0] rtag0[NUM_CACHE_LINES - 1:0];
-	wire [31:0] rdata0[NUM_CACHE_LINES - 1:0];
+	// wire [31:0] rdata0[NUM_CACHE_LINES - 1:0];
+	wire [31:0] rdata0;
 	wire rdirty0[NUM_CACHE_LINES - 1:0];
 	wire rvalid0[NUM_CACHE_LINES - 1:0];
-	wire we0[NUM_CACHE_LINES - 1:0];
+	wire [NUM_CACHE_LINES - 1:0] we0;
 	
 	// wires to CacheLines1
 	// use tag to judge which rdata, use we to judge which 
 	wire [TAG_WIDTH - 1:0] rtag1[NUM_CACHE_LINES - 1:0];
-	wire [31:0] rdata1[NUM_CACHE_LINES - 1:0];
+	// wire [31:0] rdata1[NUM_CACHE_LINES - 1:0];
+	wire [31:0] rdata1;
 	wire rdirty1[NUM_CACHE_LINES - 1:0];
 	wire rvalid1[NUM_CACHE_LINES - 1:0];
-	wire we1[NUM_CACHE_LINES - 1:0];
+	wire [NUM_CACHE_LINES - 1:0] we1;
 	
 	// common signals
 	wire [OFFSET_WIDTH - 1:0] roff;
@@ -71,6 +73,20 @@ module ICache(
 	reg [3:0] w_byte_enable;
 	reg wdirty;
 	reg wvalid;
+	wire [OFFSET_WIDTH - 1:0] Cache_access_offset = ((|we0) | (|we1)) ? woff : roff;
+	
+	// Cache access tag, index, offset, byteoffset
+	wire [TAG_WIDTH - 1:0] ICache_addr_tag;
+	wire [INDEX_WIDTH - 1:0] ICache_addr_index;
+	wire [OFFSET_WIDTH - 1:0] ICache_addr_offset;
+	wire [1:0] ICache_addr_byteoffset;
+	assign {ICache_addr_tag, ICache_addr_index, ICache_addr_offset, ICache_addr_byteoffset} = ICache_cpu_addr;
+	reg [31:0] ICache_cpu_addr_pre;
+	wire [TAG_WIDTH - 1:0] ICache_addr_pre_tag;
+	wire [INDEX_WIDTH - 1:0] ICache_addr_pre_index;
+	wire [OFFSET_WIDTH - 1:0] ICache_addr_pre_offset;
+	wire [1:0] ICache_addr_pre_byteoffset;
+	assign {ICache_addr_pre_tag, ICache_addr_pre_index, ICache_addr_pre_offset, ICache_addr_pre_byteoffset} = ICache_cpu_addr_pre;
 	
 	// 2-way DCache
 	reg [NUM_CACHE_LINES - 1:0]LRU;		// record recent access which way 0 / 1
@@ -86,19 +102,26 @@ module ICache(
 			.clk(clk), 
 			.rst_n(rst_n), 
 			.rtag(rtag0[i]), 
-			.roff(roff), 
-			.rdata(rdata0[i]), 
+			// .roff(roff), 
+			// .rdata(rdata0[i]), 
 			.rdirty(rdirty0[i]), 
 			.rvalid(rvalid0[i]), 
 			.we(we0[i]), 
 			.wtag(wtag), 
-			.woff(woff), 
-			.wdata(wdata), 
-			.w_byte_enable(w_byte_enable), 
+			// .woff(woff), 
+			// .wdata(wdata), 
+			// .w_byte_enable(w_byte_enable), 
 			.wdirty(wdirty), 
 			.wvalid(wvalid)
 		);
 		end
+	block_cacheblock_data m_ICacheWay0(
+		.clka(clk), 
+		.wea(w_byte_enable & ({4{(|we0)}})), 
+		.addra({ICache_addr_index, Cache_access_offset}), 
+		.dina(wdata), 
+		.douta(rdata0)
+	);
 	// CacheLines1
 	for(i = 0;i < NUM_CACHE_LINES;i = i + 1)
 		begin
@@ -109,35 +132,30 @@ module ICache(
 			.clk(clk), 
 			.rst_n(rst_n), 
 			.rtag(rtag1[i]), 
-			.roff(roff), 
-			.rdata(rdata1[i]), 
+			// .roff(roff), 
+			// .rdata(rdata1[i]), 
 			.rdirty(rdirty1[i]), 
 			.rvalid(rvalid1[i]), 
 			.we(we1[i]), 
 			.wtag(wtag), 
-			.woff(woff), 
-			.wdata(wdata), 
-			.w_byte_enable(w_byte_enable), 
+			// .woff(woff), 
+			// .wdata(wdata), 
+			// .w_byte_enable(w_byte_enable), 
 			.wdirty(wdirty), 
 			.wvalid(wvalid)
 		);
 		end
+	block_cacheblock_data m_ICacheWay1(
+		.clka(clk), 
+		.wea(w_byte_enable & ({4{(|we1)}})), 
+		.addra({ICache_addr_index, Cache_access_offset}), 
+		.dina(wdata), 
+		.douta(rdata1)
+	);
 	endgenerate
 	
 	reg [3:0] state;
 	reg [3:0] pre_state;
-	// Cache access tag, index, offset, byteoffset
-	wire [TAG_WIDTH - 1:0] ICache_addr_tag;
-	wire [INDEX_WIDTH - 1:0] ICache_addr_index;
-	wire [OFFSET_WIDTH - 1:0] ICache_addr_offset;
-	wire [1:0] ICache_addr_byteoffset;
-	assign {ICache_addr_tag, ICache_addr_index, ICache_addr_offset, ICache_addr_byteoffset} = ICache_cpu_addr;
-	reg [31:0] ICache_cpu_addr_pre;
-	wire [TAG_WIDTH - 1:0] ICache_addr_pre_tag;
-	wire [INDEX_WIDTH - 1:0] ICache_addr_pre_index;
-	wire [OFFSET_WIDTH - 1:0] ICache_addr_pre_offset;
-	wire [1:0] ICache_addr_pre_byteoffset;
-	assign {ICache_addr_pre_tag, ICache_addr_pre_index, ICache_addr_pre_offset, ICache_addr_pre_byteoffset} = ICache_cpu_addr_pre;
 	
 	// MEM / DCacheLine Traverse offset
 	reg [TAG_WIDTH - 1:0] Mem_access_tag;
@@ -153,20 +171,22 @@ module ICache(
 	wire CacheLines0_dirty = rdirty0[ICache_addr_index];
 	wire [TAG_WIDTH-1:0] CacheLines0_tag = rtag0[ICache_addr_index];
 	wire CacheLines0_hit = (CacheLines0_tag == ICache_addr_tag);
-	wire [31:0] CacheLines0_rdata = rdata0[ICache_addr_pre_index];
+	// wire [31:0] CacheLines0_rdata = rdata0[ICache_addr_pre_index];
+	wire [31:0] CacheLines0_rdata = rdata0;
 	wire CacheLines1_valid = rvalid1[ICache_addr_index];
 	wire CacheLines1_dirty = rdirty1[ICache_addr_index];
 	wire [TAG_WIDTH-1:0] CacheLines1_tag = rtag1[ICache_addr_index];
 	wire CacheLines1_hit = (CacheLines1_tag == ICache_addr_tag);
-	wire [31:0] CacheLines1_rdata = rdata1[ICache_addr_pre_index];		// get last period roff read data
-	always@(posedge clk)
+	// wire [31:0] CacheLines1_rdata = rdata1[ICache_addr_pre_index];		// get last period roff read data
+	wire [31:0] CacheLines1_rdata = rdata1;
+	/*always@(posedge clk)
 		begin
 		# 1;
 		$display("CacheLines1_valid: 0b%1b, CacheLines1_tag: 0x%5h, CacheLines1_hit: 0b%1b, ICache_cpu_addr: 0x%8h, ICache_cpu_addr_pre: 0x%8h"
 				, CacheLines1_valid, CacheLines1_tag, CacheLines1_hit, ICache_cpu_addr, ICache_cpu_addr_pre);
 		$display("rtag1[6'h1c]: 0x%5h, rvalid1[6'h1c]: 0b%1b, rdata1[6'h1c]: 0x%8h, rtag1[6'h36]: 0x%5h, rvalid1[6'h36]: 0b%1b, rdata1[6'h36]: 0x%8h"
 				, rtag1[6'h1c], rvalid1[6'h1c], rdata1[6'h1c], rtag1[6'h36], rvalid1[6'h36], rdata1[6'h36]);
-		end
+		end*/
 	
 	// cache write control signals
 	reg cache_we;
@@ -206,7 +226,7 @@ module ICache(
 	);
 	// already wait for 1 cycle
 	assign ICache_cpu_rdata = CacheLines0_hit ? CacheLines0_rdata : (CacheLines1_hit ? CacheLines1_rdata : 32'b0);
-	always@(*)
+	/*always@(*)
 		begin
 		$display("CacheLines0_rdata: 0x%8h, CacheLines1_rdata: 0x%8h"
 				, CacheLines0_rdata, CacheLines1_rdata);
@@ -220,7 +240,7 @@ module ICache(
 		begin
 		# 1;
 		$display("ICache state: 0x%1h, ICache_cpu_Stall: 0b%1b", state, ICache_cpu_Stall);
-		end
+		end*/
 	
 	always@(posedge clk)
 		begin
@@ -404,8 +424,8 @@ module ICache(
 						ICache_rready <= 1'b1;
 						// ICache_arvalid <= 1'b0;
 						state <= ICache_MemRead;
-						# 1;
-						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);
+						/*# 1;
+						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h", wdata, woff, Mem_access_offset);*/
 						end
 					else
 						begin
@@ -444,9 +464,9 @@ module ICache(
 							ICache_rready <= 1'b1;
 							// ICache_arvalid <= 1'b0;
 							end
-						# 1;
+						/*# 1;
 						$display("wdata: 0x%8h, woff: 0x%1h, Mem_access_offset: 0x%1h, {OFFSET_WIDTH{1'b1}}: 0x%2h"
-								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});
+								, wdata, woff, Mem_access_offset, {OFFSET_WIDTH{1'b1}});*/
 						end
 					else
 						begin
