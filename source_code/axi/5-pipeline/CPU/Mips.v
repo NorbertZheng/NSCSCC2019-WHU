@@ -736,22 +736,24 @@ module Mips(
 	
 	// hi_fw_mux
 	wire [1:0] hi_fw_sel;
-	wire [31:0] hi_fw_mux_data, MEM_hi_data;
+	wire [31:0] hi_fw_mux_data, MEM_hi_data, ID_EXE_hi_data_temp;
+	assign ID_EXE_hi_data_temp = (ID_EXE_hi_data == hi_o) ? ID_EXE_hi_data : hi_o;
 	Mux3T1 m_hi_fw_mux(
 		.s(hi_fw_sel), 
 		.y(hi_fw_mux_data), 
-		.d0(ID_EXE_hi_data), 
+		.d0(ID_EXE_hi_data_temp), 
 		.d1(MEM_hi_data), 
 		.d2(WB_hi_data)
 	);
 	
 	// lo_fw_mux
 	wire [1:0] lo_fw_sel;
-	wire [31:0] lo_fw_mux_data, MEM_lo_data;
+	wire [31:0] lo_fw_mux_data, MEM_lo_data, ID_EXE_lo_data_temp;
+	assign ID_EXE_lo_data_temp = (ID_EXE_lo_data == lo_o) ? ID_EXE_lo_data : lo_o;
 	Mux3T1 m_lo_fw_mux(
 		.s(lo_fw_sel), 
 		.y(lo_fw_mux_data), 
-		.d0(ID_EXE_lo_data), 
+		.d0(ID_EXE_lo_data_temp), 
 		.d1(MEM_lo_data), 
 		.d2(WB_lo_data)
 	);
