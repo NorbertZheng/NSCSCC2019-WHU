@@ -37,7 +37,7 @@ module MMU(clk, rst_n, wtlb, user_mode, tlb_addr, tlb_wdata, inst_enable, data_e
 	output [31:0] inst_addr_o, data_addr_o, tlbp_result;
 	output [89:0] tlbr_result;
 	
-	parameter WITH_TLB = 1;
+	parameter WITH_TLB = 0;
 	
 	wire data_tlb_map, inst_tlb_map, data_map_uncached, inst_map_uncached, inst_access_invalid, data_access_invalid;
 	wire dataBypassCache, instBypassCache;
