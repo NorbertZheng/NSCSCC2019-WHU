@@ -31,7 +31,7 @@ module ICache(
 	output				ICache_cpu_Stall		
 );
 	parameter	CACHE_LINE_WIDTH		=	6,
-				TAG_WIDTH				=	20,
+				TAG_WIDTH				=	19,
 				INDEX_WIDTH				=	32 - CACHE_LINE_WIDTH - TAG_WIDTH,
 				NUM_CACHE_LINES			=	2 ** INDEX_WIDTH,
 				OFFSET_WIDTH			=	CACHE_LINE_WIDTH - 2;
@@ -115,7 +115,7 @@ module ICache(
 			.wvalid(wvalid)
 		);
 		end
-	block_cacheblock_data m_ICacheWay0(
+	block_cacheblock_data_8KB m_ICacheWay0(
 		.clka(clk), 
 		.wea(w_byte_enable & ({4{(|we0)}})), 
 		.addra({ICache_addr_index, Cache_access_offset}), 
@@ -145,7 +145,7 @@ module ICache(
 			.wvalid(wvalid)
 		);
 		end
-	block_cacheblock_data m_ICacheWay1(
+	block_cacheblock_data_8KB m_ICacheWay1(
 		.clka(clk), 
 		.wea(w_byte_enable & ({4{(|we1)}})), 
 		.addra({ICache_addr_index, Cache_access_offset}), 
