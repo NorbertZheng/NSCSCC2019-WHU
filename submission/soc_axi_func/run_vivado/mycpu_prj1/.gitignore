@@ -1,3 +1,5 @@
 *
 !.gitignore
 !*.xpr
+!func.bit
+!memory.bit
